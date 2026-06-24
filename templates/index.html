@@ -87,8 +87,8 @@
         .hero-section {
             color: var(--white); text-align: center;
             min-height: 520px; display: flex; align-items: center; justify-content: center;
-            background: linear-gradient(rgba(13,71,161,0.85), rgba(13,71,161,0.75)),
-                        url('https://images.unsplash.com/photo-1555992457-b8fefdd09069?w=1400') center/cover no-repeat;
+            background: linear-gradient(rgba(13,71,161,0.75), rgba(13,71,161,0.65)),
+                        url('https://res.cloudinary.com/dhu1cqvrb/image/upload/v1782268935/71348f13-0b87-4720-ad5d-5feaf0ac95ad.png') center/cover no-repeat;
             position: relative;
         }
         .hero-content { max-width: 700px; padding: 60px 20px; }
@@ -251,6 +251,12 @@
         .td-item.active { color: var(--primary); font-weight: 600; background: #e8f0fe; }
         .td-item .flag { font-size: 18px; flex-shrink: 0; }
         .td-empty { padding: 24px; text-align: center; color: #bbb; font-size: 13px; }
+
+        /* ── Suggestion form placeholders ── */
+        #sg_country::placeholder, #sg_city::placeholder,
+        #sg_station::placeholder, #sg_notes::placeholder {
+            color: rgba(255,255,255,0.55);
+        }
 
         @media (max-width: 480px) {
             #translate-drawer { width: calc(100vw - 32px); right: 16px; bottom: 72px; max-height: 55vh; }
