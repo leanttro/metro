@@ -193,8 +193,69 @@
         footer ul li a:hover { color: var(--white); }
         .footer-bottom { border-top: 1px solid #555; padding-top: 20px; text-align: center; font-size: 0.85em; color: #888; }
 
-        /* ── Translate widget ── */
-        #google_translate_element { position: fixed; bottom: 16px; right: 16px; z-index: 999; }
+        /* ── Translate widget (native hidden) ── */
+        #google_translate_element { position: absolute; visibility: hidden; pointer-events: none; }
+        .goog-te-banner-frame, .skiptranslate { display: none !important; }
+        body { top: 0 !important; }
+
+        /* ── Translate button ── */
+        #translate-btn {
+            position: fixed; bottom: 20px; right: 20px; z-index: 999;
+            background: var(--white); border: none; border-radius: 50px;
+            padding: 10px 18px; display: flex; align-items: center; gap: 8px;
+            font-family: 'Roboto', sans-serif; font-size: 14px; font-weight: 600;
+            color: var(--dark); cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.18);
+            transition: box-shadow 0.2s, transform 0.15s;
+        }
+        #translate-btn:hover { box-shadow: 0 6px 28px rgba(0,0,0,0.25); transform: translateY(-1px); }
+        #translate-btn i { color: var(--primary); font-size: 16px; }
+
+        /* ── Translate drawer ── */
+        #translate-drawer {
+            position: fixed; bottom: 70px; right: 20px; z-index: 1000;
+            background: var(--white); border-radius: 16px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+            width: 280px; max-height: 420px;
+            display: none; flex-direction: column;
+            overflow: hidden;
+        }
+        #translate-drawer.open { display: flex; }
+        .td-header {
+            padding: 14px 16px 10px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .td-search {
+            flex: 1; border: 1.5px solid var(--medium-gray);
+            border-radius: 8px; padding: 8px 12px;
+            font-family: 'Roboto', sans-serif; font-size: 13px;
+            outline: none; transition: border-color 0.2s;
+        }
+        .td-search:focus { border-color: var(--primary); }
+        .td-close {
+            background: none; border: none; color: #aaa;
+            font-size: 18px; cursor: pointer; line-height: 1; padding: 2px 4px;
+        }
+        .td-close:hover { color: var(--dark-gray); }
+        .td-list {
+            overflow-y: auto; flex: 1;
+            padding: 6px 0;
+        }
+        .td-item {
+            padding: 9px 18px; font-size: 14px; cursor: pointer;
+            color: var(--text-color); transition: background 0.1s;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .td-item:hover { background: var(--light); color: var(--dark); }
+        .td-item.active { color: var(--primary); font-weight: 600; background: #e8f0fe; }
+        .td-item .flag { font-size: 18px; flex-shrink: 0; }
+        .td-empty { padding: 24px; text-align: center; color: #bbb; font-size: 13px; }
+
+        @media (max-width: 480px) {
+            #translate-drawer { width: calc(100vw - 32px); right: 16px; bottom: 72px; max-height: 55vh; }
+            #translate-btn { bottom: 16px; right: 16px; }
+        }
 
         /* ── Responsive ── */
         @media (max-width: 768px) {
@@ -219,7 +280,7 @@
 
 <!-- ── Header ── -->
 <header>
-    <div class="logo"><a href="/"><img src="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1782262509/Nearest_Metro_Modern_Logo_Concept_1_wwskph.png" alt="nearestmetro.com" style="height:120px;display:block;filter:brightness(0) invert(1);"></a></div>
+    <div class="logo"><a href="/"><img src="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1782262509/Nearest_Metro_Modern_Logo_Concept_1_wwskph.png" alt="nearestmetro.com" style="height:160px;display:block;filter:brightness(0) invert(1);"></a></div>
     <nav class="desktop-nav">
         <ul>
             <li><a href="/">Home</a></li>
@@ -287,16 +348,64 @@
     </div>
 </section>
 
-<!-- ── Featured Stations ── -->
-<section class="section" style="background:var(--white); padding-top:0;">
-    <div class="container" style="padding-top:60px;">
-        <h2 class="section-title">Featured Stations</h2>
-        <p class="section-subtitle">Iconic metro stations from around the world</p>
-        <div class="stations-grid" id="featuredGrid">
-            <div style="text-align:center;color:#999;grid-column:1/-1;padding:40px;">
-                <i class="fas fa-subway fa-2x" style="margin-bottom:12px;display:block;color:#ddd;"></i>
-                Loading stations…
+<!-- ── Missing a Station? (inline form) ── -->
+<section style="background:linear-gradient(135deg,var(--dark) 0%,var(--primary) 100%);padding:72px 0;">
+    <div class="container">
+        <div style="text-align:center;margin-bottom:40px;">
+            <div style="font-size:3em;margin-bottom:12px;">🚇</div>
+            <h2 style="color:#fff;font-size:2em;font-weight:700;margin-bottom:10px;">Missing a station?</h2>
+            <p style="color:rgba(255,255,255,0.82);font-size:1.05em;max-width:500px;margin:0 auto;">
+                Help us grow! If you know a metro station that's not on our map yet, tell us and we'll add it.
+            </p>
+        </div>
+
+        <div style="max-width:520px;margin:0 auto;background:rgba(255,255,255,0.07);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:36px 32px;">
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+                <div>
+                    <label style="display:block;font-size:0.78em;font-weight:700;color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">Country *</label>
+                    <input id="sg_country" type="text" placeholder="e.g. Brazil"
+                        style="width:100%;padding:12px 14px;border:1.5px solid rgba(255,255,255,0.2);border-radius:9px;font-size:0.97em;font-family:inherit;background:rgba(255,255,255,0.12);color:#fff;outline:none;transition:border-color 0.2s;"
+                        onfocus="this.style.borderColor='rgba(255,255,255,0.6)'"
+                        onblur="this.style.borderColor='rgba(255,255,255,0.2)'">
+                </div>
+                <div>
+                    <label style="display:block;font-size:0.78em;font-weight:700;color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">City *</label>
+                    <input id="sg_city" type="text" placeholder="e.g. São Paulo"
+                        style="width:100%;padding:12px 14px;border:1.5px solid rgba(255,255,255,0.2);border-radius:9px;font-size:0.97em;font-family:inherit;background:rgba(255,255,255,0.12);color:#fff;outline:none;transition:border-color 0.2s;"
+                        onfocus="this.style.borderColor='rgba(255,255,255,0.6)'"
+                        onblur="this.style.borderColor='rgba(255,255,255,0.2)'">
+                </div>
             </div>
+
+            <div style="margin-bottom:14px;">
+                <label style="display:block;font-size:0.78em;font-weight:700;color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">Station / Line Name *</label>
+                <input id="sg_station" type="text" placeholder="e.g. Paulista — Line 2 Green"
+                    style="width:100%;padding:12px 14px;border:1.5px solid rgba(255,255,255,0.2);border-radius:9px;font-size:0.97em;font-family:inherit;background:rgba(255,255,255,0.12);color:#fff;outline:none;transition:border-color 0.2s;"
+                    onfocus="this.style.borderColor='rgba(255,255,255,0.6)'"
+                    onblur="this.style.borderColor='rgba(255,255,255,0.2)'">
+            </div>
+
+            <div style="margin-bottom:22px;">
+                <label style="display:block;font-size:0.78em;font-weight:700;color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">
+                    Extra info <span style="font-weight:400;text-transform:none;opacity:0.7;">(optional)</span>
+                </label>
+                <textarea id="sg_notes" placeholder="Address, coordinates, links…" rows="3"
+                    style="width:100%;padding:12px 14px;border:1.5px solid rgba(255,255,255,0.2);border-radius:9px;font-size:0.97em;font-family:inherit;background:rgba(255,255,255,0.12);color:#fff;outline:none;resize:vertical;transition:border-color 0.2s;"
+                    onfocus="this.style.borderColor='rgba(255,255,255,0.6)'"
+                    onblur="this.style.borderColor='rgba(255,255,255,0.2)'"></textarea>
+            </div>
+
+            <div id="sg_msg" style="display:none;border-radius:9px;padding:11px 14px;font-size:0.92em;margin-bottom:16px;text-align:center;"></div>
+
+            <button onclick="submitSuggestion()" id="sg_btn"
+                style="width:100%;padding:14px;background:#fff;color:var(--dark);border:none;border-radius:9px;font-size:1em;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,0.25);transition:opacity 0.2s,transform 0.15s;"
+                onmouseover="this.style.opacity='0.92'"
+                onmouseout="this.style.opacity='1'"
+                onmousedown="this.style.transform='scale(0.98)'"
+                onmouseup="this.style.transform='scale(1)'">
+                <i class="fas fa-paper-plane"></i> Send Suggestion
+            </button>
         </div>
     </div>
 </section>
@@ -326,102 +435,6 @@
     </div>
 </section>
 
-<!-- ── Suggest a Station ── -->
-<section style="background:linear-gradient(135deg,var(--dark) 0%,var(--primary) 100%);padding:64px 0;">
-    <div class="container" style="text-align:center;">
-        <div style="font-size:3em;margin-bottom:16px;">🚇</div>
-        <h2 style="font-family:'Merriweather',serif;color:#fff;font-size:1.9em;margin-bottom:12px;">Missing a station?</h2>
-        <p style="color:rgba(255,255,255,0.82);font-size:1.05em;max-width:480px;margin:0 auto 32px;">
-            Help us grow! If you know a metro station that's not on our map yet, tell us and we'll add it.
-        </p>
-        <button onclick="openSuggestModal()" style="background:#fff;color:var(--dark);border:none;border-radius:10px;padding:14px 36px;font-size:1em;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,0.2);">
-            <i class="fas fa-plus-circle"></i> Suggest a Station
-        </button>
-    </div>
-</section>
-
-<!-- Modal Suggest -->
-<div id="suggestModal" style="display:none;position:fixed;inset:0;z-index:2000;align-items:center;justify-content:center;background:rgba(0,0,0,0.55);padding:20px;">
-    <div style="background:#fff;border-radius:18px;padding:40px 36px;width:100%;max-width:460px;box-shadow:0 24px 64px rgba(0,0,0,0.3);position:relative;">
-        <button onclick="closeSuggestModal()" style="position:absolute;top:16px;right:18px;background:none;border:none;font-size:1.4em;color:#aaa;cursor:pointer;">&#10005;</button>
-        <div style="text-align:center;margin-bottom:24px;">
-            <div style="font-size:2.2em;margin-bottom:8px;">🚇</div>
-            <h3 style="font-size:1.3em;font-weight:700;color:var(--dark-gray);">Suggest a Missing Station</h3>
-            <p style="color:#888;font-size:0.9em;margin-top:6px;">Fill in what you know — we'll take care of the rest!</p>
-        </div>
-        <div style="margin-bottom:16px;">
-            <label style="display:block;font-size:0.8em;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Country *</label>
-            <input id="sg_country" type="text" placeholder="e.g. Brazil" style="width:100%;padding:11px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:0.97em;font-family:inherit;">
-        </div>
-        <div style="margin-bottom:16px;">
-            <label style="display:block;font-size:0.8em;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">City *</label>
-            <input id="sg_city" type="text" placeholder="e.g. Sao Paulo" style="width:100%;padding:11px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:0.97em;font-family:inherit;">
-        </div>
-        <div style="margin-bottom:16px;">
-            <label style="display:block;font-size:0.8em;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Station / Metro Line Name *</label>
-            <input id="sg_station" type="text" placeholder="e.g. Paulista - Line 2 Green" style="width:100%;padding:11px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:0.97em;font-family:inherit;">
-        </div>
-        <div style="margin-bottom:24px;">
-            <label style="display:block;font-size:0.8em;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Extra info <span style="font-weight:400;text-transform:none;">(optional)</span></label>
-            <textarea id="sg_notes" placeholder="Address, coordinates, links..." rows="3" style="width:100%;padding:11px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:0.97em;font-family:inherit;resize:vertical;"></textarea>
-        </div>
-        <div id="sg_msg" style="display:none;border-radius:8px;padding:10px 14px;font-size:0.9em;margin-bottom:16px;text-align:center;"></div>
-        <button onclick="submitSuggestion()" id="sg_btn" style="width:100%;padding:13px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-size:1em;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
-            <i class="fas fa-paper-plane"></i> Send Suggestion
-        </button>
-    </div>
-</div>
-
-<script>
-function openSuggestModal() {
-    document.getElementById('suggestModal').style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-}
-function closeSuggestModal() {
-    document.getElementById('suggestModal').style.display = 'none';
-    document.body.style.overflow = '';
-    ['sg_country','sg_city','sg_station','sg_notes'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('sg_msg').style.display = 'none';
-    const btn = document.getElementById('sg_btn');
-    btn.disabled = false;
-    btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Suggestion';
-}
-document.getElementById('suggestModal').addEventListener('click', function(e){ if(e.target===this) closeSuggestModal(); });
-async function submitSuggestion() {
-    const country = document.getElementById('sg_country').value.trim();
-    const city    = document.getElementById('sg_city').value.trim();
-    const station = document.getElementById('sg_station').value.trim();
-    const notes   = document.getElementById('sg_notes').value.trim();
-    const msg     = document.getElementById('sg_msg');
-    const btn     = document.getElementById('sg_btn');
-    msg.style.display = 'none';
-    if (!country || !city || !station) {
-        msg.textContent = 'Please fill in Country, City and Station name.';
-        msg.style.cssText = 'display:block;background:#fdecea;color:#c62828;border:1px solid #f5c6cb;border-radius:8px;padding:10px 14px;font-size:0.9em;margin-bottom:16px;text-align:center;';
-        return;
-    }
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-    try {
-        const res  = await fetch('/api/suggestions', {
-            method: 'POST', headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({country, city, station_name: station, notes})
-        });
-        const data = await res.json();
-        if (data.ok) {
-            msg.textContent = 'Thank you! We received your suggestion and will review it soon.';
-            msg.style.cssText = 'display:block;background:#e8f5e9;color:#2e7d32;border:1px solid #c8e6c9;border-radius:8px;padding:10px 14px;font-size:0.9em;margin-bottom:16px;text-align:center;';
-            btn.innerHTML = '<i class="fas fa-check"></i> Sent!';
-        } else { throw new Error(data.error || 'Error'); }
-    } catch(e) {
-        msg.textContent = 'Something went wrong. Please try again.';
-        msg.style.cssText = 'display:block;background:#fdecea;color:#c62828;border:1px solid #f5c6cb;border-radius:8px;padding:10px 14px;font-size:0.9em;margin-bottom:16px;text-align:center;';
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Suggestion';
-    }
-}
-</script>
-
 <!-- ── Footer ── -->
 <footer>
     <div class="container">
@@ -445,17 +458,144 @@ async function submitSuggestion() {
     </div>
 </footer>
 
-<!-- ── Google Translate ── -->
+<!-- ── Google Translate (hidden native) ── -->
 <div id="google_translate_element"></div>
 <script>
 function googleTranslateElementInit() {
-    new google.translate.TranslateElement({
-        pageLanguage: 'en',
-        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-    }, 'google_translate_element');
+    new google.translate.TranslateElement({ pageLanguage: 'en', autoDisplay: false }, 'google_translate_element');
 }
 </script>
 <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<!-- ── Custom Translate Button + Drawer ── -->
+<button id="translate-btn" onclick="toggleTranslateDrawer()">
+    <i class="fas fa-language"></i> Translate
+</button>
+
+<div id="translate-drawer">
+    <div class="td-header">
+        <input class="td-search" id="td-search" type="text" placeholder="Search language…" oninput="filterLangs(this.value)">
+        <button class="td-close" onclick="toggleTranslateDrawer()">&#10005;</button>
+    </div>
+    <div class="td-list" id="td-list"></div>
+</div>
+
+<script>
+const LANGS = [
+    {code:'af',name:'Afrikaans',flag:'🇿🇦'},{code:'sq',name:'Albanian',flag:'🇦🇱'},{code:'am',name:'Amharic',flag:'🇪🇹'},
+    {code:'ar',name:'Arabic',flag:'🇸🇦'},{code:'hy',name:'Armenian',flag:'🇦🇲'},{code:'az',name:'Azerbaijani',flag:'🇦🇿'},
+    {code:'eu',name:'Basque',flag:'🏴'},{code:'be',name:'Belarusian',flag:'🇧🇾'},{code:'bn',name:'Bengali',flag:'🇧🇩'},
+    {code:'bs',name:'Bosnian',flag:'🇧🇦'},{code:'bg',name:'Bulgarian',flag:'🇧🇬'},{code:'ca',name:'Catalan',flag:'🏴'},
+    {code:'ceb',name:'Cebuano',flag:'🇵🇭'},{code:'zh-CN',name:'Chinese (Simplified)',flag:'🇨🇳'},{code:'zh-TW',name:'Chinese (Traditional)',flag:'🇹🇼'},
+    {code:'co',name:'Corsican',flag:'🇫🇷'},{code:'hr',name:'Croatian',flag:'🇭🇷'},{code:'cs',name:'Czech',flag:'🇨🇿'},
+    {code:'da',name:'Danish',flag:'🇩🇰'},{code:'nl',name:'Dutch',flag:'🇳🇱'},{code:'en',name:'English',flag:'🇬🇧'},
+    {code:'eo',name:'Esperanto',flag:'🌍'},{code:'et',name:'Estonian',flag:'🇪🇪'},{code:'fi',name:'Finnish',flag:'🇫🇮'},
+    {code:'fr',name:'French',flag:'🇫🇷'},{code:'fy',name:'Frisian',flag:'🏴'},{code:'gl',name:'Galician',flag:'🏴'},
+    {code:'ka',name:'Georgian',flag:'🇬🇪'},{code:'de',name:'German',flag:'🇩🇪'},{code:'el',name:'Greek',flag:'🇬🇷'},
+    {code:'gu',name:'Gujarati',flag:'🇮🇳'},{code:'ht',name:'Haitian Creole',flag:'🇭🇹'},{code:'ha',name:'Hausa',flag:'🇳🇬'},
+    {code:'haw',name:'Hawaiian',flag:'🇺🇸'},{code:'he',name:'Hebrew',flag:'🇮🇱'},{code:'hi',name:'Hindi',flag:'🇮🇳'},
+    {code:'hmn',name:'Hmong',flag:'🌏'},{code:'hu',name:'Hungarian',flag:'🇭🇺'},{code:'is',name:'Icelandic',flag:'🇮🇸'},
+    {code:'ig',name:'Igbo',flag:'🇳🇬'},{code:'id',name:'Indonesian',flag:'🇮🇩'},{code:'ga',name:'Irish',flag:'🇮🇪'},
+    {code:'it',name:'Italian',flag:'🇮🇹'},{code:'ja',name:'Japanese',flag:'🇯🇵'},{code:'jv',name:'Javanese',flag:'🇮🇩'},
+    {code:'kn',name:'Kannada',flag:'🇮🇳'},{code:'kk',name:'Kazakh',flag:'🇰🇿'},{code:'km',name:'Khmer',flag:'🇰🇭'},
+    {code:'rw',name:'Kinyarwanda',flag:'🇷🇼'},{code:'ko',name:'Korean',flag:'🇰🇷'},{code:'ku',name:'Kurdish',flag:'🌍'},
+    {code:'ky',name:'Kyrgyz',flag:'🇰🇬'},{code:'lo',name:'Lao',flag:'🇱🇦'},{code:'la',name:'Latin',flag:'🏛️'},
+    {code:'lv',name:'Latvian',flag:'🇱🇻'},{code:'lt',name:'Lithuanian',flag:'🇱🇹'},{code:'lb',name:'Luxembourgish',flag:'🇱🇺'},
+    {code:'mk',name:'Macedonian',flag:'🇲🇰'},{code:'mg',name:'Malagasy',flag:'🇲🇬'},{code:'ms',name:'Malay',flag:'🇲🇾'},
+    {code:'ml',name:'Malayalam',flag:'🇮🇳'},{code:'mt',name:'Maltese',flag:'🇲🇹'},{code:'mi',name:'Maori',flag:'🇳🇿'},
+    {code:'mr',name:'Marathi',flag:'🇮🇳'},{code:'mn',name:'Mongolian',flag:'🇲🇳'},{code:'my',name:'Myanmar (Burmese)',flag:'🇲🇲'},
+    {code:'ne',name:'Nepali',flag:'🇳🇵'},{code:'no',name:'Norwegian',flag:'🇳🇴'},{code:'ny',name:'Nyanja (Chichewa)',flag:'🇲🇼'},
+    {code:'or',name:'Odia (Oriya)',flag:'🇮🇳'},{code:'ps',name:'Pashto',flag:'🇦🇫'},{code:'fa',name:'Persian',flag:'🇮🇷'},
+    {code:'pl',name:'Polish',flag:'🇵🇱'},{code:'pt',name:'Portuguese',flag:'🇵🇹'},{code:'pa',name:'Punjabi',flag:'🇮🇳'},
+    {code:'ro',name:'Romanian',flag:'🇷🇴'},{code:'ru',name:'Russian',flag:'🇷🇺'},{code:'sm',name:'Samoan',flag:'🇼🇸'},
+    {code:'gd',name:'Scots Gaelic',flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿'},{code:'sr',name:'Serbian',flag:'🇷🇸'},{code:'st',name:'Sesotho',flag:'🇱🇸'},
+    {code:'sn',name:'Shona',flag:'🇿🇼'},{code:'sd',name:'Sindhi',flag:'🇵🇰'},{code:'si',name:'Sinhala',flag:'🇱🇰'},
+    {code:'sk',name:'Slovak',flag:'🇸🇰'},{code:'sl',name:'Slovenian',flag:'🇸🇮'},{code:'so',name:'Somali',flag:'🇸🇴'},
+    {code:'es',name:'Spanish',flag:'🇪🇸'},{code:'su',name:'Sundanese',flag:'🇮🇩'},{code:'sw',name:'Swahili',flag:'🇰🇪'},
+    {code:'sv',name:'Swedish',flag:'🇸🇪'},{code:'tl',name:'Tagalog (Filipino)',flag:'🇵🇭'},{code:'tg',name:'Tajik',flag:'🇹🇯'},
+    {code:'ta',name:'Tamil',flag:'🇮🇳'},{code:'tt',name:'Tatar',flag:'🇷🇺'},{code:'te',name:'Telugu',flag:'🇮🇳'},
+    {code:'th',name:'Thai',flag:'🇹🇭'},{code:'tr',name:'Turkish',flag:'🇹🇷'},{code:'tk',name:'Turkmen',flag:'🇹🇲'},
+    {code:'uk',name:'Ukrainian',flag:'🇺🇦'},{code:'ur',name:'Urdu',flag:'🇵🇰'},{code:'ug',name:'Uyghur',flag:'🇨🇳'},
+    {code:'uz',name:'Uzbek',flag:'🇺🇿'},{code:'vi',name:'Vietnamese',flag:'🇻🇳'},{code:'cy',name:'Welsh',flag:'🏴󠁧󠁢󠁷󠁬󠁳󠁿'},
+    {code:'xh',name:'Xhosa',flag:'🇿🇦'},{code:'yi',name:'Yiddish',flag:'🌍'},{code:'yo',name:'Yoruba',flag:'🇳🇬'},
+    {code:'zu',name:'Zulu',flag:'🇿🇦'}
+];
+
+let currentLang = 'en';
+let drawerOpen  = false;
+
+function renderLangs(list) {
+    const el = document.getElementById('td-list');
+    if (!list.length) {
+        el.innerHTML = '<div class="td-empty">No language found</div>';
+        return;
+    }
+    el.innerHTML = list.map(l => `
+        <div class="td-item ${l.code === currentLang ? 'active' : ''}" onclick="selectLang('${l.code}','${l.name}')">
+            <span class="flag">${l.flag}</span> ${l.name}
+        </div>
+    `).join('');
+}
+
+function filterLangs(q) {
+    const filtered = LANGS.filter(l => l.name.toLowerCase().includes(q.toLowerCase()));
+    renderLangs(filtered);
+}
+
+function selectLang(code, name) {
+    currentLang = code;
+    drawerOpen  = false;
+    document.getElementById('translate-drawer').classList.remove('open');
+
+    // Update button label
+    const lang = LANGS.find(l => l.code === code);
+    document.getElementById('translate-btn').innerHTML =
+        `<i class="fas fa-language"></i> ${lang ? lang.flag + ' ' + name : name}`;
+
+    if (code === 'en') {
+        // restore original
+        const sel = document.querySelector('.goog-te-combo');
+        if (sel) { sel.value = ''; sel.dispatchEvent(new Event('change')); }
+        return;
+    }
+
+    // trigger Google Translate
+    const tryTranslate = (attempts) => {
+        const sel = document.querySelector('.goog-te-combo');
+        if (sel) {
+            sel.value = code;
+            sel.dispatchEvent(new Event('change'));
+        } else if (attempts > 0) {
+            setTimeout(() => tryTranslate(attempts - 1), 300);
+        }
+    };
+    tryTranslate(10);
+}
+
+function toggleTranslateDrawer() {
+    drawerOpen = !drawerOpen;
+    const drawer = document.getElementById('translate-drawer');
+    if (drawerOpen) {
+        drawer.classList.add('open');
+        renderLangs(LANGS);
+        const search = document.getElementById('td-search');
+        search.value = '';
+        setTimeout(() => search.focus(), 50);
+    } else {
+        drawer.classList.remove('open');
+    }
+}
+
+// close drawer when clicking outside
+document.addEventListener('click', function(e) {
+    if (drawerOpen &&
+        !document.getElementById('translate-drawer').contains(e.target) &&
+        !document.getElementById('translate-btn').contains(e.target)) {
+        drawerOpen = false;
+        document.getElementById('translate-drawer').classList.remove('open');
+    }
+});
+</script>
 
 <script>
 // ── Mobile menu ──
@@ -592,33 +732,45 @@ function renderCountryCards(countries) {
     `).join('');
 }
 
-// ── Load featured stations ──
-async function loadFeatured() {
-    try {
-        const res  = await fetch('/api/stations?limit=6');
-        const data = await res.json();
-        const grid = document.getElementById('featuredGrid');
-        if (!data.length) {
-            grid.innerHTML = '<p style="text-align:center;color:#999;grid-column:1/-1;">No stations added yet.</p>';
-            return;
-        }
-        grid.innerHTML = data.filter(s => s.featured || true).slice(0, 6).map(s => `
-            <a class="station-card" href="/stations/${s.slug}">
-                <div class="station-card-img">
-                    ${s.photo_url ? `<img src="${s.photo_url}" alt="${s.name}" loading="lazy">` : '<i class="fas fa-subway"></i>'}
-                </div>
-                <div class="station-card-body">
-                    ${s.line_name ? `<span class="line-badge" style="background:${s.line_color||'#1a73e8'}">${s.line_name}</span>` : ''}
-                    <h3>${s.name}</h3>
-                    <p class="location"><i class="fas fa-map-marker-alt" style="color:#aaa;margin-right:4px;"></i>${s.city_name || ''}${s.country_name ? ', ' + s.country_name : ''}</p>
-                </div>
-            </a>
-        `).join('');
-    } catch(e) { console.error(e); }
-}
-
 loadCountries();
-loadFeatured();
+
+async function submitSuggestion() {
+    const country = document.getElementById('sg_country').value.trim();
+    const city    = document.getElementById('sg_city').value.trim();
+    const station = document.getElementById('sg_station').value.trim();
+    const notes   = document.getElementById('sg_notes').value.trim();
+    const msg     = document.getElementById('sg_msg');
+    const btn     = document.getElementById('sg_btn');
+    msg.style.display = 'none';
+    if (!country || !city || !station) {
+        msg.textContent = 'Please fill in Country, City and Station name.';
+        msg.style.cssText = 'display:block;background:rgba(198,40,40,0.18);color:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:9px;padding:11px 14px;font-size:0.92em;margin-bottom:16px;text-align:center;';
+        return;
+    }
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending…';
+    try {
+        const res  = await fetch('/api/suggestions', {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({country, city, station_name: station, notes})
+        });
+        const data = await res.json();
+        if (data.ok) {
+            msg.textContent = '✅ Thank you! We received your suggestion and will review it soon.';
+            msg.style.cssText = 'display:block;background:rgba(46,125,50,0.25);color:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:9px;padding:11px 14px;font-size:0.92em;margin-bottom:16px;text-align:center;';
+            btn.innerHTML = '<i class="fas fa-check"></i> Sent! Thank you 🎉';
+            document.getElementById('sg_country').value = '';
+            document.getElementById('sg_city').value = '';
+            document.getElementById('sg_station').value = '';
+            document.getElementById('sg_notes').value = '';
+        } else { throw new Error(data.error || 'Error'); }
+    } catch(e) {
+        msg.textContent = 'Something went wrong. Please try again.';
+        msg.style.cssText = 'display:block;background:rgba(198,40,40,0.18);color:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:9px;padding:11px 14px;font-size:0.92em;margin-bottom:16px;text-align:center;';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Suggestion';
+    }
+}
 </script>
 </body>
 </html>
