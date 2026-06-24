@@ -1041,24 +1041,43 @@ def api_admin_suggestion(sg_id):
 @app.route('/sitemap.xml')
 def sitemap():
     conn = None
-    base = 'https://www.nearestmetro.com'
-    urls = [base + '/', base + '/blog']
+    base  = 'https://www.nearestmetro.com'
+    today = datetime.date.today().isoformat()
+
+    # (loc, changefreq, priority)
+    urls = [
+        (base + '/',     'daily',  '1.0'),
+        (base + '/blog', 'weekly', '0.7'),
+    ]
+
     try:
         conn = get_db_connection()
         cur  = conn.cursor()
-        cur.execute("SELECT slug FROM stations WHERE active = TRUE AND slug IS NOT NULL")
+
+        # países
+        cur.execute("SELECT slug FROM countries WHERE active = TRUE AND slug IS NOT NULL")
         for row in cur.fetchall():
-            urls.append(f'{base}/stations/{row[0]}')
+            urls.append((f'{base}/country/{row[0]}', 'weekly', '0.8'))
+
+        # cidades
         cur.execute("""
             SELECT co.slug, ci.slug
             FROM cities ci JOIN countries co ON ci.country_id = co.id
-            WHERE ci.active = TRUE
+            WHERE ci.active = TRUE AND ci.slug IS NOT NULL AND co.slug IS NOT NULL
         """)
         for row in cur.fetchall():
-            urls.append(f'{base}/country/{row[0]}/{row[1]}')
+            urls.append((f'{base}/country/{row[0]}/{row[1]}', 'weekly', '0.8'))
+
+        # estações
+        cur.execute("SELECT slug FROM stations WHERE active = TRUE AND slug IS NOT NULL")
+        for row in cur.fetchall():
+            urls.append((f'{base}/stations/{row[0]}', 'monthly', '0.6'))
+
+        # posts
         cur.execute("SELECT slug FROM posts WHERE active = TRUE AND slug IS NOT NULL")
         for row in cur.fetchall():
-            urls.append(f'{base}/blog/{row[0]}')
+            urls.append((f'{base}/blog/{row[0]}', 'monthly', '0.7'))
+
         cur.close()
     except Exception as e:
         print(f"WARNING: Error building sitemap: {e}")
@@ -1067,8 +1086,15 @@ def sitemap():
 
     xml  = '<?xml version="1.0" encoding="UTF-8"?>\n'
     xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-    for url in urls:
-        xml += f'  <url><loc>{url}</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>\n'
+    for loc, changefreq, priority in urls:
+        xml += (
+            f'  <url>'
+            f'<loc>{loc}</loc>'
+            f'<lastmod>{today}</lastmod>'
+            f'<changefreq>{changefreq}</changefreq>'
+            f'<priority>{priority}</priority>'
+            f'</url>\n'
+        )
     xml += '</urlset>'
     return make_response(xml, 200, {'Content-Type': 'application/xml'})
 
