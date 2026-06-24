@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin — nearestmetro.com</title>
+    <title>Admin Panel — nearestmetro.com</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -16,6 +16,12 @@
             --dark-gray:   #343a40;
             --text-color:  #495057;
             --white:       #ffffff;
+            --green:       #2e7d32;
+            --green-light: #e8f5e9;
+            --red:         #c62828;
+            --red-light:   #fdecea;
+            --orange:      #e65100;
+            --orange-light:#fff3e0;
             --sidebar-w:   240px;
         }
 
@@ -29,83 +35,101 @@
             min-height: 100vh;
         }
 
-        /* ── Sidebar ── */
+        /* ── Sidebar ─────────────────────────────── */
         .sidebar {
             width: var(--sidebar-w);
-            background: var(--dark);
+            background: linear-gradient(180deg, var(--dark) 0%, #1565c0 100%);
+            display: flex;
+            flex-direction: column;
             position: fixed;
             top: 0; left: 0;
             height: 100vh;
-            display: flex;
-            flex-direction: column;
             z-index: 100;
-            overflow-y: auto;
+            box-shadow: 2px 0 12px rgba(0,0,0,0.15);
         }
 
         .sidebar-logo {
             padding: 24px 20px 20px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
         }
-
-        .sidebar-logo .logo-text {
-            font-size: 20px;
-            font-weight: 700;
+        .sidebar-logo img {
+            height: 44px;
+            filter: brightness(0) invert(1);
         }
-        .sidebar-logo .nearest { color: var(--white); }
-        .sidebar-logo .metro   { color: #90caf9; }
-        .sidebar-logo .dot-com { color: rgba(255,255,255,0.45); font-size: 15px; font-weight: 400; }
-
-        .sidebar-logo .admin-badge {
-            display: inline-block;
-            background: rgba(255,255,255,0.15);
-            color: rgba(255,255,255,0.75);
-            font-size: 10px;
+        .sidebar-logo span {
+            display: block;
+            color: rgba(255,255,255,0.55);
+            font-size: 11px;
             font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 8px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 16px 0;
+            overflow-y: auto;
+        }
+
+        .nav-section-label {
+            color: rgba(255,255,255,0.35);
+            font-size: 10px;
+            font-weight: 700;
             letter-spacing: 1.5px;
             text-transform: uppercase;
-            padding: 2px 8px;
-            border-radius: 4px;
-            margin-top: 6px;
+            padding: 16px 20px 6px;
         }
-
-        .sidebar-user {
-            padding: 16px 20px;
-            font-size: 13px;
-            color: rgba(255,255,255,0.55);
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-        }
-        .sidebar-user i { margin-right: 6px; }
-
-        .sidebar-nav { padding: 12px 0; flex: 1; }
 
         .nav-item {
             display: flex;
             align-items: center;
             gap: 12px;
             padding: 11px 20px;
-            color: rgba(255,255,255,0.7);
+            color: rgba(255,255,255,0.75);
+            text-decoration: none;
             font-size: 14px;
             font-weight: 500;
             cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
             transition: background 0.15s, color 0.15s;
-            user-select: none;
             border-left: 3px solid transparent;
         }
-
-        .nav-item:hover  { background: rgba(255,255,255,0.08); color: var(--white); }
-        .nav-item.active { background: rgba(255,255,255,0.12); color: var(--white); border-left-color: #90caf9; }
         .nav-item i { width: 18px; text-align: center; font-size: 15px; }
-
-        .nav-divider {
-            height: 1px;
-            background: rgba(255,255,255,0.08);
-            margin: 8px 0;
+        .nav-item:hover { background: rgba(255,255,255,0.08); color: var(--white); }
+        .nav-item.active { background: rgba(255,255,255,0.13); color: var(--white); border-left-color: var(--white); }
+        .nav-item .badge {
+            margin-left: auto;
+            background: #ef5350;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 10px;
+            min-width: 20px;
+            text-align: center;
         }
 
-        .nav-item.logout { color: rgba(255,160,160,0.8); }
-        .nav-item.logout:hover { color: #ffcdd2; background: rgba(255,100,100,0.1); }
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .sidebar-footer a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255,255,255,0.55);
+            font-size: 13px;
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+        .sidebar-footer a:hover { color: var(--white); }
 
-        /* ── Main ── */
+        /* ── Main ─────────────────────────────────── */
         .main {
             margin-left: var(--sidebar-w);
             flex: 1;
@@ -116,1171 +140,909 @@
 
         .topbar {
             background: var(--white);
-            border-bottom: 1px solid var(--medium-gray);
-            padding: 16px 28px;
+            padding: 0 28px;
+            height: 60px;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            border-bottom: 1px solid var(--medium-gray);
             position: sticky;
             top: 0;
             z-index: 50;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        }
+        .topbar h1 {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+        .topbar-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-color);
+            font-size: 14px;
+        }
+        .topbar-user .avatar {
+            width: 32px; height: 32px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 600; font-size: 13px;
         }
 
-        .topbar h1 { font-size: 20px; font-weight: 600; color: var(--dark-gray); }
-        .topbar-right { color: var(--text-color); font-size: 13px; }
+        .content {
+            padding: 28px;
+            flex: 1;
+        }
 
-        .content { padding: 28px; }
+        /* ── Panels ───────────────────────────────── */
+        .panel { display: none; }
+        .panel.active { display: block; }
 
-        /* ── Section panels ── */
-        .section { display: none; }
-        .section.active { display: block; }
-
-        /* ── Dashboard cards ── */
+        /* ── Stats cards ──────────────────────────── */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
             gap: 16px;
             margin-bottom: 28px;
         }
-
         .stat-card {
             background: var(--white);
             border-radius: 12px;
-            padding: 22px 20px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+            padding: 20px;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.07);
             display: flex;
             flex-direction: column;
             gap: 6px;
         }
+        .stat-card .label { font-size: 12px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-card .value { font-size: 28px; font-weight: 700; color: var(--dark-gray); }
+        .stat-card .icon { font-size: 20px; color: var(--primary); margin-bottom: 4px; }
 
-        .stat-card .stat-icon {
-            width: 38px; height: 38px;
-            border-radius: 10px;
-            background: var(--light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary);
-            font-size: 16px;
-            margin-bottom: 6px;
-        }
-
-        .stat-card .stat-num {
-            font-size: 30px;
-            font-weight: 700;
-            color: var(--dark-gray);
-            line-height: 1;
-        }
-
-        .stat-card .stat-label {
-            font-size: 12px;
-            color: var(--text-color);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 500;
-        }
-
-        /* ── Table ── */
+        /* ── Section header ───────────────────────── */
         .section-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 16px;
+            margin-bottom: 18px;
+            gap: 12px;
+            flex-wrap: wrap;
         }
-
-        .section-title {
+        .section-header h2 {
             font-size: 18px;
             font-weight: 600;
             color: var(--dark-gray);
         }
 
+        /* ── Table ────────────────────────────────── */
+        .table-wrap {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+            overflow: hidden;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        thead th {
+            background: var(--light-gray);
+            color: #666;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--medium-gray);
+            white-space: nowrap;
+        }
+        tbody td {
+            padding: 13px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
+        }
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:hover { background: #fafafa; }
+
+        /* ── Badges ───────────────────────────────── */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .badge-pending  { background: var(--orange-light); color: var(--orange); }
+        .badge-done     { background: var(--green-light);  color: var(--green); }
+        .badge-rejected { background: var(--red-light);    color: var(--red); }
+        .badge-approved { background: var(--green-light);  color: var(--green); }
+        .badge-waiting  { background: #fff8e1; color: #f57f17; }
+
+        /* ── Buttons ──────────────────────────────── */
         .btn {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 8px 16px;
+            padding: 7px 14px;
             border-radius: 7px;
             font-family: 'Roboto', sans-serif;
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             border: none;
-            transition: background 0.15s, opacity 0.15s;
+            transition: opacity 0.15s, transform 0.1s;
         }
-
-        .btn-primary  { background: var(--primary); color: var(--white); }
-        .btn-primary:hover  { background: var(--dark); }
-        .btn-success  { background: #2e7d32; color: var(--white); }
-        .btn-success:hover  { background: #1b5e20; }
-        .btn-danger   { background: #c62828; color: var(--white); }
-        .btn-danger:hover   { background: #b71c1c; }
-        .btn-sm { padding: 5px 10px; font-size: 12px; }
-        .btn-warning  { background: #f57c00; color: var(--white); }
-        .btn-warning:hover  { background: #e65100; }
-
-        .table-wrap {
-            background: var(--white);
-            border-radius: 12px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-            overflow: hidden;
-        }
-
-        table { width: 100%; border-collapse: collapse; }
-
-        table th {
-            background: var(--light-gray);
-            padding: 11px 14px;
-            text-align: left;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
-            color: var(--text-color);
-            border-bottom: 1px solid var(--medium-gray);
-        }
-
-        table td {
-            padding: 10px 14px;
-            font-size: 13px;
-            border-bottom: 1px solid #f0f0f0;
-            vertical-align: middle;
-        }
-
-        table tr:last-child td { border-bottom: none; }
-        table tr:hover td { background: #fafbff; }
-
-        .badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-        .badge-yes  { background: #e8f5e9; color: #2e7d32; }
-        .badge-no   { background: #fdecea; color: #c62828; }
-        .badge-pend { background: #fff8e1; color: #f57c00; }
-
-        .color-dot {
-            display: inline-block;
-            width: 14px; height: 14px;
-            border-radius: 50%;
-            border: 2px solid rgba(0,0,0,0.15);
-            vertical-align: middle;
-            margin-right: 6px;
-        }
-
-        tr.pending-row { background: #fffde7; }
-
-        /* ── Modal ── */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.45);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .modal-box {
-            background: var(--white);
-            border-radius: 14px;
-            box-shadow: 0 24px 80px rgba(0,0,0,0.3);
-            width: 100%;
-            max-width: 560px;
-            max-height: 90vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .modal-header {
-            padding: 18px 22px;
-            border-bottom: 1px solid var(--medium-gray);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .modal-header h3 { font-size: 16px; font-weight: 600; color: var(--dark-gray); }
-
-        .modal-close {
+        .btn:active { transform: scale(0.97); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-primary   { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--dark); }
+        .btn-success   { background: var(--green);   color: white; }
+        .btn-success:hover { background: #1b5e20; }
+        .btn-danger    { background: var(--red);     color: white; }
+        .btn-danger:hover  { background: #b71c1c; }
+        .btn-warning   { background: var(--orange);  color: white; }
+        .btn-warning:hover { background: #bf360c; }
+        .btn-ghost {
             background: none;
-            border: none;
-            font-size: 18px;
-            cursor: pointer;
             color: var(--text-color);
-            padding: 4px 8px;
-            border-radius: 6px;
-            line-height: 1;
-        }
-        .modal-close:hover { background: var(--light-gray); }
-
-        .modal-body {
-            padding: 22px;
-            overflow-y: auto;
-            flex: 1;
-        }
-
-        .modal-footer {
-            padding: 14px 22px;
-            border-top: 1px solid var(--medium-gray);
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-
-        /* ── Form controls ── */
-        .form-row { margin-bottom: 16px; }
-        .form-row label {
-            display: block;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-color);
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .form-row input,
-        .form-row select,
-        .form-row textarea {
-            width: 100%;
-            padding: 9px 12px;
             border: 1.5px solid var(--medium-gray);
-            border-radius: 7px;
-            font-family: 'Roboto', sans-serif;
-            font-size: 14px;
-            color: var(--dark-gray);
-            background: var(--light-gray);
-            transition: border-color 0.2s;
         }
+        .btn-ghost:hover { border-color: #aaa; color: var(--dark-gray); }
+        .btn-sm { padding: 5px 10px; font-size: 12px; }
+        .btn-group { display: flex; gap: 6px; flex-wrap: wrap; }
 
-        .form-row input:focus,
-        .form-row select:focus,
-        .form-row textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: var(--white);
-        }
-
-        .form-row textarea { resize: vertical; min-height: 100px; }
-
-        .form-check {
+        /* ── Filter tabs ──────────────────────────── */
+        .filter-tabs {
             display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
+            gap: 4px;
+            background: var(--light-gray);
+            padding: 4px;
+            border-radius: 8px;
         }
-        .form-check input[type=checkbox] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary); }
+        .filter-tab {
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: #777;
+            font-family: 'Roboto', sans-serif;
+            transition: all 0.15s;
+        }
+        .filter-tab.active { background: var(--white); color: var(--dark-gray); box-shadow: 0 1px 4px rgba(0,0,0,0.1); font-weight: 600; }
+        .filter-tab .count { font-size: 11px; margin-left: 4px; opacity: 0.7; }
 
-        .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        /* ── Empty state ──────────────────────────── */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #bbb;
+        }
+        .empty-state i { font-size: 36px; margin-bottom: 12px; display: block; }
+        .empty-state p { font-size: 15px; }
 
-        /* ── Toast ── */
-        .toast-container {
+        /* ── Loading ──────────────────────────────── */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #bbb;
+        }
+        .loading i { animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Toast ────────────────────────────────── */
+        #toast {
             position: fixed;
             bottom: 24px;
             right: 24px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .toast {
             background: var(--dark-gray);
-            color: var(--white);
-            padding: 12px 18px;
-            border-radius: 8px;
-            font-size: 13px;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14px;
             font-weight: 500;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
-            display: flex;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+            display: none;
             align-items: center;
             gap: 10px;
-            animation: slideIn 0.25s ease;
-            min-width: 220px;
-            max-width: 340px;
+            z-index: 9999;
+            max-width: 320px;
         }
+        #toast.show { display: flex; }
+        #toast.success { background: var(--green); }
+        #toast.error   { background: var(--red); }
 
-        .toast.success { background: #2e7d32; }
-        .toast.error   { background: #c62828; }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(40px); }
-            to   { opacity: 1; transform: translateX(0); }
+        /* ── Suggestions specific ─────────────────── */
+        .suggestion-notes {
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #888;
+            font-size: 13px;
         }
-
-        .empty-row td {
-            text-align: center;
-            padding: 32px;
+        .suggestion-meta {
+            font-size: 12px;
             color: #aaa;
-            font-style: italic;
+        }
+        .suggestion-location {
+            font-weight: 500;
+            color: var(--dark-gray);
         }
 
-        .loading-row td {
-            text-align: center;
-            padding: 24px;
-            color: var(--primary);
+        /* ── Comments specific ───────────────────── */
+        .comment-text {
+            max-width: 260px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #555;
         }
 
-        .truncate { max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        /* ── Responsive ───────────────────────────── */
+        @media (max-width: 768px) {
+            .sidebar { width: 60px; }
+            .sidebar-logo img { height: 30px; }
+            .sidebar-logo span,
+            .nav-item span,
+            .nav-section-label,
+            .sidebar-footer span { display: none; }
+            .nav-item { justify-content: center; padding: 14px; border-left: none; border-bottom: 3px solid transparent; }
+            .nav-item.active { border-bottom-color: white; border-left: none; }
+            .nav-item .badge { display: none; }
+            .main { margin-left: 60px; }
+            .content { padding: 16px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            table { font-size: 13px; }
+            thead th, tbody td { padding: 10px 12px; }
+        }
     </style>
 </head>
 <body>
 
-<!-- Sidebar -->
-<nav class="sidebar">
+<!-- ── Sidebar ── -->
+<aside class="sidebar">
     <div class="sidebar-logo">
-        <div class="logo-text">
-            <span class="nearest">nearest</span><span class="metro">metro</span><span class="dot-com">.com</span>
-        </div>
-        <span class="admin-badge">Admin</span>
+        <img src="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1782262509/Nearest_Metro_Modern_Logo_Concept_1_wwskph.png" alt="nearestmetro.com">
+        <span>Admin Panel</span>
     </div>
-    <div class="sidebar-user">
-        <i class="fa fa-circle-user"></i> {{ name or 'Admin' }}
-    </div>
-    <div class="sidebar-nav">
-        <div class="nav-item active" onclick="showSection('dashboard')" id="nav-dashboard">
-            <i class="fa fa-gauge-high"></i> Dashboard
-        </div>
-        <div class="nav-item" onclick="showSection('stations')" id="nav-stations">
-            <i class="fa fa-train-subway"></i> Stations
-        </div>
-        <div class="nav-item" onclick="showSection('countries')" id="nav-countries">
-            <i class="fa fa-globe"></i> Countries
-        </div>
-        <div class="nav-item" onclick="showSection('cities')" id="nav-cities">
-            <i class="fa fa-city"></i> Cities
-        </div>
-        <div class="nav-item" onclick="showSection('lines')" id="nav-lines">
-            <i class="fa fa-route"></i> Lines
-        </div>
-        <div class="nav-item" onclick="showSection('comments')" id="nav-comments">
-            <i class="fa fa-comments"></i> Comments
-        </div>
-        <div class="nav-item" onclick="showSection('blog')" id="nav-blog">
-            <i class="fa fa-pen-to-square"></i> Blog
-        </div>
-        <div class="nav-divider"></div>
-        <div class="nav-item logout" onclick="logout()">
-            <i class="fa fa-right-from-bracket"></i> Logout
-        </div>
-    </div>
-</nav>
 
-<!-- Main -->
+    <nav class="sidebar-nav">
+        <div class="nav-section-label">Overview</div>
+        <button class="nav-item active" onclick="showPanel('dashboard')">
+            <i class="fas fa-chart-line"></i> <span>Dashboard</span>
+        </button>
+
+        <div class="nav-section-label">Content</div>
+        <button class="nav-item" onclick="showPanel('suggestions')">
+            <i class="fas fa-lightbulb"></i> <span>Suggestions</span>
+            <span class="badge" id="suggestions-badge" style="display:none;"></span>
+        </button>
+        <button class="nav-item" onclick="showPanel('comments')">
+            <i class="fas fa-comments"></i> <span>Comments</span>
+            <span class="badge" id="comments-badge" style="display:none;"></span>
+        </button>
+        <button class="nav-item" onclick="showPanel('stations')">
+            <i class="fas fa-subway"></i> <span>Stations</span>
+        </button>
+        <button class="nav-item" onclick="showPanel('blog')">
+            <i class="fas fa-newspaper"></i> <span>Blog</span>
+        </button>
+
+        <div class="nav-section-label">Structure</div>
+        <button class="nav-item" onclick="showPanel('countries')">
+            <i class="fas fa-globe"></i> <span>Countries</span>
+        </button>
+        <button class="nav-item" onclick="showPanel('cities')">
+            <i class="fas fa-city"></i> <span>Cities</span>
+        </button>
+        <button class="nav-item" onclick="showPanel('lines')">
+            <i class="fas fa-route"></i> <span>Lines</span>
+        </button>
+    </nav>
+
+    <div class="sidebar-footer">
+        <a href="/admin/logout">
+            <i class="fas fa-right-from-bracket"></i> <span>Logout</span>
+        </a>
+    </div>
+</aside>
+
+<!-- ── Main ── -->
 <div class="main">
     <div class="topbar">
-        <h1 id="pageTitle">Dashboard</h1>
-        <span class="topbar-right"><i class="fa fa-circle" style="color:#4caf50;font-size:9px;"></i> nearestmetro.com</span>
+        <h1 id="topbar-title">Dashboard</h1>
+        <div class="topbar-user">
+            <div class="avatar" id="userInitial">A</div>
+            <span id="userName">Admin</span>
+        </div>
     </div>
 
     <div class="content">
 
         <!-- ══ DASHBOARD ══ -->
-        <div class="section active" id="section-dashboard">
+        <div class="panel active" id="panel-dashboard">
             <div class="stats-grid" id="statsGrid">
                 <div class="stat-card">
-                    <div class="stat-icon"><i class="fa fa-spinner fa-spin"></i></div>
-                    <div class="stat-num">—</div>
-                    <div class="stat-label">Loading…</div>
+                    <div class="icon"><i class="fas fa-spinner fa-spin"></i></div>
+                    <div class="value">—</div>
+                    <div class="label">Loading…</div>
+                </div>
+            </div>
+            <div style="background:var(--white);border-radius:12px;padding:24px;box-shadow:0 1px 6px rgba(0,0,0,0.07);">
+                <h2 style="font-size:16px;font-weight:600;color:var(--dark-gray);margin-bottom:16px;">Quick Access</h2>
+                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;" id="quickLinks">
+                    <button class="btn btn-primary" onclick="showPanel('suggestions')"><i class="fas fa-lightbulb"></i> View Suggestions</button>
+                    <button class="btn btn-ghost" onclick="showPanel('comments')"><i class="fas fa-comments"></i> Moderate Comments</button>
+                    <button class="btn btn-ghost" onclick="showPanel('stations')"><i class="fas fa-subway"></i> Manage Stations</button>
+                    <button class="btn btn-ghost" onclick="showPanel('blog')"><i class="fas fa-newspaper"></i> Manage Blog</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ SUGGESTIONS ══ -->
+        <div class="panel" id="panel-suggestions">
+            <div class="section-header">
+                <h2><i class="fas fa-lightbulb" style="color:var(--orange);margin-right:8px;"></i> Station Suggestions</h2>
+                <div class="filter-tabs">
+                    <button class="filter-tab active" onclick="loadSuggestions('pending')" id="tab-pending">Pending <span class="count" id="count-pending"></span></button>
+                    <button class="filter-tab" onclick="loadSuggestions('done')" id="tab-done">Done <span class="count" id="count-done"></span></button>
+                    <button class="filter-tab" onclick="loadSuggestions('rejected')" id="tab-rejected">Rejected <span class="count" id="count-rejected"></span></button>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <div id="suggestions-body">
+                    <div class="loading"><i class="fas fa-spinner"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ COMMENTS ══ -->
+        <div class="panel" id="panel-comments">
+            <div class="section-header">
+                <h2><i class="fas fa-comments" style="color:var(--primary);margin-right:8px;"></i> Comments</h2>
+                <button class="btn btn-ghost btn-sm" onclick="loadComments()"><i class="fas fa-refresh"></i> Refresh</button>
+            </div>
+            <div class="table-wrap">
+                <div id="comments-body">
+                    <div class="loading"><i class="fas fa-spinner"></i></div>
                 </div>
             </div>
         </div>
 
         <!-- ══ STATIONS ══ -->
-        <div class="section" id="section-stations">
+        <div class="panel" id="panel-stations">
             <div class="section-header">
-                <span class="section-title">Stations</span>
-                <button class="btn btn-primary" onclick="openStationModal()">
-                    <i class="fa fa-plus"></i> Add Station
-                </button>
+                <h2><i class="fas fa-subway" style="color:var(--primary);margin-right:8px;"></i> Stations</h2>
+                <button class="btn btn-ghost btn-sm" onclick="loadStations()"><i class="fas fa-refresh"></i> Refresh</button>
             </div>
             <div class="table-wrap">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th><th>Name</th><th>Line</th><th>City</th><th>Country</th>
-                            <th>Active</th><th>Featured</th><th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="stationsTable"><tr class="loading-row"><td colspan="8"><i class="fa fa-spinner fa-spin"></i> Loading…</td></tr></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- ══ COUNTRIES ══ -->
-        <div class="section" id="section-countries">
-            <div class="section-header">
-                <span class="section-title">Countries</span>
-                <button class="btn btn-primary" onclick="openCountryModal()">
-                    <i class="fa fa-plus"></i> Add Country
-                </button>
-            </div>
-            <div class="table-wrap">
-                <table>
-                    <thead>
-                        <tr><th>ID</th><th>Name</th><th>Slug</th><th>Code</th><th>Active</th><th>Actions</th></tr>
-                    </thead>
-                    <tbody id="countriesTable"><tr class="loading-row"><td colspan="6"><i class="fa fa-spinner fa-spin"></i> Loading…</td></tr></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- ══ CITIES ══ -->
-        <div class="section" id="section-cities">
-            <div class="section-header">
-                <span class="section-title">Cities</span>
-                <button class="btn btn-primary" onclick="openCityModal()">
-                    <i class="fa fa-plus"></i> Add City
-                </button>
-            </div>
-            <div class="table-wrap">
-                <table>
-                    <thead>
-                        <tr><th>ID</th><th>Name</th><th>Slug</th><th>Country</th><th>Active</th><th>Actions</th></tr>
-                    </thead>
-                    <tbody id="citiesTable"><tr class="loading-row"><td colspan="6"><i class="fa fa-spinner fa-spin"></i> Loading…</td></tr></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- ══ LINES ══ -->
-        <div class="section" id="section-lines">
-            <div class="section-header">
-                <span class="section-title">Lines</span>
-                <button class="btn btn-primary" onclick="openLineModal()">
-                    <i class="fa fa-plus"></i> Add Line
-                </button>
-            </div>
-            <div class="table-wrap">
-                <table>
-                    <thead>
-                        <tr><th>ID</th><th>Name</th><th>Slug</th><th>Color</th><th>City</th><th>Active</th><th>Actions</th></tr>
-                    </thead>
-                    <tbody id="linesTable"><tr class="loading-row"><td colspan="7"><i class="fa fa-spinner fa-spin"></i> Loading…</td></tr></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- ══ COMMENTS ══ -->
-        <div class="section" id="section-comments">
-            <div class="section-header">
-                <span class="section-title">Comments</span>
-            </div>
-            <div class="table-wrap">
-                <table>
-                    <thead>
-                        <tr><th>ID</th><th>Station</th><th>Name</th><th>Comment</th><th>Date</th><th>Approved</th><th>Actions</th></tr>
-                    </thead>
-                    <tbody id="commentsTable"><tr class="loading-row"><td colspan="7"><i class="fa fa-spinner fa-spin"></i> Loading…</td></tr></tbody>
-                </table>
+                <div id="stations-body">
+                    <div class="loading"><i class="fas fa-spinner"></i></div>
+                </div>
             </div>
         </div>
 
         <!-- ══ BLOG ══ -->
-        <div class="section" id="section-blog">
+        <div class="panel" id="panel-blog">
             <div class="section-header">
-                <span class="section-title">Blog Posts</span>
-                <button class="btn btn-primary" onclick="openBlogModal()">
-                    <i class="fa fa-plus"></i> Add Post
-                </button>
+                <h2><i class="fas fa-newspaper" style="color:var(--primary);margin-right:8px;"></i> Blog Posts</h2>
+                <button class="btn btn-ghost btn-sm" onclick="loadBlog()"><i class="fas fa-refresh"></i> Refresh</button>
             </div>
             <div class="table-wrap">
-                <table>
-                    <thead>
-                        <tr><th>ID</th><th>Title</th><th>Author</th><th>Date</th><th>Active</th><th>Actions</th></tr>
-                    </thead>
-                    <tbody id="blogTable"><tr class="loading-row"><td colspan="6"><i class="fa fa-spinner fa-spin"></i> Loading…</td></tr></tbody>
-                </table>
+                <div id="blog-body">
+                    <div class="loading"><i class="fas fa-spinner"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ COUNTRIES ══ -->
+        <div class="panel" id="panel-countries">
+            <div class="section-header">
+                <h2><i class="fas fa-globe" style="color:var(--primary);margin-right:8px;"></i> Countries</h2>
+                <button class="btn btn-ghost btn-sm" onclick="loadCountries()"><i class="fas fa-refresh"></i> Refresh</button>
+            </div>
+            <div class="table-wrap">
+                <div id="countries-body">
+                    <div class="loading"><i class="fas fa-spinner"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ CITIES ══ -->
+        <div class="panel" id="panel-cities">
+            <div class="section-header">
+                <h2><i class="fas fa-city" style="color:var(--primary);margin-right:8px;"></i> Cities</h2>
+                <button class="btn btn-ghost btn-sm" onclick="loadCities()"><i class="fas fa-refresh"></i> Refresh</button>
+            </div>
+            <div class="table-wrap">
+                <div id="cities-body">
+                    <div class="loading"><i class="fas fa-spinner"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ LINES ══ -->
+        <div class="panel" id="panel-lines">
+            <div class="section-header">
+                <h2><i class="fas fa-route" style="color:var(--primary);margin-right:8px;"></i> Lines</h2>
+                <button class="btn btn-ghost btn-sm" onclick="loadLines()"><i class="fas fa-refresh"></i> Refresh</button>
+            </div>
+            <div class="table-wrap">
+                <div id="lines-body">
+                    <div class="loading"><i class="fas fa-spinner"></i></div>
+                </div>
             </div>
         </div>
 
     </div><!-- /content -->
 </div><!-- /main -->
 
-<!-- Modal -->
-<div id="modal" class="modal-overlay" style="display:none;" onclick="overlayClose(event)">
-    <div class="modal-box">
-        <div class="modal-header">
-            <h3 id="modalTitle">Title</h3>
-            <button class="modal-close" onclick="closeModal()">✕</button>
-        </div>
-        <div class="modal-body" id="modalBody"></div>
-        <div class="modal-footer">
-            <button class="btn" style="background:var(--light-gray);color:var(--dark-gray);" onclick="closeModal()">Cancel</button>
-            <button class="btn btn-primary" id="modalSaveBtn" onclick="modalSave()">
-                <i class="fa fa-floppy-disk"></i> Save
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- Toast container -->
-<div class="toast-container" id="toastContainer"></div>
+<!-- Toast -->
+<div id="toast"><i class="fas fa-check-circle"></i> <span id="toast-msg"></span></div>
 
 <script>
-// ══════════════════════════════════════════════
-//  UTILITIES
-// ══════════════════════════════════════════════
+// ── State ───────────────────────────────────────────
+let currentPanel = 'dashboard';
+let currentSuggestionsStatus = 'pending';
+let suggestionsData = {};
 
-function generateSlug(text) {
-    return text.toLowerCase()
-        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^a-z0-9\s-]/g, '')
-        .trim().replace(/\s+/g, '-');
-}
-
-function badge(val) {
-    return val
-        ? '<span class="badge badge-yes">Yes</span>'
-        : '<span class="badge badge-no">No</span>';
-}
-
-function toast(msg, type = 'success') {
-    const tc = document.getElementById('toastContainer');
-    const el = document.createElement('div');
-    el.className = `toast ${type}`;
-    el.innerHTML = `<i class="fa ${type === 'success' ? 'fa-circle-check' : 'fa-circle-xmark'}"></i> ${msg}`;
-    tc.appendChild(el);
-    setTimeout(() => el.remove(), 3500);
-}
-
-async function apiFetch(url, opts = {}) {
-    const defaults = { headers: { 'Content-Type': 'application/json' } };
-    const res = await fetch(url, { ...defaults, ...opts });
-    const data = await res.json();
-    return data;
-}
-
-// ══════════════════════════════════════════════
-//  NAVIGATION
-// ══════════════════════════════════════════════
-
-const sectionTitles = {
-    dashboard: 'Dashboard', stations: 'Stations', countries: 'Countries',
-    cities: 'Cities', lines: 'Lines', comments: 'Comments', blog: 'Blog'
-};
-
-const sectionLoaders = {
-    stations: loadStations, countries: loadCountries,
-    cities: loadCities, lines: loadLines,
-    comments: loadComments, blog: loadBlog
-};
-
-function showSection(name) {
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+// ── Navigation ───────────────────────────────────────
+function showPanel(name) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    document.getElementById(`section-${name}`).classList.add('active');
-    document.getElementById(`nav-${name}`).classList.add('active');
-    document.getElementById('pageTitle').textContent = sectionTitles[name];
-    if (sectionLoaders[name]) sectionLoaders[name]();
+    document.getElementById('panel-' + name).classList.add('active');
+
+    // activate correct sidebar item
+    document.querySelectorAll('.nav-item').forEach(btn => {
+        if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes("'" + name + "'")) {
+            btn.classList.add('active');
+        }
+    });
+
+    const titles = {
+        dashboard: 'Dashboard',
+        suggestions: 'Station Suggestions',
+        comments: 'Comments',
+        stations: 'Stations',
+        blog: 'Blog Posts',
+        countries: 'Countries',
+        cities: 'Cities',
+        lines: 'Lines'
+    };
+    document.getElementById('topbar-title').textContent = titles[name] || name;
+    currentPanel = name;
+
+    // lazy-load each panel
+    if (name === 'dashboard') loadStats();
+    if (name === 'suggestions') loadSuggestions(currentSuggestionsStatus);
+    if (name === 'comments') loadComments();
+    if (name === 'stations') loadStations();
+    if (name === 'blog') loadBlog();
+    if (name === 'countries') loadCountries();
+    if (name === 'cities') loadCities();
+    if (name === 'lines') loadLines();
 }
 
-// ══════════════════════════════════════════════
-//  MODAL
-// ══════════════════════════════════════════════
-
-let _modalSaveFn = null;
-
-function openModal(title, bodyHTML, saveFn) {
-    document.getElementById('modalTitle').textContent = title;
-    document.getElementById('modalBody').innerHTML = bodyHTML;
-    document.getElementById('modal').style.display = 'flex';
-    _modalSaveFn = saveFn;
+// ── Toast ────────────────────────────────────────────
+function toast(msg, type = 'success') {
+    const el = document.getElementById('toast');
+    const msgEl = document.getElementById('toast-msg');
+    el.className = 'show ' + type;
+    msgEl.textContent = msg;
+    el.querySelector('i').className = type === 'success' ? 'fas fa-check-circle' : 'fas fa-triangle-exclamation';
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
 }
 
-function closeModal() {
-    document.getElementById('modal').style.display = 'none';
-    _modalSaveFn = null;
+// ── Format date ───────────────────────────────────────
+function fmtDate(str) {
+    if (!str) return '—';
+    const d = new Date(str);
+    return d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }) +
+           ' ' + d.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
 }
 
-function overlayClose(e) {
-    if (e.target.id === 'modal') closeModal();
+// ── API helper ────────────────────────────────────────
+async function api(url, method = 'GET', body = null) {
+    const opts = { method, headers: { 'Content-Type': 'application/json' } };
+    if (body) opts.body = JSON.stringify(body);
+    const res = await fetch(url, opts);
+    return res.json();
 }
 
-function modalSave() {
-    if (_modalSaveFn) _modalSaveFn();
-}
-
-// ══════════════════════════════════════════════
-//  DASHBOARD
-// ══════════════════════════════════════════════
-
-async function loadDashboard() {
+// ── DASHBOARD ─────────────────────────────────────────
+async function loadStats() {
     try {
-        const data = await apiFetch('/api/admin/stats');
+        const data = await api('/api/admin/stats');
+        const grid = document.getElementById('statsGrid');
         const items = [
-            { icon: 'fa-train-subway', num: data.stations   ?? '—', label: 'Stations' },
-            { icon: 'fa-globe',        num: data.countries  ?? '—', label: 'Countries' },
-            { icon: 'fa-city',         num: data.cities     ?? '—', label: 'Cities' },
-            { icon: 'fa-route',        num: data.lines      ?? '—', label: 'Lines' },
-            { icon: 'fa-comments',     num: data.pending_comments ?? '—', label: 'Pending Comments' },
-            { icon: 'fa-pen-to-square',num: data.posts      ?? '—', label: 'Blog Posts' },
+            { label: 'Stations',           value: data.stations,         icon: 'fa-subway',      color: '#1a73e8' },
+            { label: 'Countries',          value: data.countries,        icon: 'fa-globe',       color: '#0d47a1' },
+            { label: 'Cities',             value: data.cities,           icon: 'fa-city',        color: '#6200ea' },
+            { label: 'Lines',              value: data.lines,            icon: 'fa-route',       color: '#00796b' },
+            { label: 'Blog Posts',         value: data.posts,            icon: 'fa-newspaper',   color: '#558b2f' },
+            { label: 'Pending Comments',   value: data.pending_comments, icon: 'fa-comments',    color: data.pending_comments > 0 ? '#e65100' : '#888' },
+            { label: 'Suggestions',        value: data.suggestions ?? '—', icon: 'fa-lightbulb', color: '#f57f17' },
         ];
-        document.getElementById('statsGrid').innerHTML = items.map(i => `
+        grid.innerHTML = items.map(i => `
             <div class="stat-card">
-                <div class="stat-icon"><i class="fa ${i.icon}"></i></div>
-                <div class="stat-num">${i.num}</div>
-                <div class="stat-label">${i.label}</div>
+                <div class="icon" style="color:${i.color}"><i class="fas ${i.icon}"></i></div>
+                <div class="value">${i.value}</div>
+                <div class="label">${i.label}</div>
             </div>
         `).join('');
-    } catch (e) {
-        document.getElementById('statsGrid').innerHTML = '<p style="color:#c62828;padding:16px">Failed to load stats.</p>';
+
+        // update badges
+        if (data.pending_comments > 0) {
+            const b = document.getElementById('comments-badge');
+            b.textContent = data.pending_comments;
+            b.style.display = 'inline-block';
+        }
+    } catch(e) {
+        console.error(e);
     }
 }
 
-// ══════════════════════════════════════════════
-//  COUNTRIES
-// ══════════════════════════════════════════════
+// ── SUGGESTIONS ───────────────────────────────────────
+async function loadSuggestions(status) {
+    currentSuggestionsStatus = status;
 
-let _countries = [];
+    // update tab UI
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + status).classList.add('active');
 
-async function loadCountries() {
-    const tb = document.getElementById('countriesTable');
-    tb.innerHTML = '<tr class="loading-row"><td colspan="6"><i class="fa fa-spinner fa-spin"></i> Loading…</td></tr>';
+    const wrap = document.getElementById('suggestions-body');
+    wrap.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i></div>';
+
     try {
-        _countries = await apiFetch('/api/admin/countries');
-        if (!_countries.length) { tb.innerHTML = '<tr class="empty-row"><td colspan="6">No countries yet.</td></tr>'; return; }
-        tb.innerHTML = _countries.map(c => `
-            <tr>
-                <td>${c.id}</td>
-                <td>${c.name}</td>
-                <td><code>${c.slug}</code></td>
-                <td>${c.code || ''}</td>
-                <td>${badge(c.active)}</td>
-                <td>
-                    <button class="btn btn-sm btn-primary" onclick="openCountryModal(${c.id})"><i class="fa fa-pen"></i></button>
-                    <button class="btn btn-sm btn-danger" onclick="deleteCountry(${c.id})"><i class="fa fa-trash"></i></button>
-                </td>
-            </tr>
-        `).join('');
-    } catch(e) { tb.innerHTML = '<tr class="empty-row"><td colspan="6">Error loading data.</td></tr>'; }
+        const rows = await api('/api/admin/suggestions?status=' + status);
+        suggestionsData[status] = rows;
+
+        // update counts
+        document.getElementById('count-' + status).textContent = '(' + rows.length + ')';
+
+        // also load counts for other tabs if not loaded
+        ['pending','done','rejected'].forEach(async s => {
+            if (!suggestionsData[s]) {
+                const r = await api('/api/admin/suggestions?status=' + s);
+                suggestionsData[s] = r;
+                document.getElementById('count-' + s).textContent = '(' + r.length + ')';
+                if (s === 'pending' && r.length > 0) {
+                    const b = document.getElementById('suggestions-badge');
+                    b.textContent = r.length;
+                    b.style.display = 'inline-block';
+                }
+            }
+        });
+
+        if (rows.length === 0) {
+            wrap.innerHTML = `<div class="empty-state"><i class="fas fa-inbox"></i><p>No ${status} suggestions</p></div>`;
+            return;
+        }
+
+        wrap.innerHTML = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Station</th>
+                        <th>City</th>
+                        <th>Country</th>
+                        <th>Notes</th>
+                        <th>Submitted</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${rows.map(r => `
+                        <tr id="sg-row-${r.id}">
+                            <td style="color:#bbb;font-size:12px;">${r.id}</td>
+                            <td><strong class="suggestion-location">${esc(r.station_name)}</strong></td>
+                            <td>${esc(r.city)}</td>
+                            <td>${esc(r.country)}</td>
+                            <td><span class="suggestion-notes" title="${esc(r.notes || '')}">${r.notes ? esc(r.notes) : '<span style="color:#ddd">—</span>'}</span></td>
+                            <td><span class="suggestion-meta">${fmtDate(r.created_at)}</span></td>
+                            <td>
+                                <div class="btn-group">
+                                    ${status === 'pending' ? `
+                                        <button class="btn btn-success btn-sm" onclick="updateSuggestion(${r.id},'done')">
+                                            <i class="fas fa-check"></i> Done
+                                        </button>
+                                        <button class="btn btn-warning btn-sm" onclick="updateSuggestion(${r.id},'rejected')">
+                                            <i class="fas fa-ban"></i> Reject
+                                        </button>
+                                    ` : `
+                                        <button class="btn btn-ghost btn-sm" onclick="updateSuggestion(${r.id},'pending')">
+                                            <i class="fas fa-arrow-rotate-left"></i> Reopen
+                                        </button>
+                                    `}
+                                    <button class="btn btn-danger btn-sm" onclick="deleteSuggestion(${r.id})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    } catch(e) {
+        wrap.innerHTML = '<div class="empty-state"><i class="fas fa-triangle-exclamation"></i><p>Failed to load suggestions</p></div>';
+    }
 }
 
-async function openCountryModal(id = null) {
-    let d = { name:'', slug:'', code:'', active: true };
-    if (id) { d = _countries.find(c => c.id === id) || d; }
-    const body = `
-        <div class="form-row">
-            <label>Name</label>
-            <input type="text" id="f_name" value="${d.name}" oninput="autoSlug('f_name','f_slug')">
-        </div>
-        <div class="form-row">
-            <label>Slug</label>
-            <input type="text" id="f_slug" value="${d.slug}">
-        </div>
-        <div class="form-row">
-            <label>ISO Code (2 letters)</label>
-            <input type="text" id="f_code" value="${d.code || ''}" maxlength="2" style="text-transform:uppercase">
-        </div>
-        <div class="form-row">
-            <label class="form-check">
-                <input type="checkbox" id="f_active" ${d.active ? 'checked' : ''}> Active
-            </label>
-        </div>
-    `;
-    openModal(id ? 'Edit Country' : 'Add Country', body, async () => {
-        const payload = {
-            name:   document.getElementById('f_name').value.trim(),
-            slug:   document.getElementById('f_slug').value.trim(),
-            code:   document.getElementById('f_code').value.trim().toUpperCase(),
-            active: document.getElementById('f_active').checked
-        };
-        try {
-            const url    = id ? `/api/admin/countries/${id}` : '/api/admin/countries';
-            const method = id ? 'PUT' : 'POST';
-            const res = await apiFetch(url, { method, body: JSON.stringify(payload) });
-            if (res.ok) { toast('Country saved!'); closeModal(); loadCountries(); }
-            else toast(res.error || 'Error saving.', 'error');
-        } catch(e) { toast('Request failed.', 'error'); }
-    });
-}
-
-async function deleteCountry(id) {
-    if (!confirm('Delete this country?')) return;
-    const res = await apiFetch(`/api/admin/countries/${id}`, { method: 'DELETE' });
-    if (res.ok) { toast('Country deleted.'); loadCountries(); }
-    else toast(res.error || 'Error.', 'error');
-}
-
-// ══════════════════════════════════════════════
-//  CITIES
-// ══════════════════════════════════════════════
-
-let _cities = [];
-
-async function loadCities() {
-    const tb = document.getElementById('citiesTable');
-    tb.innerHTML = '<tr class="loading-row"><td colspan="6"><i class="fa fa-spinner fa-spin"></i> Loading…</td></tr>';
+async function updateSuggestion(id, status) {
     try {
-        _cities = await apiFetch('/api/admin/cities');
-        if (!_cities.length) { tb.innerHTML = '<tr class="empty-row"><td colspan="6">No cities yet.</td></tr>'; return; }
-        tb.innerHTML = _cities.map(c => `
-            <tr>
-                <td>${c.id}</td>
-                <td>${c.name}</td>
-                <td><code>${c.slug}</code></td>
-                <td>${c.country_name || '—'}</td>
-                <td>${badge(c.active)}</td>
-                <td>
-                    <button class="btn btn-sm btn-primary" onclick="openCityModal(${c.id})"><i class="fa fa-pen"></i></button>
-                    <button class="btn btn-sm btn-danger" onclick="deleteCity(${c.id})"><i class="fa fa-trash"></i></button>
-                </td>
-            </tr>
-        `).join('');
-    } catch(e) { tb.innerHTML = '<tr class="empty-row"><td colspan="6">Error loading data.</td></tr>'; }
+        const data = await api(`/api/admin/suggestions/${id}`, 'PUT', { status });
+        if (data.ok) {
+            toast(status === 'done' ? 'Marked as done!' : status === 'rejected' ? 'Rejected.' : 'Reopened.');
+            suggestionsData = {}; // clear cache
+            loadSuggestions(currentSuggestionsStatus);
+        }
+    } catch(e) { toast('Error updating', 'error'); }
 }
 
-async function openCityModal(id = null) {
-    if (!_countries.length) await loadCountries();
-    let d = { name:'', slug:'', country_id: '', active: true };
-    if (id) { d = _cities.find(c => c.id === id) || d; }
-    const countryOpts = _countries.map(c =>
-        `<option value="${c.id}" ${c.id === d.country_id ? 'selected' : ''}>${c.name}</option>`
-    ).join('');
-    const body = `
-        <div class="form-row">
-            <label>Name</label>
-            <input type="text" id="f_name" value="${d.name}" oninput="autoSlug('f_name','f_slug')">
-        </div>
-        <div class="form-row">
-            <label>Slug</label>
-            <input type="text" id="f_slug" value="${d.slug}">
-        </div>
-        <div class="form-row">
-            <label>Country</label>
-            <select id="f_country_id"><option value="">— Select —</option>${countryOpts}</select>
-        </div>
-        <div class="form-row">
-            <label class="form-check">
-                <input type="checkbox" id="f_active" ${d.active ? 'checked' : ''}> Active
-            </label>
-        </div>
-    `;
-    openModal(id ? 'Edit City' : 'Add City', body, async () => {
-        const payload = {
-            name:       document.getElementById('f_name').value.trim(),
-            slug:       document.getElementById('f_slug').value.trim(),
-            country_id: parseInt(document.getElementById('f_country_id').value) || null,
-            active:     document.getElementById('f_active').checked
-        };
-        try {
-            const url    = id ? `/api/admin/cities/${id}` : '/api/admin/cities';
-            const method = id ? 'PUT' : 'POST';
-            const res = await apiFetch(url, { method, body: JSON.stringify(payload) });
-            if (res.ok) { toast('City saved!'); closeModal(); loadCities(); }
-            else toast(res.error || 'Error saving.', 'error');
-        } catch(e) { toast('Request failed.', 'error'); }
-    });
-}
-
-async function deleteCity(id) {
-    if (!confirm('Delete this city?')) return;
-    const res = await apiFetch(`/api/admin/cities/${id}`, { method: 'DELETE' });
-    if (res.ok) { toast('City deleted.'); loadCities(); }
-    else toast(res.error || 'Error.', 'error');
-}
-
-// ══════════════════════════════════════════════
-//  LINES
-// ══════════════════════════════════════════════
-
-let _lines = [];
-
-async function loadLines() {
-    const tb = document.getElementById('linesTable');
-    tb.innerHTML = '<tr class="loading-row"><td colspan="7"><i class="fa fa-spinner fa-spin"></i> Loading…</td></tr>';
+async function deleteSuggestion(id) {
+    if (!confirm('Delete this suggestion permanently?')) return;
     try {
-        _lines = await apiFetch('/api/admin/lines');
-        if (!_lines.length) { tb.innerHTML = '<tr class="empty-row"><td colspan="7">No lines yet.</td></tr>'; return; }
-        tb.innerHTML = _lines.map(l => `
-            <tr>
-                <td>${l.id}</td>
-                <td>${l.name}</td>
-                <td><code>${l.slug}</code></td>
-                <td><span class="color-dot" style="background:${l.color || '#ccc'}"></span>${l.color || '—'}</td>
-                <td>${l.city_name || '—'}</td>
-                <td>${badge(l.active)}</td>
-                <td>
-                    <button class="btn btn-sm btn-primary" onclick="openLineModal(${l.id})"><i class="fa fa-pen"></i></button>
-                    <button class="btn btn-sm btn-danger" onclick="deleteLine(${l.id})"><i class="fa fa-trash"></i></button>
-                </td>
-            </tr>
-        `).join('');
-    } catch(e) { tb.innerHTML = '<tr class="empty-row"><td colspan="7">Error loading data.</td></tr>'; }
+        const data = await api(`/api/admin/suggestions/${id}`, 'DELETE');
+        if (data.ok) {
+            toast('Deleted.');
+            suggestionsData = {};
+            loadSuggestions(currentSuggestionsStatus);
+        }
+    } catch(e) { toast('Error deleting', 'error'); }
 }
 
-async function openLineModal(id = null) {
-    if (!_cities.length) await loadCities();
-    let d = { name:'', slug:'', color:'#1a73e8', city_id:'', active: true };
-    if (id) { d = _lines.find(l => l.id === id) || d; }
-    const cityOpts = _cities.map(c =>
-        `<option value="${c.id}" ${c.id === d.city_id ? 'selected' : ''}>${c.name}</option>`
-    ).join('');
-    const body = `
-        <div class="form-row">
-            <label>Name</label>
-            <input type="text" id="f_name" value="${d.name}" oninput="autoSlug('f_name','f_slug')">
-        </div>
-        <div class="form-row">
-            <label>Slug</label>
-            <input type="text" id="f_slug" value="${d.slug}">
-        </div>
-        <div class="form-grid-2">
-            <div class="form-row">
-                <label>Color</label>
-                <input type="color" id="f_color" value="${d.color || '#1a73e8'}">
-            </div>
-            <div class="form-row">
-                <label>City</label>
-                <select id="f_city_id"><option value="">— Select —</option>${cityOpts}</select>
-            </div>
-        </div>
-        <div class="form-row">
-            <label class="form-check">
-                <input type="checkbox" id="f_active" ${d.active ? 'checked' : ''}> Active
-            </label>
-        </div>
-    `;
-    openModal(id ? 'Edit Line' : 'Add Line', body, async () => {
-        const payload = {
-            name:    document.getElementById('f_name').value.trim(),
-            slug:    document.getElementById('f_slug').value.trim(),
-            color:   document.getElementById('f_color').value,
-            city_id: parseInt(document.getElementById('f_city_id').value) || null,
-            active:  document.getElementById('f_active').checked
-        };
-        try {
-            const url    = id ? `/api/admin/lines/${id}` : '/api/admin/lines';
-            const method = id ? 'PUT' : 'POST';
-            const res = await apiFetch(url, { method, body: JSON.stringify(payload) });
-            if (res.ok) { toast('Line saved!'); closeModal(); loadLines(); }
-            else toast(res.error || 'Error saving.', 'error');
-        } catch(e) { toast('Request failed.', 'error'); }
-    });
-}
-
-async function deleteLine(id) {
-    if (!confirm('Delete this line?')) return;
-    const res = await apiFetch(`/api/admin/lines/${id}`, { method: 'DELETE' });
-    if (res.ok) { toast('Line deleted.'); loadLines(); }
-    else toast(res.error || 'Error.', 'error');
-}
-
-// ══════════════════════════════════════════════
-//  STATIONS
-// ══════════════════════════════════════════════
-
-let _stations = [];
-
-async function loadStations() {
-    const tb = document.getElementById('stationsTable');
-    tb.innerHTML = '<tr class="loading-row"><td colspan="8"><i class="fa fa-spinner fa-spin"></i> Loading…</td></tr>';
-    try {
-        _stations = await apiFetch('/api/admin/stations');
-        if (!_stations.length) { tb.innerHTML = '<tr class="empty-row"><td colspan="8">No stations yet.</td></tr>'; return; }
-        tb.innerHTML = _stations.map(s => `
-            <tr>
-                <td>${s.id}</td>
-                <td>${s.name}</td>
-                <td>${s.line_name || '—'}</td>
-                <td>${s.city_name || '—'}</td>
-                <td>${s.country_name || '—'}</td>
-                <td>${badge(s.active)}</td>
-                <td>${badge(s.featured)}</td>
-                <td>
-                    <button class="btn btn-sm btn-primary" onclick="openStationModal(${s.id})"><i class="fa fa-pen"></i></button>
-                    <button class="btn btn-sm btn-danger" onclick="deleteStation(${s.id})"><i class="fa fa-trash"></i></button>
-                </td>
-            </tr>
-        `).join('');
-    } catch(e) { tb.innerHTML = '<tr class="empty-row"><td colspan="8">Error loading data.</td></tr>'; }
-}
-
-async function openStationModal(id = null) {
-    // Ensure reference data is loaded
-    if (!_countries.length) await loadCountries();
-    if (!_cities.length)    await loadCities();
-    if (!_lines.length)     await loadLines();
-
-    let d = { name:'', slug:'', country_id:'', city_id:'', line_id:'', address:'', description:'',
-              lat:'', lng:'', photo_url:'', active:true, featured:false };
-    if (id) { d = _stations.find(s => s.id === id) || d; }
-
-    const countryOpts = _countries.map(c =>
-        `<option value="${c.id}" ${c.id === d.country_id ? 'selected' : ''}>${c.name}</option>`
-    ).join('');
-    const cityOpts = _cities.map(c =>
-        `<option value="${c.id}" ${c.id === d.city_id ? 'selected' : ''}>${c.name}</option>`
-    ).join('');
-    const lineOpts = _lines.map(l =>
-        `<option value="${l.id}" ${l.id === d.line_id ? 'selected' : ''}>${l.name}</option>`
-    ).join('');
-
-    const body = `
-        <div class="form-row">
-            <label>Name</label>
-            <input type="text" id="f_name" value="${d.name}" oninput="autoSlug('f_name','f_slug')">
-        </div>
-        <div class="form-row">
-            <label>Slug</label>
-            <input type="text" id="f_slug" value="${d.slug}">
-        </div>
-        <div class="form-row">
-            <label>Country</label>
-            <select id="f_country_id" onchange="filterCitiesByCountry()">
-                <option value="">— Select —</option>${countryOpts}
-            </select>
-        </div>
-        <div class="form-row">
-            <label>City</label>
-            <select id="f_city_id" onchange="filterLinesByCity()">
-                <option value="">— Select —</option>${cityOpts}
-            </select>
-        </div>
-        <div class="form-row">
-            <label>Line</label>
-            <select id="f_line_id"><option value="">— Select —</option>${lineOpts}</select>
-        </div>
-        <div class="form-row">
-            <label>Address</label>
-            <input type="text" id="f_address" value="${d.address || ''}">
-        </div>
-        <div class="form-row">
-            <label>Description</label>
-            <textarea id="f_description">${d.description || ''}</textarea>
-        </div>
-        <div class="form-grid-2">
-            <div class="form-row">
-                <label>Latitude</label>
-                <input type="number" step="any" id="f_lat" value="${d.lat || ''}">
-            </div>
-            <div class="form-row">
-                <label>Longitude</label>
-                <input type="number" step="any" id="f_lng" value="${d.lng || ''}">
-            </div>
-        </div>
-        <div class="form-row">
-            <label>Photo URL</label>
-            <input type="text" id="f_photo_url" value="${d.photo_url || ''}">
-        </div>
-        <div class="form-row" style="display:flex;gap:20px;">
-            <label class="form-check">
-                <input type="checkbox" id="f_active" ${d.active ? 'checked' : ''}> Active
-            </label>
-            <label class="form-check">
-                <input type="checkbox" id="f_featured" ${d.featured ? 'checked' : ''}> Featured
-            </label>
-        </div>
-    `;
-
-    openModal(id ? 'Edit Station' : 'Add Station', body, async () => {
-        const payload = {
-            name:        document.getElementById('f_name').value.trim(),
-            slug:        document.getElementById('f_slug').value.trim(),
-            country_id:  parseInt(document.getElementById('f_country_id').value) || null,
-            city_id:     parseInt(document.getElementById('f_city_id').value) || null,
-            line_id:     parseInt(document.getElementById('f_line_id').value) || null,
-            address:     document.getElementById('f_address').value.trim(),
-            description: document.getElementById('f_description').value.trim(),
-            lat:         parseFloat(document.getElementById('f_lat').value) || null,
-            lng:         parseFloat(document.getElementById('f_lng').value) || null,
-            photo_url:   document.getElementById('f_photo_url').value.trim(),
-            active:      document.getElementById('f_active').checked,
-            featured:    document.getElementById('f_featured').checked,
-        };
-        try {
-            const url    = id ? `/api/admin/stations/${id}` : '/api/admin/stations';
-            const method = id ? 'PUT' : 'POST';
-            const res = await apiFetch(url, { method, body: JSON.stringify(payload) });
-            if (res.ok) { toast('Station saved!'); closeModal(); loadStations(); }
-            else toast(res.error || 'Error saving.', 'error');
-        } catch(e) { toast('Request failed.', 'error'); }
-    });
-}
-
-function filterCitiesByCountry() {
-    const cid = parseInt(document.getElementById('f_country_id').value);
-    const sel = document.getElementById('f_city_id');
-    sel.innerHTML = '<option value="">— Select —</option>';
-    _cities.filter(c => !cid || c.country_id === cid).forEach(c => {
-        sel.innerHTML += `<option value="${c.id}">${c.name}</option>`;
-    });
-    filterLinesByCity();
-}
-
-function filterLinesByCity() {
-    const cid = parseInt(document.getElementById('f_city_id').value);
-    const sel = document.getElementById('f_line_id');
-    if (!sel) return;
-    sel.innerHTML = '<option value="">— Select —</option>';
-    _lines.filter(l => !cid || l.city_id === cid).forEach(l => {
-        sel.innerHTML += `<option value="${l.id}">${l.name}</option>`;
-    });
-}
-
-async function deleteStation(id) {
-    if (!confirm('Delete this station?')) return;
-    const res = await apiFetch(`/api/admin/stations/${id}`, { method: 'DELETE' });
-    if (res.ok) { toast('Station deleted.'); loadStations(); }
-    else toast(res.error || 'Error.', 'error');
-}
-
-// ══════════════════════════════════════════════
-//  COMMENTS
-// ══════════════════════════════════════════════
-
+// ── COMMENTS ─────────────────────────────────────────
 async function loadComments() {
-    const tb = document.getElementById('commentsTable');
-    tb.innerHTML = '<tr class="loading-row"><td colspan="7"><i class="fa fa-spinner fa-spin"></i> Loading…</td></tr>';
+    const wrap = document.getElementById('comments-body');
+    wrap.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i></div>';
     try {
-        const comments = await apiFetch('/api/admin/comments');
-        if (!comments.length) { tb.innerHTML = '<tr class="empty-row"><td colspan="7">No comments yet.</td></tr>'; return; }
-        tb.innerHTML = comments.map(c => `
-            <tr class="${c.approved ? '' : 'pending-row'}">
-                <td>${c.id}</td>
-                <td>${c.station_name || c.station_id || '—'}</td>
-                <td>${c.name || '—'}</td>
-                <td class="truncate" title="${(c.comment || '').replace(/"/g,'&quot;')}">${c.comment || ''}</td>
-                <td>${c.created_at ? c.created_at.slice(0,10) : '—'}</td>
-                <td>${c.approved
-                    ? '<span class="badge badge-yes">Approved</span>'
-                    : '<span class="badge badge-pend">Pending</span>'}</td>
-                <td>
-                    ${!c.approved ? `<button class="btn btn-sm btn-success" onclick="approveComment(${c.id})"><i class="fa fa-check"></i> Approve</button> ` : ''}
-                    <button class="btn btn-sm btn-danger" onclick="deleteComment(${c.id})"><i class="fa fa-trash"></i></button>
-                </td>
-            </tr>
-        `).join('');
-    } catch(e) { tb.innerHTML = '<tr class="empty-row"><td colspan="7">Error loading data.</td></tr>'; }
+        const rows = await api('/api/admin/comments');
+        if (!rows.length) {
+            wrap.innerHTML = '<div class="empty-state"><i class="fas fa-comments"></i><p>No comments yet</p></div>';
+            return;
+        }
+        wrap.innerHTML = `
+            <table>
+                <thead><tr>
+                    <th>Author</th><th>Comment</th><th>Station</th><th>Date</th><th>Status</th><th>Actions</th>
+                </tr></thead>
+                <tbody>
+                ${rows.map(r => `
+                    <tr id="cm-row-${r.id}">
+                        <td><strong>${esc(r.name)}</strong>${r.email ? `<br><small style="color:#aaa">${esc(r.email)}</small>` : ''}</td>
+                        <td><span class="comment-text" title="${esc(r.text)}">${esc(r.text)}</span></td>
+                        <td>${r.station_name ? esc(r.station_name) : '<span style="color:#ddd">—</span>'}</td>
+                        <td><span class="suggestion-meta">${fmtDate(r.created_at)}</span></td>
+                        <td>${r.approved
+                            ? '<span class="badge badge-approved"><i class="fas fa-check"></i> Approved</span>'
+                            : '<span class="badge badge-waiting"><i class="fas fa-clock"></i> Pending</span>'
+                        }</td>
+                        <td>
+                            <div class="btn-group">
+                                ${!r.approved ? `<button class="btn btn-success btn-sm" onclick="approveComment(${r.id})"><i class="fas fa-check"></i> Approve</button>` : ''}
+                                <button class="btn btn-danger btn-sm" onclick="deleteComment(${r.id})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('')}
+                </tbody>
+            </table>
+        `;
+    } catch(e) {
+        wrap.innerHTML = '<div class="empty-state"><i class="fas fa-triangle-exclamation"></i><p>Failed to load comments</p></div>';
+    }
 }
 
 async function approveComment(id) {
-    const res = await apiFetch(`/api/admin/comments/${id}/approve`, { method: 'POST' });
-    if (res.ok) { toast('Comment approved!'); loadComments(); }
-    else toast(res.error || 'Error.', 'error');
+    const data = await api(`/api/admin/comments/${id}/approve`, 'POST');
+    if (data.ok) { toast('Comment approved!'); loadComments(); }
 }
-
 async function deleteComment(id) {
     if (!confirm('Delete this comment?')) return;
-    const res = await apiFetch(`/api/admin/comments/${id}`, { method: 'DELETE' });
-    if (res.ok) { toast('Comment deleted.'); loadComments(); }
-    else toast(res.error || 'Error.', 'error');
+    const data = await api(`/api/admin/comments/${id}`, 'DELETE');
+    if (data.ok) { toast('Comment deleted.'); loadComments(); }
 }
 
-// ══════════════════════════════════════════════
-//  BLOG
-// ══════════════════════════════════════════════
-
-let _posts = [];
-
-async function loadBlog() {
-    const tb = document.getElementById('blogTable');
-    tb.innerHTML = '<tr class="loading-row"><td colspan="6"><i class="fa fa-spinner fa-spin"></i> Loading…</td></tr>';
+// ── STATIONS ─────────────────────────────────────────
+async function loadStations() {
+    const wrap = document.getElementById('stations-body');
+    wrap.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i></div>';
     try {
-        _posts = await apiFetch('/api/admin/blog');
-        if (!_posts.length) { tb.innerHTML = '<tr class="empty-row"><td colspan="6">No posts yet.</td></tr>'; return; }
-        tb.innerHTML = _posts.map(p => `
-            <tr>
-                <td>${p.id}</td>
-                <td>${p.title}</td>
-                <td>${p.author || '—'}</td>
-                <td>${p.created_at ? p.created_at.slice(0,10) : '—'}</td>
-                <td>${badge(p.active)}</td>
-                <td>
-                    <button class="btn btn-sm btn-primary" onclick="openBlogModal(${p.id})"><i class="fa fa-pen"></i></button>
-                    <button class="btn btn-sm btn-danger" onclick="deleteBlog(${p.id})"><i class="fa fa-trash"></i></button>
-                </td>
-            </tr>
-        `).join('');
-    } catch(e) { tb.innerHTML = '<tr class="empty-row"><td colspan="6">Error loading data.</td></tr>'; }
+        const rows = await api('/api/admin/stations');
+        if (!rows.length) { wrap.innerHTML = '<div class="empty-state"><i class="fas fa-subway"></i><p>No stations</p></div>'; return; }
+        wrap.innerHTML = `
+            <table>
+                <thead><tr><th>Name</th><th>Line</th><th>City</th><th>Country</th><th>Status</th></tr></thead>
+                <tbody>
+                ${rows.map(r => `
+                    <tr>
+                        <td><strong>${esc(r.name)}</strong></td>
+                        <td>${r.line_name ? esc(r.line_name) : '<span style="color:#ddd">—</span>'}</td>
+                        <td>${r.city_name ? esc(r.city_name) : '<span style="color:#ddd">—</span>'}</td>
+                        <td>${r.country_name ? esc(r.country_name) : '<span style="color:#ddd">—</span>'}</td>
+                        <td>${r.active
+                            ? '<span class="badge badge-approved"><i class="fas fa-circle" style="font-size:8px"></i> Active</span>'
+                            : '<span class="badge badge-rejected"><i class="fas fa-circle" style="font-size:8px"></i> Inactive</span>'
+                        }</td>
+                    </tr>
+                `).join('')}
+                </tbody>
+            </table>
+        `;
+    } catch(e) {
+        wrap.innerHTML = '<div class="empty-state"><i class="fas fa-triangle-exclamation"></i><p>Failed to load</p></div>';
+    }
 }
 
-async function openBlogModal(id = null) {
-    let d = { title:'', slug:'', subtitle:'', author:'', content:'', image_url:'', active:true };
-    if (id) { d = _posts.find(p => p.id === id) || d; }
-    const body = `
-        <div class="form-row">
-            <label>Title</label>
-            <input type="text" id="f_title" value="${escAttr(d.title)}" oninput="autoSlug('f_title','f_slug')">
-        </div>
-        <div class="form-row">
-            <label>Slug</label>
-            <input type="text" id="f_slug" value="${d.slug}">
-        </div>
-        <div class="form-row">
-            <label>Subtitle</label>
-            <input type="text" id="f_subtitle" value="${escAttr(d.subtitle || '')}">
-        </div>
-        <div class="form-row">
-            <label>Author</label>
-            <input type="text" id="f_author" value="${escAttr(d.author || '')}">
-        </div>
-        <div class="form-row">
-            <label>Content</label>
-            <textarea id="f_content" style="min-height:160px">${d.content || ''}</textarea>
-        </div>
-        <div class="form-row">
-            <label>Image URL</label>
-            <input type="text" id="f_image_url" value="${escAttr(d.image_url || '')}">
-        </div>
-        <div class="form-row">
-            <label class="form-check">
-                <input type="checkbox" id="f_active" ${d.active ? 'checked' : ''}> Active
-            </label>
-        </div>
-    `;
-    openModal(id ? 'Edit Post' : 'Add Post', body, async () => {
-        const payload = {
-            title:     document.getElementById('f_title').value.trim(),
-            slug:      document.getElementById('f_slug').value.trim(),
-            subtitle:  document.getElementById('f_subtitle').value.trim(),
-            author:    document.getElementById('f_author').value.trim(),
-            content:   document.getElementById('f_content').value.trim(),
-            image_url: document.getElementById('f_image_url').value.trim(),
-            active:    document.getElementById('f_active').checked
-        };
-        try {
-            const url    = id ? `/api/admin/blog/${id}` : '/api/admin/blog';
-            const method = id ? 'PUT' : 'POST';
-            const res = await apiFetch(url, { method, body: JSON.stringify(payload) });
-            if (res.ok) { toast('Post saved!'); closeModal(); loadBlog(); }
-            else toast(res.error || 'Error saving.', 'error');
-        } catch(e) { toast('Request failed.', 'error'); }
-    });
+// ── BLOG ─────────────────────────────────────────────
+async function loadBlog() {
+    const wrap = document.getElementById('blog-body');
+    wrap.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i></div>';
+    try {
+        const rows = await api('/api/admin/blog');
+        if (!rows.length) { wrap.innerHTML = '<div class="empty-state"><i class="fas fa-newspaper"></i><p>No posts</p></div>'; return; }
+        wrap.innerHTML = `
+            <table>
+                <thead><tr><th>Title</th><th>Author</th><th>Date</th><th>Status</th></tr></thead>
+                <tbody>
+                ${rows.map(r => `
+                    <tr>
+                        <td><strong>${esc(r.title)}</strong>${r.subtitle ? `<br><small style="color:#aaa">${esc(r.subtitle)}</small>` : ''}</td>
+                        <td>${r.author ? esc(r.author) : '<span style="color:#ddd">—</span>'}</td>
+                        <td><span class="suggestion-meta">${fmtDate(r.created_at)}</span></td>
+                        <td>${r.active
+                            ? '<span class="badge badge-approved"><i class="fas fa-circle" style="font-size:8px"></i> Published</span>'
+                            : '<span class="badge badge-rejected"><i class="fas fa-circle" style="font-size:8px"></i> Draft</span>'
+                        }</td>
+                    </tr>
+                `).join('')}
+                </tbody>
+            </table>
+        `;
+    } catch(e) {
+        wrap.innerHTML = '<div class="empty-state"><i class="fas fa-triangle-exclamation"></i><p>Failed to load</p></div>';
+    }
 }
 
-async function deleteBlog(id) {
-    if (!confirm('Delete this post?')) return;
-    const res = await apiFetch(`/api/admin/blog/${id}`, { method: 'DELETE' });
-    if (res.ok) { toast('Post deleted.'); loadBlog(); }
-    else toast(res.error || 'Error.', 'error');
+// ── COUNTRIES ────────────────────────────────────────
+async function loadCountries() {
+    const wrap = document.getElementById('countries-body');
+    wrap.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i></div>';
+    try {
+        const rows = await api('/api/admin/countries');
+        if (!rows.length) { wrap.innerHTML = '<div class="empty-state"><i class="fas fa-globe"></i><p>No countries</p></div>'; return; }
+        wrap.innerHTML = `
+            <table>
+                <thead><tr><th>Name</th><th>Code</th><th>Slug</th><th>Status</th></tr></thead>
+                <tbody>
+                ${rows.map(r => `
+                    <tr>
+                        <td><strong>${esc(r.name)}</strong></td>
+                        <td><code style="background:#f0f0f0;padding:2px 6px;border-radius:4px;font-size:12px;">${esc(r.code || '—')}</code></td>
+                        <td style="color:#aaa;font-size:13px;">${esc(r.slug || '—')}</td>
+                        <td>${r.active
+                            ? '<span class="badge badge-approved"><i class="fas fa-circle" style="font-size:8px"></i> Active</span>'
+                            : '<span class="badge badge-rejected"><i class="fas fa-circle" style="font-size:8px"></i> Inactive</span>'
+                        }</td>
+                    </tr>
+                `).join('')}
+                </tbody>
+            </table>
+        `;
+    } catch(e) {
+        wrap.innerHTML = '<div class="empty-state"><i class="fas fa-triangle-exclamation"></i><p>Failed to load</p></div>';
+    }
 }
 
-// ══════════════════════════════════════════════
-//  HELPERS
-// ══════════════════════════════════════════════
-
-function autoSlug(srcId, dstId) {
-    const src = document.getElementById(srcId);
-    const dst = document.getElementById(dstId);
-    if (src && dst) dst.value = generateSlug(src.value);
+// ── CITIES ───────────────────────────────────────────
+async function loadCities() {
+    const wrap = document.getElementById('cities-body');
+    wrap.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i></div>';
+    try {
+        const rows = await api('/api/admin/cities');
+        if (!rows.length) { wrap.innerHTML = '<div class="empty-state"><i class="fas fa-city"></i><p>No cities</p></div>'; return; }
+        wrap.innerHTML = `
+            <table>
+                <thead><tr><th>Name</th><th>Country</th><th>Slug</th><th>Status</th></tr></thead>
+                <tbody>
+                ${rows.map(r => `
+                    <tr>
+                        <td><strong>${esc(r.name)}</strong></td>
+                        <td>${r.country_name ? esc(r.country_name) : '<span style="color:#ddd">—</span>'}</td>
+                        <td style="color:#aaa;font-size:13px;">${esc(r.slug || '—')}</td>
+                        <td>${r.active
+                            ? '<span class="badge badge-approved"><i class="fas fa-circle" style="font-size:8px"></i> Active</span>'
+                            : '<span class="badge badge-rejected"><i class="fas fa-circle" style="font-size:8px"></i> Inactive</span>'
+                        }</td>
+                    </tr>
+                `).join('')}
+                </tbody>
+            </table>
+        `;
+    } catch(e) {
+        wrap.innerHTML = '<div class="empty-state"><i class="fas fa-triangle-exclamation"></i><p>Failed to load</p></div>';
+    }
 }
 
-function escAttr(str) {
-    return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+// ── LINES ────────────────────────────────────────────
+async function loadLines() {
+    const wrap = document.getElementById('lines-body');
+    wrap.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i></div>';
+    try {
+        const rows = await api('/api/admin/lines');
+        if (!rows.length) { wrap.innerHTML = '<div class="empty-state"><i class="fas fa-route"></i><p>No lines</p></div>'; return; }
+        wrap.innerHTML = `
+            <table>
+                <thead><tr><th>Name</th><th>City</th><th>Color</th><th>Status</th></tr></thead>
+                <tbody>
+                ${rows.map(r => `
+                    <tr>
+                        <td><strong>${esc(r.name)}</strong></td>
+                        <td>${r.city_name ? esc(r.city_name) : '<span style="color:#ddd">—</span>'}</td>
+                        <td>${r.color
+                            ? `<span style="display:inline-flex;align-items:center;gap:6px;">
+                                <span style="width:16px;height:16px;border-radius:50%;background:${esc(r.color)};display:inline-block;"></span>
+                                <code style="font-size:12px;color:#666;">${esc(r.color)}</code>
+                               </span>`
+                            : '<span style="color:#ddd">—</span>'
+                        }</td>
+                        <td>${r.active
+                            ? '<span class="badge badge-approved"><i class="fas fa-circle" style="font-size:8px"></i> Active</span>'
+                            : '<span class="badge badge-rejected"><i class="fas fa-circle" style="font-size:8px"></i> Inactive</span>'
+                        }</td>
+                    </tr>
+                `).join('')}
+                </tbody>
+            </table>
+        `;
+    } catch(e) {
+        wrap.innerHTML = '<div class="empty-state"><i class="fas fa-triangle-exclamation"></i><p>Failed to load</p></div>';
+    }
 }
 
-async function logout() {
-    await fetch('/admin/logout');
-    window.location.href = '/admin/login';
+// ── Escape HTML ───────────────────────────────────────
+function esc(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ── Init ──
-loadDashboard();
+// ── Init ─────────────────────────────────────────────
+(async function init() {
+    // try to get username from session (via stats endpoint)
+    try {
+        const stats = await api('/api/admin/stats');
+        // update pending badges from stats
+        if (stats.pending_comments > 0) {
+            const b = document.getElementById('comments-badge');
+            b.textContent = stats.pending_comments;
+            b.style.display = 'inline-block';
+        }
+        loadStats();
+    } catch(e) {}
+
+    // load suggestions count for sidebar badge
+    try {
+        const pending = await api('/api/admin/suggestions?status=pending');
+        if (pending.length > 0) {
+            const b = document.getElementById('suggestions-badge');
+            b.textContent = pending.length;
+            b.style.display = 'inline-block';
+            suggestionsData['pending'] = pending;
+        }
+    } catch(e) {}
+})();
 </script>
 </body>
 </html>
