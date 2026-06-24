@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog | nearestmetro.com</title>
+    <meta name="description" content="Articles, guides and news about metro systems around the world.">
+    <link rel="canonical" href="https://www.nearestmetro.com/blog">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary:     #1a73e8;
+            --dark:        #0d47a1;
+            --light:       #e3f2fd;
+            --light-gray:  #f8f9fa;
+            --medium-gray: #e0e0e0;
+            --dark-gray:   #343a40;
+            --text-color:  #495057;
+            --white:       #ffffff;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Roboto', sans-serif; background: var(--light-gray); color: var(--text-color); line-height: 1.6; }
+
+        /* ── Header ── */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--dark));
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        header .logo a { text-decoration: none; color: #fff; font-size: 1.4em; font-weight: 700; }
+        header .logo a span { opacity: .7; }
+        header nav a { color: rgba(255,255,255,0.85); text-decoration: none; margin-left: 24px; font-weight: 500; }
+        header nav a:hover { color: #fff; }
+
+        /* ── Hero banner ── */
+        .blog-hero {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 100%);
+            padding: 56px 20px 52px;
+            text-align: center;
+            color: var(--white);
+        }
+        .blog-hero h1 {
+            font-family: 'Merriweather', serif;
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .blog-hero p {
+            font-size: 1.05em;
+            opacity: .8;
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        /* ── Container ── */
+        .container { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+
+        /* ── Grid ── */
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            padding: 40px 0 56px;
+        }
+
+        /* ── Card ── */
+        .post-card {
+            background: var(--white);
+            border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+        .post-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 28px rgba(0,0,0,0.13);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 190px;
+            object-fit: cover;
+            display: block;
+            background: var(--light);
+        }
+        .card-placeholder {
+            width: 100%;
+            height: 190px;
+            background: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            color: var(--primary);
+        }
+
+        .card-body { padding: 20px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
+
+        .card-meta {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 0.8em;
+            color: #999;
+        }
+        .card-meta i { color: var(--primary); margin-right: 4px; }
+
+        .card-title {
+            font-family: 'Merriweather', serif;
+            font-size: 1.05em;
+            font-weight: 700;
+            color: var(--dark-gray);
+            line-height: 1.4;
+            margin-top: 2px;
+        }
+
+        .card-subtitle {
+            font-size: 0.88em;
+            color: #777;
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        .card-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--primary);
+            font-size: 0.88em;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        /* ── States ── */
+        .state-box {
+            text-align: center;
+            padding: 64px 20px;
+            color: #aaa;
+        }
+        .state-box i { font-size: 3em; margin-bottom: 16px; display: block; color: var(--medium-gray); }
+        .state-box p { font-size: 1em; }
+
+        /* ── Footer ── */
+        footer { background: #2d3748; color: #aaa; text-align: center; padding: 24px; font-size: 0.9em; margin-top: 0; }
+        footer a { color: #90caf9; text-decoration: none; }
+
+        #google_translate_element { position: fixed; bottom: 16px; right: 16px; z-index: 999; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo"><a href="/">nearest<span>metro</span>.com</a></div>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/blog">Blog</a>
+    </nav>
+</header>
+
+<div class="blog-hero">
+    <h1><i class="fas fa-pen-nib" style="font-size:0.8em;margin-right:10px;opacity:0.85"></i>Metro Blog</h1>
+    <p>Articles, guides and curiosities about metro systems around the world.</p>
+</div>
+
+<div class="container">
+    <div class="posts-grid" id="postsGrid">
+        <div class="state-box" style="grid-column:1/-1">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading posts…</p>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p><a href="/">nearestmetro.com</a> — Find metro stations worldwide</p>
+</footer>
+
+<div id="google_translate_element"></div>
+<script>
+function googleTranslateElementInit() {
+    new google.translate.TranslateElement(
+        { pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE },
+        'google_translate_element'
+    );
+}
+</script>
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<script>
+async function loadPosts() {
+    const grid = document.getElementById('postsGrid');
+    try {
+        const res   = await fetch('/api/blog');
+        const posts = await res.json();
+
+        if (!Array.isArray(posts) || posts.length === 0) {
+            grid.innerHTML = `
+                <div class="state-box" style="grid-column:1/-1">
+                    <i class="fas fa-newspaper"></i>
+                    <p>No posts published yet. Check back soon!</p>
+                </div>`;
+            return;
+        }
+
+        grid.innerHTML = posts.map(p => {
+            const date = p.created_at ? p.created_at.slice(0, 10) : '';
+            const img  = p.image_url
+                ? `<img class="card-image" src="${escHtml(p.image_url)}" alt="${escHtml(p.title)}" loading="lazy">`
+                : `<div class="card-placeholder"><i class="fas fa-subway"></i></div>`;
+
+            return `
+                <a class="post-card" href="/blog/${escHtml(p.slug)}">
+                    ${img}
+                    <div class="card-body">
+                        <div class="card-meta">
+                            ${p.author ? `<span><i class="fas fa-user-circle"></i>${escHtml(p.author)}</span>` : ''}
+                            ${date    ? `<span><i class="fas fa-calendar-alt"></i>${date}</span>` : ''}
+                        </div>
+                        <div class="card-title">${escHtml(p.title)}</div>
+                        ${p.subtitle ? `<div class="card-subtitle">${escHtml(p.subtitle)}</div>` : ''}
+                        <span class="card-link">Read more <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>`;
+        }).join('');
+
+    } catch (e) {
+        grid.innerHTML = `
+            <div class="state-box" style="grid-column:1/-1">
+                <i class="fas fa-exclamation-circle"></i>
+                <p>Failed to load posts. Please try again later.</p>
+            </div>`;
+    }
+}
+
+function escHtml(str) {
+    return String(str ?? '')
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;');
+}
+
+loadPosts();
+</script>
+</body>
+</html>
