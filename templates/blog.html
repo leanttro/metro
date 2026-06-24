@@ -3,178 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog | nearestmetro.com</title>
-    <meta name="description" content="Articles, guides and news about metro systems around the world.">
-    <link rel="canonical" href="https://www.nearestmetro.com/blog">
+    <title>{{ post.title }} | nearestmetro.com Blog</title>
+    <meta name="description" content="{{ post.subtitle or post.title }}">
+    <link rel="canonical" href="https://www.nearestmetro.com/blog/{{ post.slug }}">
+    {% if post.image_url %}<meta property="og:image" content="{{ post.image_url }}">{% endif %}
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
-        :root {
-            --primary:     #1a73e8;
-            --dark:        #0d47a1;
-            --light:       #e3f2fd;
-            --light-gray:  #f8f9fa;
-            --medium-gray: #e0e0e0;
-            --dark-gray:   #343a40;
-            --text-color:  #495057;
-            --white:       #ffffff;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Roboto', sans-serif; background: var(--light-gray); color: var(--text-color); line-height: 1.6; }
+        :root { --primary:#1a73e8; --dark:#0d47a1; --light:#e3f2fd; --light-gray:#f8f9fa; --medium-gray:#e0e0e0; --dark-gray:#343a40; --text-color:#495057; --white:#ffffff; }
+        * { box-sizing:border-box; margin:0; padding:0; }
+        body { font-family:'Roboto',sans-serif; background:var(--light-gray); color:var(--text-color); line-height:1.6; }
+        .container { max-width:780px; margin:0 auto; padding:0 20px; }
 
-        /* ── Header ── */
-        header {
-            background: linear-gradient(135deg, var(--primary), var(--dark));
-            padding: 16px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        header .logo a { text-decoration: none; color: #fff; font-size: 1.4em; font-weight: 700; }
-        header .logo a span { opacity: .7; }
-        header nav a { color: rgba(255,255,255,0.85); text-decoration: none; margin-left: 24px; font-weight: 500; }
-        header nav a:hover { color: #fff; }
+        header { background:linear-gradient(135deg,var(--primary),var(--dark)); padding:16px 20px; display:flex; align-items:center; justify-content:space-between; max-width:100%; }
+        header .logo a { text-decoration:none; color:#fff; font-size:1.4em; font-weight:700; }
+        header .logo a span { opacity:.7; }
+        header nav a { color:rgba(255,255,255,0.85); text-decoration:none; margin-left:24px; font-weight:500; }
 
-        /* ── Hero banner ── */
-        .blog-hero {
-            background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 100%);
-            padding: 56px 20px 52px;
-            text-align: center;
-            color: var(--white);
-        }
-        .blog-hero h1 {
-            font-family: 'Merriweather', serif;
-            font-size: 2.2em;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-        .blog-hero p {
-            font-size: 1.05em;
-            opacity: .8;
-            max-width: 520px;
-            margin: 0 auto;
-        }
+        .post-hero { width:100%; max-height:420px; overflow:hidden; background:var(--light); display:flex; align-items:center; justify-content:center; }
+        .post-hero img { width:100%; max-height:420px; object-fit:cover; display:block; }
+        .post-hero-placeholder { width:100%; height:240px; display:flex; align-items:center; justify-content:center; font-size:4em; color:var(--primary); background:var(--light); }
 
-        /* ── Container ── */
-        .container { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+        .post-body { background:var(--white); border-radius:16px; padding:40px; margin:32px auto; box-shadow:0 4px 20px rgba(0,0,0,0.08); }
+        .post-meta { display:flex; align-items:center; gap:16px; font-size:0.88em; color:#888; margin-bottom:20px; flex-wrap:wrap; }
+        .post-meta i { color:var(--primary); }
+        .post-body h1 { font-family:'Merriweather',serif; font-size:2em; font-weight:700; color:var(--dark-gray); margin-bottom:14px; line-height:1.3; }
+        .post-subtitle { font-size:1.1em; color:#666; margin-bottom:28px; font-style:italic; border-left:4px solid var(--primary); padding-left:16px; }
+        .post-content { font-family:'Merriweather',serif; font-size:1.02em; color:#333; line-height:1.9; }
+        .post-content p { margin-bottom:1.4em; }
+        .post-content h2, .post-content h3 { font-weight:700; margin:1.8em 0 0.8em; color:var(--dark-gray); }
+        .post-content a { color:var(--primary); }
+        .post-content img { max-width:100%; border-radius:10px; margin:1em 0; }
 
-        /* ── Grid ── */
-        .posts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 24px;
-            padding: 40px 0 56px;
-        }
+        .back-link { display:inline-flex; align-items:center; gap:8px; color:var(--primary); text-decoration:none; font-weight:500; margin:24px 0 0; font-size:0.95em; }
+        .back-link:hover { text-decoration:underline; }
 
-        /* ── Card ── */
-        .post-card {
-            background: var(--white);
-            border-radius: 14px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.2s, box-shadow 0.2s;
-            text-decoration: none;
-            color: inherit;
-        }
-        .post-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 28px rgba(0,0,0,0.13);
-        }
-
-        .card-image {
-            width: 100%;
-            height: 190px;
-            object-fit: cover;
-            display: block;
-            background: var(--light);
-        }
-        .card-placeholder {
-            width: 100%;
-            height: 190px;
-            background: var(--light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3em;
-            color: var(--primary);
-        }
-
-        .card-body { padding: 20px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
-
-        .card-meta {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            font-size: 0.8em;
-            color: #999;
-        }
-        .card-meta i { color: var(--primary); margin-right: 4px; }
-
-        .card-title {
-            font-family: 'Merriweather', serif;
-            font-size: 1.05em;
-            font-weight: 700;
-            color: var(--dark-gray);
-            line-height: 1.4;
-            margin-top: 2px;
-        }
-
-        .card-subtitle {
-            font-size: 0.88em;
-            color: #777;
-            line-height: 1.5;
-            flex: 1;
-        }
-
-        .card-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            color: var(--primary);
-            font-size: 0.88em;
-            font-weight: 600;
-            margin-top: 10px;
-        }
-
-        /* ── States ── */
-        .state-box {
-            text-align: center;
-            padding: 64px 20px;
-            color: #aaa;
-        }
-        .state-box i { font-size: 3em; margin-bottom: 16px; display: block; color: var(--medium-gray); }
-        .state-box p { font-size: 1em; }
-
-        /* ── Footer ── */
-        footer { background: #2d3748; color: #aaa; text-align: center; padding: 24px; font-size: 0.9em; margin-top: 0; }
-        footer a { color: #90caf9; text-decoration: none; }
-
-        #google_translate_element { position: fixed; bottom: 16px; right: 16px; z-index: 999; }
+        footer { background:#2d3748; color:#aaa; text-align:center; padding:24px; font-size:0.9em; margin-top:40px; }
+        footer a { color:#90caf9; text-decoration:none; }
+        #google_translate_element { position:fixed; bottom:16px; right:16px; z-index:999; }
     </style>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KRX8VNQDC4"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag("js", new Date());
+      gtag("config", "G-KRX8VNQDC4");
+    </script>
 </head>
 <body>
 
 <header>
-    <div class="logo"><a href="/">nearest<span>metro</span>.com</a></div>
+    <div class="logo"><a href="/"><img src="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1782262509/Nearest_Metro_Modern_Logo_Concept_1_wwskph.png" alt="nearestmetro.com" style="height:40px;display:block;"></a></div>
     <nav>
         <a href="/">Home</a>
         <a href="/blog">Blog</a>
     </nav>
 </header>
 
-<div class="blog-hero">
-    <h1><i class="fas fa-pen-nib" style="font-size:0.8em;margin-right:10px;opacity:0.85"></i>Metro Blog</h1>
-    <p>Articles, guides and curiosities about metro systems around the world.</p>
-</div>
+{% if post.image_url %}
+<div class="post-hero"><img src="{{ post.image_url }}" alt="{{ post.title }}"></div>
+{% else %}
+<div class="post-hero"><div class="post-hero-placeholder"><i class="fas fa-subway"></i></div></div>
+{% endif %}
 
 <div class="container">
-    <div class="posts-grid" id="postsGrid">
-        <div class="state-box" style="grid-column:1/-1">
-            <i class="fas fa-spinner fa-spin"></i>
-            <p>Loading posts…</p>
+    <a class="back-link" href="/blog"><i class="fas fa-arrow-left"></i> Back to Blog</a>
+
+    <div class="post-body">
+        <div class="post-meta">
+            {% if post.author %}<span><i class="fas fa-user-circle"></i> {{ post.author }}</span>{% endif %}
+            {% if post.created_at %}<span><i class="fas fa-calendar"></i> {{ post.created_at }}</span>{% endif %}
         </div>
+
+        <h1>{{ post.title }}</h1>
+        {% if post.subtitle %}<p class="post-subtitle">{{ post.subtitle }}</p>{% endif %}
+        <div class="post-content">{{ post.content | safe }}</div>
     </div>
 </div>
 
@@ -185,69 +89,9 @@
 <div id="google_translate_element"></div>
 <script>
 function googleTranslateElementInit() {
-    new google.translate.TranslateElement(
-        { pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE },
-        'google_translate_element'
-    );
+    new google.translate.TranslateElement({ pageLanguage:'en', layout:google.translate.TranslateElement.InlineLayout.SIMPLE }, 'google_translate_element');
 }
 </script>
 <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
-<script>
-async function loadPosts() {
-    const grid = document.getElementById('postsGrid');
-    try {
-        const res   = await fetch('/api/blog');
-        const posts = await res.json();
-
-        if (!Array.isArray(posts) || posts.length === 0) {
-            grid.innerHTML = `
-                <div class="state-box" style="grid-column:1/-1">
-                    <i class="fas fa-newspaper"></i>
-                    <p>No posts published yet. Check back soon!</p>
-                </div>`;
-            return;
-        }
-
-        grid.innerHTML = posts.map(p => {
-            const date = p.created_at ? p.created_at.slice(0, 10) : '';
-            const img  = p.image_url
-                ? `<img class="card-image" src="${escHtml(p.image_url)}" alt="${escHtml(p.title)}" loading="lazy">`
-                : `<div class="card-placeholder"><i class="fas fa-subway"></i></div>`;
-
-            return `
-                <a class="post-card" href="/blog/${escHtml(p.slug)}">
-                    ${img}
-                    <div class="card-body">
-                        <div class="card-meta">
-                            ${p.author ? `<span><i class="fas fa-user-circle"></i>${escHtml(p.author)}</span>` : ''}
-                            ${date    ? `<span><i class="fas fa-calendar-alt"></i>${date}</span>` : ''}
-                        </div>
-                        <div class="card-title">${escHtml(p.title)}</div>
-                        ${p.subtitle ? `<div class="card-subtitle">${escHtml(p.subtitle)}</div>` : ''}
-                        <span class="card-link">Read more <i class="fas fa-arrow-right"></i></span>
-                    </div>
-                </a>`;
-        }).join('');
-
-    } catch (e) {
-        grid.innerHTML = `
-            <div class="state-box" style="grid-column:1/-1">
-                <i class="fas fa-exclamation-circle"></i>
-                <p>Failed to load posts. Please try again later.</p>
-            </div>`;
-    }
-}
-
-function escHtml(str) {
-    return String(str ?? '')
-        .replace(/&/g,'&amp;')
-        .replace(/</g,'&lt;')
-        .replace(/>/g,'&gt;')
-        .replace(/"/g,'&quot;');
-}
-
-loadPosts();
-</script>
 </body>
 </html>
