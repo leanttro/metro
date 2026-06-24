@@ -945,6 +945,95 @@ def api_admin_post(post_id):
         if conn: conn.close()
 
 
+
+
+# ════════════════════════════════════════════════════════════
+#  API — STATION SUGGESTIONS (public submit)
+# ════════════════════════════════════════════════════════════
+
+@app.route('/api/suggestions', methods=['POST'])
+def api_suggestion_submit():
+    conn = None
+    try:
+        data         = request.get_json()
+        country      = (data.get('country') or '').strip()
+        city         = (data.get('city') or '').strip()
+        station_name = (data.get('station_name') or '').strip()
+        notes        = (data.get('notes') or '').strip()
+        ip           = request.headers.get('X-Forwarded-For', request.remote_addr)
+        if ip and ',' in ip:
+            ip = ip.split(',')[0].strip()
+
+        if not country or not city or not station_name:
+            return jsonify({'ok': False, 'error': 'Country, city and station name are required'}), 400
+
+        conn = get_db_connection()
+        cur  = conn.cursor()
+        cur.execute("""
+            INSERT INTO station_suggestions (country, city, station_name, notes, ip)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (country, city, station_name, notes, ip))
+        conn.commit()
+        cur.close()
+        return jsonify({'ok': True})
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'ok': False, 'error': 'Error saving suggestion'}), 500
+    finally:
+        if conn: conn.close()
+
+
+# ════════════════════════════════════════════════════════════
+#  API ADMIN — STATION SUGGESTIONS
+# ════════════════════════════════════════════════════════════
+
+@app.route('/api/admin/suggestions', methods=['GET'])
+@login_required
+def api_admin_suggestions():
+    conn = None
+    try:
+        conn = get_db_connection()
+        cur  = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        status = request.args.get('status', 'pending')
+        cur.execute("""
+            SELECT * FROM station_suggestions
+            WHERE status = %s
+            ORDER BY created_at DESC
+        """, (status,))
+        rows = [format_db_data(dict(r)) for r in cur.fetchall()]
+        cur.close()
+        return jsonify(rows)
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+    finally:
+        if conn: conn.close()
+
+
+@app.route('/api/admin/suggestions/<int:sg_id>', methods=['PUT', 'DELETE'])
+@login_required
+def api_admin_suggestion(sg_id):
+    conn = None
+    try:
+        conn = get_db_connection()
+        cur  = conn.cursor()
+        if request.method == 'DELETE':
+            cur.execute("DELETE FROM station_suggestions WHERE id = %s", (sg_id,))
+            conn.commit()
+            cur.close()
+            return jsonify({'ok': True})
+        data   = request.get_json()
+        status = data.get('status', 'done')  # pending | done | rejected
+        cur.execute("UPDATE station_suggestions SET status = %s WHERE id = %s", (status, sg_id))
+        conn.commit()
+        cur.close()
+        return jsonify({'ok': True})
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+    finally:
+        if conn: conn.close()
+
 # ════════════════════════════════════════════════════════════
 #  SITEMAP
 # ════════════════════════════════════════════════════════════
