@@ -5,35 +5,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>{{ station.name }} Metro Station — {{ station.city_name }}, {{ station.country_name }} | nearestmetro.com</title>
-    <meta name="description" content="Find {{ station.name }} metro station in {{ station.city_name }}. Get directions, nearby places, line info, and real-time visitor reviews.">
+    <meta name="description" content="Find {{ station.name }} metro station in {{ station.city_name }}, {{ station.country_name }}. Get directions, line info, map, and visitor reviews.">
     <meta name="robots" content="index, follow">
+    <meta name="author" content="nearestmetro.com">
     <link rel="canonical" href="https://www.nearestmetro.com/stations/{{ station.slug }}">
 
-    <meta property="og:type"        content="place">
-    <meta property="og:title"       content="{{ station.name }} Metro Station — {{ station.city_name }}">
-    <meta property="og:description" content="Find {{ station.name }} metro station in {{ station.city_name }}, {{ station.country_name }}. Get directions and station details.">
-    {% if station.photo_url %}<meta property="og:image" content="{{ station.photo_url }}">{% endif %}
+    <!-- Open Graph -->
+    <meta property="og:type"        content="website">
+    <meta property="og:site_name"   content="nearestmetro.com">
+    <meta property="og:url"         content="https://www.nearestmetro.com/stations/{{ station.slug }}">
+    <meta property="og:locale"      content="en_US">
+    <meta property="og:title"       content="{{ station.name }} Metro Station — {{ station.city_name }}, {{ station.country_name }}">
+    <meta property="og:description" content="Find {{ station.name }} metro station in {{ station.city_name }}, {{ station.country_name }}. Get directions, line info, map, and visitor reviews.">
+    <meta property="og:image"       content="{{ station.photo_url or 'https://res.cloudinary.com/dhu1cqvrb/image/upload/v1782268935/71348f13-0b87-4720-ad5d-5feaf0ac95ad.png' }}">
+    <meta property="og:image:alt"   content="{{ station.name }} Metro Station — {{ station.city_name }}">
+
+    <!-- Twitter / X Card -->
+    <meta name="twitter:card"        content="summary_large_image">
+    <meta name="twitter:title"       content="{{ station.name }} Metro Station — {{ station.city_name }}, {{ station.country_name }}">
+    <meta name="twitter:description" content="Find {{ station.name }} metro station in {{ station.city_name }}, {{ station.country_name }}. Get directions, line info, map, and visitor reviews.">
+    <meta name="twitter:image"       content="{{ station.photo_url or 'https://res.cloudinary.com/dhu1cqvrb/image/upload/v1782268935/71348f13-0b87-4720-ad5d-5feaf0ac95ad.png' }}">
 
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Place",
-      "name": "{{ station.name }} Metro Station",
-      "description": "{{ station.description or ('Metro station on ' + (station.line_name or 'metro line')) }}",
-      "url": "https://www.nearestmetro.com/stations/{{ station.slug }}",
-      {% if station.photo_url %}"image": "{{ station.photo_url }}",{% endif %}
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "{{ station.address or '' }}",
-        "addressLocality": "{{ station.city_name or '' }}",
-        "addressCountry": "{{ station.country_code or '' }}"
-      }{% if station.lat and station.lng %},
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": {{ station.lat }},
-        "longitude": {{ station.lng }}
-      }{% endif %}
-    }
+    [
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {"@type":"ListItem","position":1,"name":"Home","item":"https://www.nearestmetro.com/"},
+          {"@type":"ListItem","position":2,"name":"{{ station.country_name }}","item":"https://www.nearestmetro.com/country/{{ station.country_slug }}"},
+          {"@type":"ListItem","position":3,"name":"{{ station.city_name }}","item":"https://www.nearestmetro.com/country/{{ station.country_slug }}/{{ station.city_slug }}"},
+          {"@type":"ListItem","position":4,"name":"{{ station.name }} Metro Station","item":"https://www.nearestmetro.com/stations/{{ station.slug }}"}
+        ]
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "Place",
+        "name": "{{ station.name }} Metro Station",
+        "description": "{{ station.description or ('Metro station on ' + (station.line_name or 'metro line') + ' in ' + (station.city_name or '')) }}",
+        "url": "https://www.nearestmetro.com/stations/{{ station.slug }}",
+        "image": "{{ station.photo_url or 'https://res.cloudinary.com/dhu1cqvrb/image/upload/v1782268935/71348f13-0b87-4720-ad5d-5feaf0ac95ad.png' }}",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "{{ station.address or '' }}",
+          "addressLocality": "{{ station.city_name or '' }}",
+          "addressCountry": "{{ station.country_code or '' }}"
+        }{% if station.lat and station.lng %},
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": {{ station.lat }},
+          "longitude": {{ station.lng }}
+        }{% endif %}
+      }
+    ]
     </script>
 
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
