@@ -326,6 +326,102 @@
     </div>
 </section>
 
+<!-- ── Suggest a Station ── -->
+<section style="background:linear-gradient(135deg,var(--dark) 0%,var(--primary) 100%);padding:64px 0;">
+    <div class="container" style="text-align:center;">
+        <div style="font-size:3em;margin-bottom:16px;">🚇</div>
+        <h2 style="font-family:'Merriweather',serif;color:#fff;font-size:1.9em;margin-bottom:12px;">Missing a station?</h2>
+        <p style="color:rgba(255,255,255,0.82);font-size:1.05em;max-width:480px;margin:0 auto 32px;">
+            Help us grow! If you know a metro station that's not on our map yet, tell us and we'll add it.
+        </p>
+        <button onclick="openSuggestModal()" style="background:#fff;color:var(--dark);border:none;border-radius:10px;padding:14px 36px;font-size:1em;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,0.2);">
+            <i class="fas fa-plus-circle"></i> Suggest a Station
+        </button>
+    </div>
+</section>
+
+<!-- Modal Suggest -->
+<div id="suggestModal" style="display:none;position:fixed;inset:0;z-index:2000;align-items:center;justify-content:center;background:rgba(0,0,0,0.55);padding:20px;">
+    <div style="background:#fff;border-radius:18px;padding:40px 36px;width:100%;max-width:460px;box-shadow:0 24px 64px rgba(0,0,0,0.3);position:relative;">
+        <button onclick="closeSuggestModal()" style="position:absolute;top:16px;right:18px;background:none;border:none;font-size:1.4em;color:#aaa;cursor:pointer;">&#10005;</button>
+        <div style="text-align:center;margin-bottom:24px;">
+            <div style="font-size:2.2em;margin-bottom:8px;">🚇</div>
+            <h3 style="font-size:1.3em;font-weight:700;color:var(--dark-gray);">Suggest a Missing Station</h3>
+            <p style="color:#888;font-size:0.9em;margin-top:6px;">Fill in what you know — we'll take care of the rest!</p>
+        </div>
+        <div style="margin-bottom:16px;">
+            <label style="display:block;font-size:0.8em;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Country *</label>
+            <input id="sg_country" type="text" placeholder="e.g. Brazil" style="width:100%;padding:11px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:0.97em;font-family:inherit;">
+        </div>
+        <div style="margin-bottom:16px;">
+            <label style="display:block;font-size:0.8em;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">City *</label>
+            <input id="sg_city" type="text" placeholder="e.g. Sao Paulo" style="width:100%;padding:11px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:0.97em;font-family:inherit;">
+        </div>
+        <div style="margin-bottom:16px;">
+            <label style="display:block;font-size:0.8em;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Station / Metro Line Name *</label>
+            <input id="sg_station" type="text" placeholder="e.g. Paulista - Line 2 Green" style="width:100%;padding:11px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:0.97em;font-family:inherit;">
+        </div>
+        <div style="margin-bottom:24px;">
+            <label style="display:block;font-size:0.8em;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Extra info <span style="font-weight:400;text-transform:none;">(optional)</span></label>
+            <textarea id="sg_notes" placeholder="Address, coordinates, links..." rows="3" style="width:100%;padding:11px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:0.97em;font-family:inherit;resize:vertical;"></textarea>
+        </div>
+        <div id="sg_msg" style="display:none;border-radius:8px;padding:10px 14px;font-size:0.9em;margin-bottom:16px;text-align:center;"></div>
+        <button onclick="submitSuggestion()" id="sg_btn" style="width:100%;padding:13px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-size:1em;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+            <i class="fas fa-paper-plane"></i> Send Suggestion
+        </button>
+    </div>
+</div>
+
+<script>
+function openSuggestModal() {
+    document.getElementById('suggestModal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+function closeSuggestModal() {
+    document.getElementById('suggestModal').style.display = 'none';
+    document.body.style.overflow = '';
+    ['sg_country','sg_city','sg_station','sg_notes'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('sg_msg').style.display = 'none';
+    const btn = document.getElementById('sg_btn');
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Suggestion';
+}
+document.getElementById('suggestModal').addEventListener('click', function(e){ if(e.target===this) closeSuggestModal(); });
+async function submitSuggestion() {
+    const country = document.getElementById('sg_country').value.trim();
+    const city    = document.getElementById('sg_city').value.trim();
+    const station = document.getElementById('sg_station').value.trim();
+    const notes   = document.getElementById('sg_notes').value.trim();
+    const msg     = document.getElementById('sg_msg');
+    const btn     = document.getElementById('sg_btn');
+    msg.style.display = 'none';
+    if (!country || !city || !station) {
+        msg.textContent = 'Please fill in Country, City and Station name.';
+        msg.style.cssText = 'display:block;background:#fdecea;color:#c62828;border:1px solid #f5c6cb;border-radius:8px;padding:10px 14px;font-size:0.9em;margin-bottom:16px;text-align:center;';
+        return;
+    }
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+    try {
+        const res  = await fetch('/api/suggestions', {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({country, city, station_name: station, notes})
+        });
+        const data = await res.json();
+        if (data.ok) {
+            msg.textContent = 'Thank you! We received your suggestion and will review it soon.';
+            msg.style.cssText = 'display:block;background:#e8f5e9;color:#2e7d32;border:1px solid #c8e6c9;border-radius:8px;padding:10px 14px;font-size:0.9em;margin-bottom:16px;text-align:center;';
+            btn.innerHTML = '<i class="fas fa-check"></i> Sent!';
+        } else { throw new Error(data.error || 'Error'); }
+    } catch(e) {
+        msg.textContent = 'Something went wrong. Please try again.';
+        msg.style.cssText = 'display:block;background:#fdecea;color:#c62828;border:1px solid #f5c6cb;border-radius:8px;padding:10px 14px;font-size:0.9em;margin-bottom:16px;text-align:center;';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Suggestion';
+    }
+}
+</script>
+
 <!-- ── Footer ── -->
 <footer>
     <div class="container">
