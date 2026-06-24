@@ -7,11 +7,80 @@
     {% if city %}
     <title>Metro Stations in {{ city.name }}, {{ country.name }} | nearestmetro.com</title>
     <meta name="description" content="Browse all metro stations in {{ city.name }}, {{ country.name }}. Filter by line and find stations near you.">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="nearestmetro.com">
+    <meta name="theme-color" content="#1a73e8">
     <link rel="canonical" href="https://www.nearestmetro.com/country/{{ country.slug }}/{{ city.slug }}">
+
+    <!-- Open Graph -->
+    <meta property="og:type"        content="website">
+    <meta property="og:site_name"   content="nearestmetro.com">
+    <meta property="og:url"         content="https://www.nearestmetro.com/country/{{ country.slug }}/{{ city.slug }}">
+    <meta property="og:locale"      content="en_US">
+    <meta property="og:title"       content="Metro Stations in {{ city.name }}, {{ country.name }} | nearestmetro.com">
+    <meta property="og:description" content="Browse all metro stations in {{ city.name }}, {{ country.name }}. Filter by line and find stations near you.">
+    <meta property="og:image"       content="{{ city.photo_url or 'https://res.cloudinary.com/dhu1cqvrb/image/upload/v1782272398/8535e0a0-595f-4e76-a663-1e7178f57e70.png' }}">
+    <meta property="og:image:alt"   content="Metro stations in {{ city.name }}, {{ country.name }}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <!-- Twitter / X Card -->
+    <meta name="twitter:card"        content="summary_large_image">
+    <meta name="twitter:title"       content="Metro Stations in {{ city.name }}, {{ country.name }} | nearestmetro.com">
+    <meta name="twitter:description" content="Browse all metro stations in {{ city.name }}, {{ country.name }}. Filter by line and find stations near you.">
+    <meta name="twitter:image"       content="{{ city.photo_url or 'https://res.cloudinary.com/dhu1cqvrb/image/upload/v1782272398/8535e0a0-595f-4e76-a663-1e7178f57e70.png' }}">
+    <meta name="twitter:site"        content="@nearestmetro">
+
+    <script type="application/ld+json">
+    {{
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {{"@type":"ListItem","position":1,"name":"Home","item":"https://www.nearestmetro.com/"}},
+        {{"@type":"ListItem","position":2,"name":"{{ country.name }}","item":"https://www.nearestmetro.com/country/{{ country.slug }}"}},
+        {{"@type":"ListItem","position":3,"name":"{{ city.name }}","item":"https://www.nearestmetro.com/country/{{ country.slug }}/{{ city.slug }}"}}
+      ]
+    }}
+    </script>
+
     {% else %}
     <title>Metro Stations in {{ country.name }} | nearestmetro.com</title>
     <meta name="description" content="Browse all cities and metro stations in {{ country.name }}.">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="nearestmetro.com">
+    <meta name="theme-color" content="#1a73e8">
     <link rel="canonical" href="https://www.nearestmetro.com/country/{{ country.slug }}">
+
+    <!-- Open Graph -->
+    <meta property="og:type"        content="website">
+    <meta property="og:site_name"   content="nearestmetro.com">
+    <meta property="og:url"         content="https://www.nearestmetro.com/country/{{ country.slug }}">
+    <meta property="og:locale"      content="en_US">
+    <meta property="og:title"       content="Metro Stations in {{ country.name }} | nearestmetro.com">
+    <meta property="og:description" content="Browse all cities and metro stations in {{ country.name }}.">
+    <meta property="og:image"       content="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1782272398/8535e0a0-595f-4e76-a663-1e7178f57e70.png">
+    <meta property="og:image:alt"   content="Metro stations in {{ country.name }}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <!-- Twitter / X Card -->
+    <meta name="twitter:card"        content="summary_large_image">
+    <meta name="twitter:title"       content="Metro Stations in {{ country.name }} | nearestmetro.com">
+    <meta name="twitter:description" content="Browse all cities and metro stations in {{ country.name }}.">
+    <meta name="twitter:image"       content="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1782272398/8535e0a0-595f-4e76-a663-1e7178f57e70.png">
+    <meta name="twitter:site"        content="@nearestmetro">
+
+    <script type="application/ld+json">
+    {{
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {{"@type":"ListItem","position":1,"name":"Home","item":"https://www.nearestmetro.com/"}},
+        {{"@type":"ListItem","position":2,"name":"{{ country.name }}","item":"https://www.nearestmetro.com/country/{{ country.slug }}"}}
+      ]
+    }}
+    </script>
+
     {% endif %}
 
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
