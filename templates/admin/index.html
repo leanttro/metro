@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — nearestmetro.com</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary:     #1a73e8;
+            --dark:        #0d47a1;
+            --light:       #e3f2fd;
+            --light-gray:  #f8f9fa;
+            --medium-gray: #e0e0e0;
+            --dark-gray:   #343a40;
+            --text-color:  #495057;
+            --white:       #ffffff;
+            --sidebar-w:   240px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--light-gray);
+            color: var(--text-color);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: var(--sidebar-w);
+            background: var(--dark);
+            position: fixed;
+            top: 0; left: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            padding: 24px 20px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-logo .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .sidebar-logo .nearest { color: var(--white); }
+        .sidebar-logo .metro   { color: #90caf9; }
+        .sidebar-logo .dot-com { color: rgba(255,255,255,0.45); font-size: 15px; font-weight: 400; }
+
+        .sidebar-logo .admin-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            color: rgba(255,255,255,0.75);
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-top: 6px;
+        }
+
+        .sidebar-user {
+            padding: 16px 20px;
+            font-size: 13px;
+            color: rgba(255,255,255,0.55);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .sidebar-user i { margin-right: 6px; }
+
+        .sidebar-nav { padding: 12px 0; flex: 1; }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 20px;
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+            user-select: none;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover  { background: rgba(255,255,255,0.08); color: var(--white); }
+        .nav-item.active { background: rgba(255,255,255,0.12); color: var(--white); border-left-color: #90caf9; }
+        .nav-item i { width: 18px; text-align: center; font-size: 15px; }
+
+        .nav-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.08);
+            margin: 8px 0;
+        }
+
+        .nav-item.logout { color: rgba(255,160,160,0.8); }
+        .nav-item.logout:hover { color: #ffcdd2; background: rgba(255,100,100,0.1); }
+
+        /* ── Main ── */
+        .main {
+            margin-left: var(--sidebar-w);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            background: var(--white);
+            border-bottom: 1px solid var(--medium-gray);
+            padding: 16px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .topbar h1 { font-size: 20px; font-weight: 600; color: var(--dark-gray); }
+        .topbar-right { color: var(--text-color); font-size: 13px; }
+
+        .content { padding: 28px; }
+
+        /* ── Section panels ── */
+        .section { display: none; }
+        .section.active { display: block; }
+
+        /* ── Dashboard cards ── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 22px 20px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .stat-card .stat-icon {
+            width: 38px; height: 38px;
+            border-radius: 10px;
+            background: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 16px;
+            margin-bottom: 6px;
+        }
+
+        .stat-card .stat-num {
+            font-size: 30px;
+            font-weight: 700;
+            color: var(--dark-gray);
+            line-height: 1;
+        }
+
+        .stat-card .stat-label {
+            font-size: 12px;
+            color: var(--text-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        /* ── Table ── */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 7px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: background 0.15s, opacity 0.15s;
+        }
+
+        .btn-primary  { background: var(--primary); color: var(--white); }
+        .btn-primary:hover  { background: var(--dark); }
+        .btn-success  { background: #2e7d32; color: var(--white); }
+        .btn-success:hover  { background: #1b5e20; }
+        .btn-danger   { background: #c62828; color: var(--white); }
+        .btn-danger:hover   { background: #b71c1c; }
+        .btn-sm { padding: 5px 10px; font-size: 12px; }
+        .btn-warning  { background: #f57c00; color: var(--white); }
+        .btn-warning:hover  { background: #e65100; }
+
+        .table-wrap {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+            overflow: hidden;
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+
+        table th {
+            background: var(--light-gray);
+            padding: 11px 14px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--text-color);
+            border-bottom: 1px solid var(--medium-gray);
+        }
+
+        table td {
+            padding: 10px 14px;
+            font-size: 13px;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
+        }
+
+        table tr:last-child td { border-bottom: none; }
+        table tr:hover td { background: #fafbff; }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .badge-yes  { background: #e8f5e9; color: #2e7d32; }
+        .badge-no   { background: #fdecea; color: #c62828; }
+        .badge-pend { background: #fff8e1; color: #f57c00; }
+
+        .color-dot {
+            display: inline-block;
+            width: 14px; height: 14px;
+            border-radius: 50%;
+            border: 2px solid rgba(0,0,0,0.15);
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+
+        tr.pending-row { background: #fffde7; }
+
+        /* ── Modal ── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-box {
+            background: var(--white);
+            border-radius: 14px;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 560px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--medium-gray);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-header h3 { font-size: 16px; font-weight: 600; color: var(--dark-gray); }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: var(--text-color);
+            padding: 4px 8px;
+            border-radius: 6px;
+            line-height: 1;
+        }
+        .modal-close:hover { background: var(--light-gray); }
+
+        .modal-body {
+            padding: 22px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-footer {
+            padding: 14px 22px;
+            border-top: 1px solid var(--medium-gray);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* ── Form controls ── */
+        .form-row { margin-bottom: 16px; }
+        .form-row label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-row input,
+        .form-row select,
+        .form-row textarea {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1.5px solid var(--medium-gray);
+            border-radius: 7px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 14px;
+            color: var(--dark-gray);
+            background: var(--light-gray);
+            transition: border-color 0.2s;
+        }
+
+        .form-row input:focus,
+        .form-row select:focus,
+        .form-row textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--white);
+        }
+
+        .form-row textarea { resize: vertical; min-height: 100px; }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        .form-check input[type=checkbox] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary); }
+
+        .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+        /* ── Toast ── */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast {
+            background: var(--dark-gray);
+            color: var(--white);
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.25s ease;
+            min-width: 220px;
+            max-width: 340px;
+        }
+
+        .toast.success { background: #2e7d32; }
+        .toast.error   { background: #c62828; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(40px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        .empty-row td {
+            text-align: center;
+            padding: 32px;
+            color: #aaa;
+            font-style: italic;
+        }
+
+        .loading-row td {
+            text-align: center;
+            padding: 24px;
+            color: var(--primary);
+        }
+
+        .truncate { max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-text">
+            <span class="nearest">nearest</span><span class="metro">metro</span><span class="dot-com">.com</span>
+        </div>
+        <span class="admin-badge">Admin</span>
+    </div>
+    <div class="sidebar-user">
+        <i class="fa fa-circle-user"></i> {{ name or 'Admin' }}
+    </div>
+    <div class="sidebar-nav">
+        <div class="nav-item active" onclick="showSection('dashboard')" id="nav-dashboard">
+            <i class="fa fa-gauge-high"></i> Dashboard
+        </div>
+        <div class="nav-item" onclick="showSection('stations')" id="nav-stations">
+            <i class="fa fa-train-subway"></i> Stations
+        </div>
+        <div class="nav-item" onclick="showSection('countries')" id="nav-countries">
+            <i class="fa fa-globe"></i> Countries
+        </div>
+        <div class="nav-item" onclick="showSection('cities')" id="nav-cities">
+            <i class="fa fa-city"></i> Cities
+        </div>
+        <div class="nav-item" onclick="showSection('lines')" id="nav-lines">
+            <i class="fa fa-route"></i> Lines
+        </div>
+        <div class="nav-item" onclick="showSection('comments')" id="nav-comments">
+            <i class="fa fa-comments"></i> Comments
+        </div>
+        <div class="nav-item" onclick="showSection('blog')" id="nav-blog">
+            <i class="fa fa-pen-to-square"></i> Blog
+        </div>
+        <div class="nav-divider"></div>
+        <div class="nav-item logout" onclick="logout()">
+            <i class="fa fa-right-from-bracket"></i> Logout
+        </div>
+    </div>
+</nav>
+
+<!-- Main -->
+<div class="main">
+    <div class="topbar">
+        <h1 id="pageTitle">Dashboard</h1>
+        <span class="topbar-right"><i class="fa fa-circle" style="color:#4caf50;font-size:9px;"></i> nearestmetro.com</span>
+    </div>
+
+    <div class="content">
+
+        <!-- ══ DASHBOARD ══ -->
+        <div class="section active" id="section-dashboard">
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa fa-spinner fa-spin"></i></div>
+                    <div class="stat-num">—</div>
+                    <div class="stat-label">Loading…</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ STATIONS ══ -->
+        <div class="section" id="section-stations">
+            <div class="section-header">
+                <span class="section-title">Stations</span>
+                <button class="btn btn-primary" onclick="openStationModal()">
+                    <i class="fa fa-plus"></i> Add Station
+                </button>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th><th>Name</th><th>Line</th><th>City</th><th>Country</th>
+                            <th>Active</th><th>Featured</th><th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stationsTable"><tr class="loading-row"><td colspan="8"><i class="fa fa-spinner fa-spin"></i> Loading…</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ══ COUNTRIES ══ -->
+        <div class="section" id="section-countries">
+            <div class="section-header">
+                <span class="section-title">Countries</span>
+                <button class="btn btn-primary" onclick="openCountryModal()">
+                    <i class="fa fa-plus"></i> Add Country
+                </button>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>ID</th><th>Name</th><th>Slug</th><th>Code</th><th>Active</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody id="countriesTable"><tr class="loading-row"><td colspan="6"><i class="fa fa-spinner fa-spin"></i> Loading…</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ══ CITIES ══ -->
+        <div class="section" id="section-cities">
+            <div class="section-header">
+                <span class="section-title">Cities</span>
+                <button class="btn btn-primary" onclick="openCityModal()">
+                    <i class="fa fa-plus"></i> Add City
+                </button>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>ID</th><th>Name</th><th>Slug</th><th>Country</th><th>Active</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody id="citiesTable"><tr class="loading-row"><td colspan="6"><i class="fa fa-spinner fa-spin"></i> Loading…</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ══ LINES ══ -->
+        <div class="section" id="section-lines">
+            <div class="section-header">
+                <span class="section-title">Lines</span>
+                <button class="btn btn-primary" onclick="openLineModal()">
+                    <i class="fa fa-plus"></i> Add Line
+                </button>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>ID</th><th>Name</th><th>Slug</th><th>Color</th><th>City</th><th>Active</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody id="linesTable"><tr class="loading-row"><td colspan="7"><i class="fa fa-spinner fa-spin"></i> Loading…</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ══ COMMENTS ══ -->
+        <div class="section" id="section-comments">
+            <div class="section-header">
+                <span class="section-title">Comments</span>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>ID</th><th>Station</th><th>Name</th><th>Comment</th><th>Date</th><th>Approved</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody id="commentsTable"><tr class="loading-row"><td colspan="7"><i class="fa fa-spinner fa-spin"></i> Loading…</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ══ BLOG ══ -->
+        <div class="section" id="section-blog">
+            <div class="section-header">
+                <span class="section-title">Blog Posts</span>
+                <button class="btn btn-primary" onclick="openBlogModal()">
+                    <i class="fa fa-plus"></i> Add Post
+                </button>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>ID</th><th>Title</th><th>Author</th><th>Date</th><th>Active</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody id="blogTable"><tr class="loading-row"><td colspan="6"><i class="fa fa-spinner fa-spin"></i> Loading…</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+    </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- Modal -->
+<div id="modal" class="modal-overlay" style="display:none;" onclick="overlayClose(event)">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3 id="modalTitle">Title</h3>
+            <button class="modal-close" onclick="closeModal()">✕</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-footer">
+            <button class="btn" style="background:var(--light-gray);color:var(--dark-gray);" onclick="closeModal()">Cancel</button>
+            <button class="btn btn-primary" id="modalSaveBtn" onclick="modalSave()">
+                <i class="fa fa-floppy-disk"></i> Save
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ══════════════════════════════════════════════
+//  UTILITIES
+// ══════════════════════════════════════════════
+
+function generateSlug(text) {
+    return text.toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9\s-]/g, '')
+        .trim().replace(/\s+/g, '-');
+}
+
+function badge(val) {
+    return val
+        ? '<span class="badge badge-yes">Yes</span>'
+        : '<span class="badge badge-no">No</span>';
+}
+
+function toast(msg, type = 'success') {
+    const tc = document.getElementById('toastContainer');
+    const el = document.createElement('div');
+    el.className = `toast ${type}`;
+    el.innerHTML = `<i class="fa ${type === 'success' ? 'fa-circle-check' : 'fa-circle-xmark'}"></i> ${msg}`;
+    tc.appendChild(el);
+    setTimeout(() => el.remove(), 3500);
+}
+
+async function apiFetch(url, opts = {}) {
+    const defaults = { headers: { 'Content-Type': 'application/json' } };
+    const res = await fetch(url, { ...defaults, ...opts });
+    const data = await res.json();
+    return data;
+}
+
+// ══════════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════════
+
+const sectionTitles = {
+    dashboard: 'Dashboard', stations: 'Stations', countries: 'Countries',
+    cities: 'Cities', lines: 'Lines', comments: 'Comments', blog: 'Blog'
+};
+
+const sectionLoaders = {
+    stations: loadStations, countries: loadCountries,
+    cities: loadCities, lines: loadLines,
+    comments: loadComments, blog: loadBlog
+};
+
+function showSection(name) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById(`section-${name}`).classList.add('active');
+    document.getElementById(`nav-${name}`).classList.add('active');
+    document.getElementById('pageTitle').textContent = sectionTitles[name];
+    if (sectionLoaders[name]) sectionLoaders[name]();
+}
+
+// ══════════════════════════════════════════════
+//  MODAL
+// ══════════════════════════════════════════════
+
+let _modalSaveFn = null;
+
+function openModal(title, bodyHTML, saveFn) {
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalBody').innerHTML = bodyHTML;
+    document.getElementById('modal').style.display = 'flex';
+    _modalSaveFn = saveFn;
+}
+
+function closeModal() {
+    document.getElementById('modal').style.display = 'none';
+    _modalSaveFn = null;
+}
+
+function overlayClose(e) {
+    if (e.target.id === 'modal') closeModal();
+}
+
+function modalSave() {
+    if (_modalSaveFn) _modalSaveFn();
+}
+
+// ══════════════════════════════════════════════
+//  DASHBOARD
+// ══════════════════════════════════════════════
+
+async function loadDashboard() {
+    try {
+        const data = await apiFetch('/api/admin/stats');
+        const items = [
+            { icon: 'fa-train-subway', num: data.stations   ?? '—', label: 'Stations' },
+            { icon: 'fa-globe',        num: data.countries  ?? '—', label: 'Countries' },
+            { icon: 'fa-city',         num: data.cities     ?? '—', label: 'Cities' },
+            { icon: 'fa-route',        num: data.lines      ?? '—', label: 'Lines' },
+            { icon: 'fa-comments',     num: data.pending_comments ?? '—', label: 'Pending Comments' },
+            { icon: 'fa-pen-to-square',num: data.posts      ?? '—', label: 'Blog Posts' },
+        ];
+        document.getElementById('statsGrid').innerHTML = items.map(i => `
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa ${i.icon}"></i></div>
+                <div class="stat-num">${i.num}</div>
+                <div class="stat-label">${i.label}</div>
+            </div>
+        `).join('');
+    } catch (e) {
+        document.getElementById('statsGrid').innerHTML = '<p style="color:#c62828;padding:16px">Failed to load stats.</p>';
+    }
+}
+
+// ══════════════════════════════════════════════
+//  COUNTRIES
+// ══════════════════════════════════════════════
+
+let _countries = [];
+
+async function loadCountries() {
+    const tb = document.getElementById('countriesTable');
+    tb.innerHTML = '<tr class="loading-row"><td colspan="6"><i class="fa fa-spinner fa-spin"></i> Loading…</td></tr>';
+    try {
+        _countries = await apiFetch('/api/admin/countries');
+        if (!_countries.length) { tb.innerHTML = '<tr class="empty-row"><td colspan="6">No countries yet.</td></tr>'; return; }
+        tb.innerHTML = _countries.map(c => `
+            <tr>
+                <td>${c.id}</td>
+                <td>${c.name}</td>
+                <td><code>${c.slug}</code></td>
+                <td>${c.code || ''}</td>
+                <td>${badge(c.active)}</td>
+                <td>
+                    <button class="btn btn-sm btn-primary" onclick="openCountryModal(${c.id})"><i class="fa fa-pen"></i></button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteCountry(${c.id})"><i class="fa fa-trash"></i></button>
+                </td>
+            </tr>
+        `).join('');
+    } catch(e) { tb.innerHTML = '<tr class="empty-row"><td colspan="6">Error loading data.</td></tr>'; }
+}
+
+async function openCountryModal(id = null) {
+    let d = { name:'', slug:'', code:'', active: true };
+    if (id) { d = _countries.find(c => c.id === id) || d; }
+    const body = `
+        <div class="form-row">
+            <label>Name</label>
+            <input type="text" id="f_name" value="${d.name}" oninput="autoSlug('f_name','f_slug')">
+        </div>
+        <div class="form-row">
+            <label>Slug</label>
+            <input type="text" id="f_slug" value="${d.slug}">
+        </div>
+        <div class="form-row">
+            <label>ISO Code (2 letters)</label>
+            <input type="text" id="f_code" value="${d.code || ''}" maxlength="2" style="text-transform:uppercase">
+        </div>
+        <div class="form-row">
+            <label class="form-check">
+                <input type="checkbox" id="f_active" ${d.active ? 'checked' : ''}> Active
+            </label>
+        </div>
+    `;
+    openModal(id ? 'Edit Country' : 'Add Country', body, async () => {
+        const payload = {
+            name:   document.getElementById('f_name').value.trim(),
+            slug:   document.getElementById('f_slug').value.trim(),
+            code:   document.getElementById('f_code').value.trim().toUpperCase(),
+            active: document.getElementById('f_active').checked
+        };
+        try {
+            const url    = id ? `/api/admin/countries/${id}` : '/api/admin/countries';
+            const method = id ? 'PUT' : 'POST';
+            const res = await apiFetch(url, { method, body: JSON.stringify(payload) });
+            if (res.ok) { toast('Country saved!'); closeModal(); loadCountries(); }
+            else toast(res.error || 'Error saving.', 'error');
+        } catch(e) { toast('Request failed.', 'error'); }
+    });
+}
+
+async function deleteCountry(id) {
+    if (!confirm('Delete this country?')) return;
+    const res = await apiFetch(`/api/admin/countries/${id}`, { method: 'DELETE' });
+    if (res.ok) { toast('Country deleted.'); loadCountries(); }
+    else toast(res.error || 'Error.', 'error');
+}
+
+// ══════════════════════════════════════════════
+//  CITIES
+// ══════════════════════════════════════════════
+
+let _cities = [];
+
+async function loadCities() {
+    const tb = document.getElementById('citiesTable');
+    tb.innerHTML = '<tr class="loading-row"><td colspan="6"><i class="fa fa-spinner fa-spin"></i> Loading…</td></tr>';
+    try {
+        _cities = await apiFetch('/api/admin/cities');
+        if (!_cities.length) { tb.innerHTML = '<tr class="empty-row"><td colspan="6">No cities yet.</td></tr>'; return; }
+        tb.innerHTML = _cities.map(c => `
+            <tr>
+                <td>${c.id}</td>
+                <td>${c.name}</td>
+                <td><code>${c.slug}</code></td>
+                <td>${c.country_name || '—'}</td>
+                <td>${badge(c.active)}</td>
+                <td>
+                    <button class="btn btn-sm btn-primary" onclick="openCityModal(${c.id})"><i class="fa fa-pen"></i></button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteCity(${c.id})"><i class="fa fa-trash"></i></button>
+                </td>
+            </tr>
+        `).join('');
+    } catch(e) { tb.innerHTML = '<tr class="empty-row"><td colspan="6">Error loading data.</td></tr>'; }
+}
+
+async function openCityModal(id = null) {
+    if (!_countries.length) await loadCountries();
+    let d = { name:'', slug:'', country_id: '', active: true };
+    if (id) { d = _cities.find(c => c.id === id) || d; }
+    const countryOpts = _countries.map(c =>
+        `<option value="${c.id}" ${c.id === d.country_id ? 'selected' : ''}>${c.name}</option>`
+    ).join('');
+    const body = `
+        <div class="form-row">
+            <label>Name</label>
+            <input type="text" id="f_name" value="${d.name}" oninput="autoSlug('f_name','f_slug')">
+        </div>
+        <div class="form-row">
+            <label>Slug</label>
+            <input type="text" id="f_slug" value="${d.slug}">
+        </div>
+        <div class="form-row">
+            <label>Country</label>
+            <select id="f_country_id"><option value="">— Select —</option>${countryOpts}</select>
+        </div>
+        <div class="form-row">
+            <label class="form-check">
+                <input type="checkbox" id="f_active" ${d.active ? 'checked' : ''}> Active
+            </label>
+        </div>
+    `;
+    openModal(id ? 'Edit City' : 'Add City', body, async () => {
+        const payload = {
+            name:       document.getElementById('f_name').value.trim(),
+            slug:       document.getElementById('f_slug').value.trim(),
+            country_id: parseInt(document.getElementById('f_country_id').value) || null,
+            active:     document.getElementById('f_active').checked
+        };
+        try {
+            const url    = id ? `/api/admin/cities/${id}` : '/api/admin/cities';
+            const method = id ? 'PUT' : 'POST';
+            const res = await apiFetch(url, { method, body: JSON.stringify(payload) });
+            if (res.ok) { toast('City saved!'); closeModal(); loadCities(); }
+            else toast(res.error || 'Error saving.', 'error');
+        } catch(e) { toast('Request failed.', 'error'); }
+    });
+}
+
+async function deleteCity(id) {
+    if (!confirm('Delete this city?')) return;
+    const res = await apiFetch(`/api/admin/cities/${id}`, { method: 'DELETE' });
+    if (res.ok) { toast('City deleted.'); loadCities(); }
+    else toast(res.error || 'Error.', 'error');
+}
+
+// ══════════════════════════════════════════════
+//  LINES
+// ══════════════════════════════════════════════
+
+let _lines = [];
+
+async function loadLines() {
+    const tb = document.getElementById('linesTable');
+    tb.innerHTML = '<tr class="loading-row"><td colspan="7"><i class="fa fa-spinner fa-spin"></i> Loading…</td></tr>';
+    try {
+        _lines = await apiFetch('/api/admin/lines');
+        if (!_lines.length) { tb.innerHTML = '<tr class="empty-row"><td colspan="7">No lines yet.</td></tr>'; return; }
+        tb.innerHTML = _lines.map(l => `
+            <tr>
+                <td>${l.id}</td>
+                <td>${l.name}</td>
+                <td><code>${l.slug}</code></td>
+                <td><span class="color-dot" style="background:${l.color || '#ccc'}"></span>${l.color || '—'}</td>
+                <td>${l.city_name || '—'}</td>
+                <td>${badge(l.active)}</td>
+                <td>
+                    <button class="btn btn-sm btn-primary" onclick="openLineModal(${l.id})"><i class="fa fa-pen"></i></button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteLine(${l.id})"><i class="fa fa-trash"></i></button>
+                </td>
+            </tr>
+        `).join('');
+    } catch(e) { tb.innerHTML = '<tr class="empty-row"><td colspan="7">Error loading data.</td></tr>'; }
+}
+
+async function openLineModal(id = null) {
+    if (!_cities.length) await loadCities();
+    let d = { name:'', slug:'', color:'#1a73e8', city_id:'', active: true };
+    if (id) { d = _lines.find(l => l.id === id) || d; }
+    const cityOpts = _cities.map(c =>
+        `<option value="${c.id}" ${c.id === d.city_id ? 'selected' : ''}>${c.name}</option>`
+    ).join('');
+    const body = `
+        <div class="form-row">
+            <label>Name</label>
+            <input type="text" id="f_name" value="${d.name}" oninput="autoSlug('f_name','f_slug')">
+        </div>
+        <div class="form-row">
+            <label>Slug</label>
+            <input type="text" id="f_slug" value="${d.slug}">
+        </div>
+        <div class="form-grid-2">
+            <div class="form-row">
+                <label>Color</label>
+                <input type="color" id="f_color" value="${d.color || '#1a73e8'}">
+            </div>
+            <div class="form-row">
+                <label>City</label>
+                <select id="f_city_id"><option value="">— Select —</option>${cityOpts}</select>
+            </div>
+        </div>
+        <div class="form-row">
+            <label class="form-check">
+                <input type="checkbox" id="f_active" ${d.active ? 'checked' : ''}> Active
+            </label>
+        </div>
+    `;
+    openModal(id ? 'Edit Line' : 'Add Line', body, async () => {
+        const payload = {
+            name:    document.getElementById('f_name').value.trim(),
+            slug:    document.getElementById('f_slug').value.trim(),
+            color:   document.getElementById('f_color').value,
+            city_id: parseInt(document.getElementById('f_city_id').value) || null,
+            active:  document.getElementById('f_active').checked
+        };
+        try {
+            const url    = id ? `/api/admin/lines/${id}` : '/api/admin/lines';
+            const method = id ? 'PUT' : 'POST';
+            const res = await apiFetch(url, { method, body: JSON.stringify(payload) });
+            if (res.ok) { toast('Line saved!'); closeModal(); loadLines(); }
+            else toast(res.error || 'Error saving.', 'error');
+        } catch(e) { toast('Request failed.', 'error'); }
+    });
+}
+
+async function deleteLine(id) {
+    if (!confirm('Delete this line?')) return;
+    const res = await apiFetch(`/api/admin/lines/${id}`, { method: 'DELETE' });
+    if (res.ok) { toast('Line deleted.'); loadLines(); }
+    else toast(res.error || 'Error.', 'error');
+}
+
+// ══════════════════════════════════════════════
+//  STATIONS
+// ══════════════════════════════════════════════
+
+let _stations = [];
+
+async function loadStations() {
+    const tb = document.getElementById('stationsTable');
+    tb.innerHTML = '<tr class="loading-row"><td colspan="8"><i class="fa fa-spinner fa-spin"></i> Loading…</td></tr>';
+    try {
+        _stations = await apiFetch('/api/admin/stations');
+        if (!_stations.length) { tb.innerHTML = '<tr class="empty-row"><td colspan="8">No stations yet.</td></tr>'; return; }
+        tb.innerHTML = _stations.map(s => `
+            <tr>
+                <td>${s.id}</td>
+                <td>${s.name}</td>
+                <td>${s.line_name || '—'}</td>
+                <td>${s.city_name || '—'}</td>
+                <td>${s.country_name || '—'}</td>
+                <td>${badge(s.active)}</td>
+                <td>${badge(s.featured)}</td>
+                <td>
+                    <button class="btn btn-sm btn-primary" onclick="openStationModal(${s.id})"><i class="fa fa-pen"></i></button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteStation(${s.id})"><i class="fa fa-trash"></i></button>
+                </td>
+            </tr>
+        `).join('');
+    } catch(e) { tb.innerHTML = '<tr class="empty-row"><td colspan="8">Error loading data.</td></tr>'; }
+}
+
+async function openStationModal(id = null) {
+    // Ensure reference data is loaded
+    if (!_countries.length) await loadCountries();
+    if (!_cities.length)    await loadCities();
+    if (!_lines.length)     await loadLines();
+
+    let d = { name:'', slug:'', country_id:'', city_id:'', line_id:'', address:'', description:'',
+              lat:'', lng:'', photo_url:'', active:true, featured:false };
+    if (id) { d = _stations.find(s => s.id === id) || d; }
+
+    const countryOpts = _countries.map(c =>
+        `<option value="${c.id}" ${c.id === d.country_id ? 'selected' : ''}>${c.name}</option>`
+    ).join('');
+    const cityOpts = _cities.map(c =>
+        `<option value="${c.id}" ${c.id === d.city_id ? 'selected' : ''}>${c.name}</option>`
+    ).join('');
+    const lineOpts = _lines.map(l =>
+        `<option value="${l.id}" ${l.id === d.line_id ? 'selected' : ''}>${l.name}</option>`
+    ).join('');
+
+    const body = `
+        <div class="form-row">
+            <label>Name</label>
+            <input type="text" id="f_name" value="${d.name}" oninput="autoSlug('f_name','f_slug')">
+        </div>
+        <div class="form-row">
+            <label>Slug</label>
+            <input type="text" id="f_slug" value="${d.slug}">
+        </div>
+        <div class="form-row">
+            <label>Country</label>
+            <select id="f_country_id" onchange="filterCitiesByCountry()">
+                <option value="">— Select —</option>${countryOpts}
+            </select>
+        </div>
+        <div class="form-row">
+            <label>City</label>
+            <select id="f_city_id" onchange="filterLinesByCity()">
+                <option value="">— Select —</option>${cityOpts}
+            </select>
+        </div>
+        <div class="form-row">
+            <label>Line</label>
+            <select id="f_line_id"><option value="">— Select —</option>${lineOpts}</select>
+        </div>
+        <div class="form-row">
+            <label>Address</label>
+            <input type="text" id="f_address" value="${d.address || ''}">
+        </div>
+        <div class="form-row">
+            <label>Description</label>
+            <textarea id="f_description">${d.description || ''}</textarea>
+        </div>
+        <div class="form-grid-2">
+            <div class="form-row">
+                <label>Latitude</label>
+                <input type="number" step="any" id="f_lat" value="${d.lat || ''}">
+            </div>
+            <div class="form-row">
+                <label>Longitude</label>
+                <input type="number" step="any" id="f_lng" value="${d.lng || ''}">
+            </div>
+        </div>
+        <div class="form-row">
+            <label>Photo URL</label>
+            <input type="text" id="f_photo_url" value="${d.photo_url || ''}">
+        </div>
+        <div class="form-row" style="display:flex;gap:20px;">
+            <label class="form-check">
+                <input type="checkbox" id="f_active" ${d.active ? 'checked' : ''}> Active
+            </label>
+            <label class="form-check">
+                <input type="checkbox" id="f_featured" ${d.featured ? 'checked' : ''}> Featured
+            </label>
+        </div>
+    `;
+
+    openModal(id ? 'Edit Station' : 'Add Station', body, async () => {
+        const payload = {
+            name:        document.getElementById('f_name').value.trim(),
+            slug:        document.getElementById('f_slug').value.trim(),
+            country_id:  parseInt(document.getElementById('f_country_id').value) || null,
+            city_id:     parseInt(document.getElementById('f_city_id').value) || null,
+            line_id:     parseInt(document.getElementById('f_line_id').value) || null,
+            address:     document.getElementById('f_address').value.trim(),
+            description: document.getElementById('f_description').value.trim(),
+            lat:         parseFloat(document.getElementById('f_lat').value) || null,
+            lng:         parseFloat(document.getElementById('f_lng').value) || null,
+            photo_url:   document.getElementById('f_photo_url').value.trim(),
+            active:      document.getElementById('f_active').checked,
+            featured:    document.getElementById('f_featured').checked,
+        };
+        try {
+            const url    = id ? `/api/admin/stations/${id}` : '/api/admin/stations';
+            const method = id ? 'PUT' : 'POST';
+            const res = await apiFetch(url, { method, body: JSON.stringify(payload) });
+            if (res.ok) { toast('Station saved!'); closeModal(); loadStations(); }
+            else toast(res.error || 'Error saving.', 'error');
+        } catch(e) { toast('Request failed.', 'error'); }
+    });
+}
+
+function filterCitiesByCountry() {
+    const cid = parseInt(document.getElementById('f_country_id').value);
+    const sel = document.getElementById('f_city_id');
+    sel.innerHTML = '<option value="">— Select —</option>';
+    _cities.filter(c => !cid || c.country_id === cid).forEach(c => {
+        sel.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+    });
+    filterLinesByCity();
+}
+
+function filterLinesByCity() {
+    const cid = parseInt(document.getElementById('f_city_id').value);
+    const sel = document.getElementById('f_line_id');
+    if (!sel) return;
+    sel.innerHTML = '<option value="">— Select —</option>';
+    _lines.filter(l => !cid || l.city_id === cid).forEach(l => {
+        sel.innerHTML += `<option value="${l.id}">${l.name}</option>`;
+    });
+}
+
+async function deleteStation(id) {
+    if (!confirm('Delete this station?')) return;
+    const res = await apiFetch(`/api/admin/stations/${id}`, { method: 'DELETE' });
+    if (res.ok) { toast('Station deleted.'); loadStations(); }
+    else toast(res.error || 'Error.', 'error');
+}
+
+// ══════════════════════════════════════════════
+//  COMMENTS
+// ══════════════════════════════════════════════
+
+async function loadComments() {
+    const tb = document.getElementById('commentsTable');
+    tb.innerHTML = '<tr class="loading-row"><td colspan="7"><i class="fa fa-spinner fa-spin"></i> Loading…</td></tr>';
+    try {
+        const comments = await apiFetch('/api/admin/comments');
+        if (!comments.length) { tb.innerHTML = '<tr class="empty-row"><td colspan="7">No comments yet.</td></tr>'; return; }
+        tb.innerHTML = comments.map(c => `
+            <tr class="${c.approved ? '' : 'pending-row'}">
+                <td>${c.id}</td>
+                <td>${c.station_name || c.station_id || '—'}</td>
+                <td>${c.name || '—'}</td>
+                <td class="truncate" title="${(c.comment || '').replace(/"/g,'&quot;')}">${c.comment || ''}</td>
+                <td>${c.created_at ? c.created_at.slice(0,10) : '—'}</td>
+                <td>${c.approved
+                    ? '<span class="badge badge-yes">Approved</span>'
+                    : '<span class="badge badge-pend">Pending</span>'}</td>
+                <td>
+                    ${!c.approved ? `<button class="btn btn-sm btn-success" onclick="approveComment(${c.id})"><i class="fa fa-check"></i> Approve</button> ` : ''}
+                    <button class="btn btn-sm btn-danger" onclick="deleteComment(${c.id})"><i class="fa fa-trash"></i></button>
+                </td>
+            </tr>
+        `).join('');
+    } catch(e) { tb.innerHTML = '<tr class="empty-row"><td colspan="7">Error loading data.</td></tr>'; }
+}
+
+async function approveComment(id) {
+    const res = await apiFetch(`/api/admin/comments/${id}/approve`, { method: 'POST' });
+    if (res.ok) { toast('Comment approved!'); loadComments(); }
+    else toast(res.error || 'Error.', 'error');
+}
+
+async function deleteComment(id) {
+    if (!confirm('Delete this comment?')) return;
+    const res = await apiFetch(`/api/admin/comments/${id}`, { method: 'DELETE' });
+    if (res.ok) { toast('Comment deleted.'); loadComments(); }
+    else toast(res.error || 'Error.', 'error');
+}
+
+// ══════════════════════════════════════════════
+//  BLOG
+// ══════════════════════════════════════════════
+
+let _posts = [];
+
+async function loadBlog() {
+    const tb = document.getElementById('blogTable');
+    tb.innerHTML = '<tr class="loading-row"><td colspan="6"><i class="fa fa-spinner fa-spin"></i> Loading…</td></tr>';
+    try {
+        _posts = await apiFetch('/api/admin/blog');
+        if (!_posts.length) { tb.innerHTML = '<tr class="empty-row"><td colspan="6">No posts yet.</td></tr>'; return; }
+        tb.innerHTML = _posts.map(p => `
+            <tr>
+                <td>${p.id}</td>
+                <td>${p.title}</td>
+                <td>${p.author || '—'}</td>
+                <td>${p.created_at ? p.created_at.slice(0,10) : '—'}</td>
+                <td>${badge(p.active)}</td>
+                <td>
+                    <button class="btn btn-sm btn-primary" onclick="openBlogModal(${p.id})"><i class="fa fa-pen"></i></button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteBlog(${p.id})"><i class="fa fa-trash"></i></button>
+                </td>
+            </tr>
+        `).join('');
+    } catch(e) { tb.innerHTML = '<tr class="empty-row"><td colspan="6">Error loading data.</td></tr>'; }
+}
+
+async function openBlogModal(id = null) {
+    let d = { title:'', slug:'', subtitle:'', author:'', content:'', image_url:'', active:true };
+    if (id) { d = _posts.find(p => p.id === id) || d; }
+    const body = `
+        <div class="form-row">
+            <label>Title</label>
+            <input type="text" id="f_title" value="${escAttr(d.title)}" oninput="autoSlug('f_title','f_slug')">
+        </div>
+        <div class="form-row">
+            <label>Slug</label>
+            <input type="text" id="f_slug" value="${d.slug}">
+        </div>
+        <div class="form-row">
+            <label>Subtitle</label>
+            <input type="text" id="f_subtitle" value="${escAttr(d.subtitle || '')}">
+        </div>
+        <div class="form-row">
+            <label>Author</label>
+            <input type="text" id="f_author" value="${escAttr(d.author || '')}">
+        </div>
+        <div class="form-row">
+            <label>Content</label>
+            <textarea id="f_content" style="min-height:160px">${d.content || ''}</textarea>
+        </div>
+        <div class="form-row">
+            <label>Image URL</label>
+            <input type="text" id="f_image_url" value="${escAttr(d.image_url || '')}">
+        </div>
+        <div class="form-row">
+            <label class="form-check">
+                <input type="checkbox" id="f_active" ${d.active ? 'checked' : ''}> Active
+            </label>
+        </div>
+    `;
+    openModal(id ? 'Edit Post' : 'Add Post', body, async () => {
+        const payload = {
+            title:     document.getElementById('f_title').value.trim(),
+            slug:      document.getElementById('f_slug').value.trim(),
+            subtitle:  document.getElementById('f_subtitle').value.trim(),
+            author:    document.getElementById('f_author').value.trim(),
+            content:   document.getElementById('f_content').value.trim(),
+            image_url: document.getElementById('f_image_url').value.trim(),
+            active:    document.getElementById('f_active').checked
+        };
+        try {
+            const url    = id ? `/api/admin/blog/${id}` : '/api/admin/blog';
+            const method = id ? 'PUT' : 'POST';
+            const res = await apiFetch(url, { method, body: JSON.stringify(payload) });
+            if (res.ok) { toast('Post saved!'); closeModal(); loadBlog(); }
+            else toast(res.error || 'Error saving.', 'error');
+        } catch(e) { toast('Request failed.', 'error'); }
+    });
+}
+
+async function deleteBlog(id) {
+    if (!confirm('Delete this post?')) return;
+    const res = await apiFetch(`/api/admin/blog/${id}`, { method: 'DELETE' });
+    if (res.ok) { toast('Post deleted.'); loadBlog(); }
+    else toast(res.error || 'Error.', 'error');
+}
+
+// ══════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════
+
+function autoSlug(srcId, dstId) {
+    const src = document.getElementById(srcId);
+    const dst = document.getElementById(dstId);
+    if (src && dst) dst.value = generateSlug(src.value);
+}
+
+function escAttr(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+async function logout() {
+    await fetch('/admin/logout');
+    window.location.href = '/admin/login';
+}
+
+// ── Init ──
+loadDashboard();
+</script>
+</body>
+</html>
