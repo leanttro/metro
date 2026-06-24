@@ -3,622 +3,1046 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>nearestmetro.com — Find the Nearest Metro Station Worldwide</title>
-    <meta name="description" content="Find the nearest metro station to your location worldwide. Search by country, city, or metro line. Free, fast, and always up to date.">
-    <meta name="robots" content="index, follow">
-    <meta name="theme-color" content="#1a73e8">
-    <link rel="canonical" href="https://www.nearestmetro.com/">
-
-    <meta property="og:type"        content="website">
-    <meta property="og:site_name"   content="nearestmetro.com">
-    <meta property="og:url"         content="https://www.nearestmetro.com/">
-    <meta property="og:title"       content="nearestmetro.com — Find the Nearest Metro Station">
-    <meta property="og:description" content="Find the nearest metro station to your location worldwide. Search by country, city, or metro line.">
-
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "url": "https://www.nearestmetro.com/",
-      "name": "nearestmetro.com",
-      "description": "Global metro station finder",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://www.nearestmetro.com/?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-    </script>
-
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <title>Admin Panel — nearestmetro.com</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary:       #1a73e8;
-            --dark:          #0d47a1;
-            --light:         #e3f2fd;
-            --light-gray:    #f8f9fa;
-            --medium-gray:   #e0e0e0;
-            --dark-gray:     #343a40;
-            --text-color:    #495057;
-            --white:         #ffffff;
-            --shadow-light:  rgba(0,0,0,0.08);
-            --shadow-medium: rgba(0,0,0,0.15);
-            --gold:          #F39C12;
-            --metro-red:     #e53935;
-            --metro-blue:    #1e88e5;
-            --metro-green:   #43a047;
-            --metro-yellow:  #f9a825;
+            --primary:     #1a73e8;
+            --dark:        #0d47a1;
+            --light:       #e3f2fd;
+            --light-gray:  #f8f9fa;
+            --medium-gray: #e0e0e0;
+            --dark-gray:   #343a40;
+            --text-color:  #495057;
+            --white:       #ffffff;
+            --green:       #2e7d32;
+            --green-light: #e8f5e9;
+            --red:         #c62828;
+            --red-light:   #fdecea;
+            --orange:      #e65100;
+            --orange-light:#fff3e0;
+            --sidebar-w:   240px;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Roboto', sans-serif; background-color: var(--light-gray); color: var(--text-color); line-height: 1.6; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 
-        /* ── Header ── */
-        body > header {
-            background: linear-gradient(135deg, var(--primary), var(--dark));
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--light-gray);
+            color: var(--text-color);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ── Sidebar ─────────────────────────────── */
+        .sidebar {
+            width: var(--sidebar-w);
+            background: linear-gradient(180deg, var(--dark) 0%, #1565c0 100%);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0;
+            height: 100vh;
+            z-index: 100;
+            box-shadow: 2px 0 12px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-logo {
+            padding: 24px 20px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+        .sidebar-logo img {
+            height: 44px;
+            filter: brightness(0) invert(1);
+        }
+        .sidebar-logo span {
+            display: block;
+            color: rgba(255,255,255,0.55);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 8px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 16px 0;
+            overflow-y: auto;
+        }
+
+        .nav-section-label {
+            color: rgba(255,255,255,0.35);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 16px 20px 6px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 20px;
+            color: rgba(255,255,255,0.75);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            transition: background 0.15s, color 0.15s;
+            border-left: 3px solid transparent;
+        }
+        .nav-item i { width: 18px; text-align: center; font-size: 15px; }
+        .nav-item:hover { background: rgba(255,255,255,0.08); color: var(--white); }
+        .nav-item.active { background: rgba(255,255,255,0.13); color: var(--white); border-left-color: var(--white); }
+        .nav-item .badge {
+            margin-left: auto;
+            background: #ef5350;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 10px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
             padding: 16px 20px;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            gap: 12px; position: relative;
+            border-top: 1px solid rgba(255,255,255,0.1);
         }
-        .logo a { text-decoration: none; color: var(--white); font-size: 1.6em; font-weight: 700; letter-spacing: -0.5px; }
-        .logo a span { color: #90caf9; }
-        body > header nav.desktop-nav ul { list-style: none; display: flex; gap: 35px; }
-        body > header nav.desktop-nav ul li a {
-            text-decoration: none; color: var(--white); font-weight: 500;
-            transition: color 0.3s; padding-bottom: 4px;
-            border-bottom: 2px solid transparent;
+        .sidebar-footer a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255,255,255,0.55);
+            font-size: 13px;
+            text-decoration: none;
+            transition: color 0.15s;
         }
-        body > header nav.desktop-nav ul li a:hover { border-color: var(--white); }
-        .hamburger-menu { display: none; font-size: 1.8em; color: var(--white); cursor: pointer; padding: 10px 20px; z-index: 1001; position: absolute; right: 0; top: 50%; transform: translateY(-50%); }
-        .mobile-nav-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.92); z-index: 1000;
-            justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s;
+        .sidebar-footer a:hover { color: var(--white); }
+
+        /* ── Main ─────────────────────────────────── */
+        .main {
+            margin-left: var(--sidebar-w);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
-        .mobile-nav-overlay.active { display: flex; opacity: 1; }
-        .mobile-nav-overlay nav ul { list-style: none; flex-direction: column; text-align: center; padding: 0; }
-        .mobile-nav-overlay nav ul li { margin: 20px 0; }
-        .mobile-nav-overlay nav ul li a { color: var(--white); font-size: 1.8em; font-weight: 700; text-decoration: none; }
 
-        /* ── Hero ── */
-        .hero-section {
-            color: var(--white); text-align: center;
-            min-height: 520px; display: flex; align-items: center; justify-content: center;
-            background: linear-gradient(rgba(13,71,161,0.85), rgba(13,71,161,0.75)),
-                        url('https://images.unsplash.com/photo-1555992457-b8fefdd09069?w=1400') center/cover no-repeat;
-            position: relative;
+        .topbar {
+            background: var(--white);
+            padding: 0 28px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--medium-gray);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
         }
-        .hero-content { max-width: 700px; padding: 60px 20px; }
-        .hero-section h1 { font-size: 2.8em; font-weight: 700; text-shadow: 2px 2px 6px rgba(0,0,0,0.4); margin-bottom: 16px; line-height: 1.25; }
-        .hero-section p  { font-size: 1.25em; margin-bottom: 36px; opacity: 0.92; }
-
-        .btn-hero {
-            display: inline-flex; align-items: center; gap: 10px;
-            background: var(--white); color: var(--primary);
-            padding: 15px 32px; border-radius: 50px; font-size: 1.1em; font-weight: 700;
-            text-decoration: none; border: none; cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        .topbar h1 {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--dark-gray);
         }
-        .btn-hero:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
-        .btn-hero.secondary { background: transparent; color: var(--white); border: 2px solid var(--white); margin-left: 12px; }
-        .btn-hero.secondary:hover { background: rgba(255,255,255,0.1); }
-
-        /* ── Nearest Result ── */
-        #nearest-results { display: none; margin-top: 32px; background: rgba(255,255,255,0.12); border-radius: 16px; padding: 20px; backdrop-filter: blur(8px); text-align: left; }
-        #nearest-results h3 { color: var(--white); font-size: 1.1em; margin-bottom: 14px; text-align: center; }
-        .nearest-card {
-            background: rgba(255,255,255,0.95); border-radius: 10px; padding: 14px 18px;
-            margin-bottom: 10px; display: flex; align-items: center; gap: 14px;
-            text-decoration: none; color: var(--dark-gray);
-            transition: transform 0.2s; cursor: pointer;
+        .topbar-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-color);
+            font-size: 14px;
         }
-        .nearest-card:hover { transform: translateX(4px); }
-        .nearest-card:last-child { margin-bottom: 0; }
-        .nearest-card .line-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
-        .nearest-card .info { flex: 1; }
-        .nearest-card .info strong { display: block; font-weight: 600; color: var(--dark-gray); }
-        .nearest-card .info small { color: #666; font-size: 0.85em; }
-        .nearest-card .distance { font-weight: 700; color: var(--primary); font-size: 0.95em; white-space: nowrap; }
-
-        /* ── Filters ── */
-        .filters-section { padding: 50px 0; background: var(--white); }
-        .section-title { text-align: center; font-size: 2em; font-weight: 700; color: var(--dark-gray); margin-bottom: 10px; }
-        .section-subtitle { text-align: center; color: #6c757d; margin-bottom: 40px; font-size: 1.05em; }
-        .filter-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 800px; margin: 0 auto; }
-        .filter-select {
-            padding: 14px 18px; border: 2px solid var(--medium-gray); border-radius: 10px;
-            font-size: 1em; background: var(--white); color: var(--dark-gray);
-            cursor: pointer; transition: border-color 0.2s; width: 100%; appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23666' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: right 14px center;
+        .topbar-user .avatar {
+            width: 32px; height: 32px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 600; font-size: 13px;
         }
-        .filter-select:focus { outline: none; border-color: var(--primary); }
-        .btn-filter { padding: 14px 28px; background: var(--primary); color: var(--white); border: none; border-radius: 10px; font-size: 1em; font-weight: 600; cursor: pointer; transition: background 0.2s; }
-        .btn-filter:hover { background: var(--dark); }
 
-        /* ── Countries Grid ── */
-        .section { padding: 60px 0; }
-        .countries-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
-        .country-card {
-            background: var(--white); border-radius: 14px; padding: 28px 20px;
-            text-align: center; text-decoration: none; color: var(--dark-gray);
-            box-shadow: 0 4px 12px var(--shadow-light);
-            transition: transform 0.3s, box-shadow 0.3s;
-            display: flex; flex-direction: column; align-items: center; gap: 12px;
+        .content {
+            padding: 28px;
+            flex: 1;
         }
-        .country-card:hover { transform: translateY(-6px); box-shadow: 0 8px 24px var(--shadow-medium); }
-        .country-flag { font-size: 3em; }
-        .country-card h3 { font-size: 1.1em; font-weight: 600; }
-        .country-card small { color: #888; font-size: 0.85em; }
 
-        /* ── Featured Stations ── */
-        .stations-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
-        .station-card {
-            background: var(--white); border-radius: 14px; overflow: hidden;
-            box-shadow: 0 4px 12px var(--shadow-light);
-            transition: transform 0.3s, box-shadow 0.3s;
-            text-decoration: none; color: inherit;
+        /* ── Panels ───────────────────────────────── */
+        .panel { display: none; }
+        .panel.active { display: block; }
+
+        /* ── Stats cards ──────────────────────────── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
         }
-        .station-card:hover { transform: translateY(-6px); box-shadow: 0 8px 24px var(--shadow-medium); }
-        .station-card-img { width: 100%; height: 170px; object-fit: cover; background: var(--light); display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 3em; }
-        .station-card-img img { width: 100%; height: 100%; object-fit: cover; }
-        .station-card-body { padding: 18px; }
-        .station-card-body h3 { font-size: 1.1em; font-weight: 600; margin-bottom: 6px; }
-        .station-card-body .line-badge {
-            display: inline-block; padding: 3px 10px; border-radius: 20px;
-            font-size: 0.8em; font-weight: 600; color: var(--white); margin-bottom: 8px;
+        .stat-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
-        .station-card-body .location { color: #777; font-size: 0.9em; }
+        .stat-card .label { font-size: 12px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-card .value { font-size: 28px; font-weight: 700; color: var(--dark-gray); }
+        .stat-card .icon { font-size: 20px; color: var(--primary); margin-bottom: 4px; }
 
-        /* ── How it works ── */
-        .how-section { background: var(--light); padding: 60px 0; }
-        .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 30px; }
-        .step-card { text-align: center; }
-        .step-icon { width: 72px; height: 72px; border-radius: 50%; background: var(--primary); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 18px; }
-        .step-icon i { color: var(--white); font-size: 1.8em; }
-        .step-card h3 { font-size: 1.1em; font-weight: 600; margin-bottom: 8px; }
-        .step-card p { color: #666; font-size: 0.95em; }
+        /* ── Section header ───────────────────────── */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .section-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
 
-        /* ── Footer ── */
-        footer { background: var(--dark-gray); color: #ccc; padding: 40px 0 20px; }
-        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; margin-bottom: 30px; }
-        footer h4 { color: var(--white); font-size: 1em; margin-bottom: 14px; font-weight: 600; }
-        footer ul { list-style: none; }
-        footer ul li { margin-bottom: 8px; }
-        footer ul li a { color: #aaa; text-decoration: none; font-size: 0.9em; transition: color 0.2s; }
-        footer ul li a:hover { color: var(--white); }
-        .footer-bottom { border-top: 1px solid #555; padding-top: 20px; text-align: center; font-size: 0.85em; color: #888; }
+        /* ── Table ────────────────────────────────── */
+        .table-wrap {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+            overflow: hidden;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        thead th {
+            background: var(--light-gray);
+            color: #666;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--medium-gray);
+            white-space: nowrap;
+        }
+        tbody td {
+            padding: 13px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
+        }
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:hover { background: #fafafa; }
 
-        /* ── Translate widget ── */
-        #google_translate_element { position: fixed; bottom: 16px; right: 16px; z-index: 999; }
+        /* ── Badges ───────────────────────────────── */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .badge-pending  { background: var(--orange-light); color: var(--orange); }
+        .badge-done     { background: var(--green-light);  color: var(--green); }
+        .badge-rejected { background: var(--red-light);    color: var(--red); }
+        .badge-approved { background: var(--green-light);  color: var(--green); }
+        .badge-waiting  { background: #fff8e1; color: #f57f17; }
 
-        /* ── Responsive ── */
+        /* ── Buttons ──────────────────────────────── */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            border-radius: 7px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.15s, transform 0.1s;
+        }
+        .btn:active { transform: scale(0.97); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-primary   { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--dark); }
+        .btn-success   { background: var(--green);   color: white; }
+        .btn-success:hover { background: #1b5e20; }
+        .btn-danger    { background: var(--red);     color: white; }
+        .btn-danger:hover  { background: #b71c1c; }
+        .btn-warning   { background: var(--orange);  color: white; }
+        .btn-warning:hover { background: #bf360c; }
+        .btn-ghost {
+            background: none;
+            color: var(--text-color);
+            border: 1.5px solid var(--medium-gray);
+        }
+        .btn-ghost:hover { border-color: #aaa; color: var(--dark-gray); }
+        .btn-sm { padding: 5px 10px; font-size: 12px; }
+        .btn-group { display: flex; gap: 6px; flex-wrap: wrap; }
+
+        /* ── Filter tabs ──────────────────────────── */
+        .filter-tabs {
+            display: flex;
+            gap: 4px;
+            background: var(--light-gray);
+            padding: 4px;
+            border-radius: 8px;
+        }
+        .filter-tab {
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: #777;
+            font-family: 'Roboto', sans-serif;
+            transition: all 0.15s;
+        }
+        .filter-tab.active { background: var(--white); color: var(--dark-gray); box-shadow: 0 1px 4px rgba(0,0,0,0.1); font-weight: 600; }
+        .filter-tab .count { font-size: 11px; margin-left: 4px; opacity: 0.7; }
+
+        /* ── Empty state ──────────────────────────── */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #bbb;
+        }
+        .empty-state i { font-size: 36px; margin-bottom: 12px; display: block; }
+        .empty-state p { font-size: 15px; }
+
+        /* ── Loading ──────────────────────────────── */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #bbb;
+        }
+        .loading i { animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Toast ────────────────────────────────── */
+        #toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--dark-gray);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+            display: none;
+            align-items: center;
+            gap: 10px;
+            z-index: 9999;
+            max-width: 320px;
+        }
+        #toast.show { display: flex; }
+        #toast.success { background: var(--green); }
+        #toast.error   { background: var(--red); }
+
+        /* ── Suggestions specific ─────────────────── */
+        .suggestion-notes {
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #888;
+            font-size: 13px;
+        }
+        .suggestion-meta {
+            font-size: 12px;
+            color: #aaa;
+        }
+        .suggestion-location {
+            font-weight: 500;
+            color: var(--dark-gray);
+        }
+
+        /* ── Comments specific ───────────────────── */
+        .comment-text {
+            max-width: 260px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #555;
+        }
+
+        /* ── Responsive ───────────────────────────── */
         @media (max-width: 768px) {
-            .hero-section h1 { font-size: 1.9em; }
-            .filter-grid { grid-template-columns: 1fr; }
-            body > header nav.desktop-nav { display: none; }
-            .hamburger-menu { display: block; }
+            .sidebar { width: 60px; }
+            .sidebar-logo img { height: 30px; }
+            .sidebar-logo span,
+            .nav-item span,
+            .nav-section-label,
+            .sidebar-footer span { display: none; }
+            .nav-item { justify-content: center; padding: 14px; border-left: none; border-bottom: 3px solid transparent; }
+            .nav-item.active { border-bottom-color: white; border-left: none; }
+            .nav-item .badge { display: none; }
+            .main { margin-left: 60px; }
+            .content { padding: 16px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            table { font-size: 13px; }
+            thead th, tbody td { padding: 10px 12px; }
         }
     </style>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KRX8VNQDC4"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag("js", new Date());
-      gtag("config", "G-KRX8VNQDC4");
-    </script>
-    <link rel="icon" type="image/png" href="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1782262509/Nearest_Metro_Modern_Logo_Concept_1_wwskph.png">
-    <link rel="apple-touch-icon" href="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1782262509/Nearest_Metro_Modern_Logo_Concept_1_wwskph.png">
 </head>
 <body>
 
-<!-- ── Header ── -->
-<header>
-    <div class="logo"><a href="/"><img src="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1782262509/Nearest_Metro_Modern_Logo_Concept_1_wwskph.png" alt="nearestmetro.com" style="height:120px;display:block;filter:brightness(0) invert(1);"></a></div>
-    <nav class="desktop-nav">
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/blog">Blog</a></li>
-        </ul>
+<!-- ── Sidebar ── -->
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <img src="https://res.cloudinary.com/dhu1cqvrb/image/upload/v1782262509/Nearest_Metro_Modern_Logo_Concept_1_wwskph.png" alt="nearestmetro.com">
+        <span>Admin Panel</span>
+    </div>
+
+    <nav class="sidebar-nav">
+        <div class="nav-section-label">Overview</div>
+        <button class="nav-item active" onclick="showPanel('dashboard')">
+            <i class="fas fa-chart-line"></i> <span>Dashboard</span>
+        </button>
+
+        <div class="nav-section-label">Content</div>
+        <button class="nav-item" onclick="showPanel('suggestions')">
+            <i class="fas fa-lightbulb"></i> <span>Suggestions</span>
+            <span class="badge" id="suggestions-badge" style="display:none;"></span>
+        </button>
+        <button class="nav-item" onclick="showPanel('comments')">
+            <i class="fas fa-comments"></i> <span>Comments</span>
+            <span class="badge" id="comments-badge" style="display:none;"></span>
+        </button>
+        <button class="nav-item" onclick="showPanel('stations')">
+            <i class="fas fa-subway"></i> <span>Stations</span>
+        </button>
+        <button class="nav-item" onclick="showPanel('blog')">
+            <i class="fas fa-newspaper"></i> <span>Blog</span>
+        </button>
+
+        <div class="nav-section-label">Structure</div>
+        <button class="nav-item" onclick="showPanel('countries')">
+            <i class="fas fa-globe"></i> <span>Countries</span>
+        </button>
+        <button class="nav-item" onclick="showPanel('cities')">
+            <i class="fas fa-city"></i> <span>Cities</span>
+        </button>
+        <button class="nav-item" onclick="showPanel('lines')">
+            <i class="fas fa-route"></i> <span>Lines</span>
+        </button>
     </nav>
-    <span class="hamburger-menu" onclick="toggleMenu()"><i class="fas fa-bars"></i></span>
-</header>
 
-<div class="mobile-nav-overlay" id="mobileNav">
-    <span style="position:absolute;top:20px;right:25px;color:#fff;font-size:2em;cursor:pointer;" onclick="toggleMenu()"><i class="fas fa-times"></i></span>
-    <nav><ul>
-        <li><a href="/" onclick="toggleMenu()">Home</a></li>
-        <li><a href="/blog" onclick="toggleMenu()">Blog</a></li>
-    </ul></nav>
-</div>
-
-<!-- ── Hero ── -->
-<section class="hero-section">
-    <div class="hero-content">
-        <h1>Find the Nearest Metro Station</h1>
-        <p>Instant metro finder for cities worldwide. Use your location or search by country and city.</p>
-        <button class="btn-hero" id="geoBtn" onclick="findNearest()">
-            <i class="fas fa-location-arrow"></i> Use My Location
-        </button>
-        <a href="#browse" class="btn-hero secondary">
-            <i class="fas fa-search"></i> Browse by City
+    <div class="sidebar-footer">
+        <a href="/admin/logout">
+            <i class="fas fa-right-from-bracket"></i> <span>Logout</span>
         </a>
+    </div>
+</aside>
 
-        <div id="nearest-results">
-            <h3><i class="fas fa-subway"></i> Nearest Stations</h3>
-            <div id="nearest-list"></div>
+<!-- ── Main ── -->
+<div class="main">
+    <div class="topbar">
+        <h1 id="topbar-title">Dashboard</h1>
+        <div class="topbar-user">
+            <div class="avatar" id="userInitial">A</div>
+            <span id="userName">Admin</span>
         </div>
     </div>
-</section>
 
-<!-- ── Browse Filter ── -->
-<section class="filters-section" id="browse">
-    <div class="container">
-        <h2 class="section-title">Browse by Location</h2>
-        <p class="section-subtitle">Select a country and city to see all metro stations</p>
-        <div class="filter-grid">
-            <select class="filter-select" id="countryFilter" onchange="loadCities()">
-                <option value="">— Select country —</option>
-            </select>
-            <select class="filter-select" id="cityFilter" disabled>
-                <option value="">— Select city —</option>
-            </select>
-            <button class="btn-filter" onclick="goToCity()"><i class="fas fa-search"></i> Browse Stations</button>
-        </div>
-    </div>
-</section>
+    <div class="content">
 
-<!-- ── Countries Grid ── -->
-<section class="section">
-    <div class="container">
-        <h2 class="section-title">Metro Systems Worldwide</h2>
-        <p class="section-subtitle">Click a country to explore its metro stations</p>
-        <div class="countries-grid" id="countriesGrid">
-            <div style="text-align:center;color:#999;grid-column:1/-1;padding:40px;">
-                <i class="fas fa-globe fa-2x" style="margin-bottom:12px;display:block;color:#ddd;"></i>
-                Loading countries…
+        <!-- ══ DASHBOARD ══ -->
+        <div class="panel active" id="panel-dashboard">
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <div class="icon"><i class="fas fa-spinner fa-spin"></i></div>
+                    <div class="value">—</div>
+                    <div class="label">Loading…</div>
+                </div>
+            </div>
+            <div style="background:var(--white);border-radius:12px;padding:24px;box-shadow:0 1px 6px rgba(0,0,0,0.07);">
+                <h2 style="font-size:16px;font-weight:600;color:var(--dark-gray);margin-bottom:16px;">Quick Access</h2>
+                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;" id="quickLinks">
+                    <button class="btn btn-primary" onclick="showPanel('suggestions')"><i class="fas fa-lightbulb"></i> View Suggestions</button>
+                    <button class="btn btn-ghost" onclick="showPanel('comments')"><i class="fas fa-comments"></i> Moderate Comments</button>
+                    <button class="btn btn-ghost" onclick="showPanel('stations')"><i class="fas fa-subway"></i> Manage Stations</button>
+                    <button class="btn btn-ghost" onclick="showPanel('blog')"><i class="fas fa-newspaper"></i> Manage Blog</button>
+                </div>
             </div>
         </div>
-    </div>
-</section>
 
-<!-- ── Featured Stations ── -->
-<section class="section" style="background:var(--white); padding-top:0;">
-    <div class="container" style="padding-top:60px;">
-        <h2 class="section-title">Featured Stations</h2>
-        <p class="section-subtitle">Iconic metro stations from around the world</p>
-        <div class="stations-grid" id="featuredGrid">
-            <div style="text-align:center;color:#999;grid-column:1/-1;padding:40px;">
-                <i class="fas fa-subway fa-2x" style="margin-bottom:12px;display:block;color:#ddd;"></i>
-                Loading stations…
+        <!-- ══ SUGGESTIONS ══ -->
+        <div class="panel" id="panel-suggestions">
+            <div class="section-header">
+                <h2><i class="fas fa-lightbulb" style="color:var(--orange);margin-right:8px;"></i> Station Suggestions</h2>
+                <div class="filter-tabs">
+                    <button class="filter-tab active" onclick="loadSuggestions('pending')" id="tab-pending">Pending <span class="count" id="count-pending"></span></button>
+                    <button class="filter-tab" onclick="loadSuggestions('done')" id="tab-done">Done <span class="count" id="count-done"></span></button>
+                    <button class="filter-tab" onclick="loadSuggestions('rejected')" id="tab-rejected">Rejected <span class="count" id="count-rejected"></span></button>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <div id="suggestions-body">
+                    <div class="loading"><i class="fas fa-spinner"></i></div>
+                </div>
             </div>
         </div>
-    </div>
-</section>
 
-<!-- ── How it works ── -->
-<section class="how-section">
-    <div class="container">
-        <h2 class="section-title">How It Works</h2>
-        <p class="section-subtitle">Three simple steps to find any metro station</p>
-        <div class="steps-grid">
-            <div class="step-card">
-                <div class="step-icon"><i class="fas fa-location-arrow"></i></div>
-                <h3>Share Location</h3>
-                <p>Tap "Use My Location" to instantly find metro stations near you using GPS.</p>
+        <!-- ══ COMMENTS ══ -->
+        <div class="panel" id="panel-comments">
+            <div class="section-header">
+                <h2><i class="fas fa-comments" style="color:var(--primary);margin-right:8px;"></i> Comments</h2>
+                <button class="btn btn-ghost btn-sm" onclick="loadComments()"><i class="fas fa-refresh"></i> Refresh</button>
             </div>
-            <div class="step-card">
-                <div class="step-icon"><i class="fas fa-subway"></i></div>
-                <h3>See Nearest Stations</h3>
-                <p>We calculate distance using the Haversine formula and sort by proximity.</p>
-            </div>
-            <div class="step-card">
-                <div class="step-icon"><i class="fas fa-map-marker-alt"></i></div>
-                <h3>Get Directions</h3>
-                <p>View station details, line info, address, and open in Google Maps.</p>
+            <div class="table-wrap">
+                <div id="comments-body">
+                    <div class="loading"><i class="fas fa-spinner"></i></div>
+                </div>
             </div>
         </div>
-    </div>
-</section>
 
-<!-- ── Suggest a Station ── -->
-<section style="background:linear-gradient(135deg,var(--dark) 0%,var(--primary) 100%);padding:64px 0;">
-    <div class="container" style="text-align:center;">
-        <div style="font-size:3em;margin-bottom:16px;">🚇</div>
-        <h2 style="font-family:'Merriweather',serif;color:#fff;font-size:1.9em;margin-bottom:12px;">Missing a station?</h2>
-        <p style="color:rgba(255,255,255,0.82);font-size:1.05em;max-width:480px;margin:0 auto 32px;">
-            Help us grow! If you know a metro station that's not on our map yet, tell us and we'll add it.
-        </p>
-        <button onclick="openSuggestModal()" style="background:#fff;color:var(--dark);border:none;border-radius:10px;padding:14px 36px;font-size:1em;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,0.2);">
-            <i class="fas fa-plus-circle"></i> Suggest a Station
-        </button>
-    </div>
-</section>
+        <!-- ══ STATIONS ══ -->
+        <div class="panel" id="panel-stations">
+            <div class="section-header">
+                <h2><i class="fas fa-subway" style="color:var(--primary);margin-right:8px;"></i> Stations</h2>
+                <button class="btn btn-ghost btn-sm" onclick="loadStations()"><i class="fas fa-refresh"></i> Refresh</button>
+            </div>
+            <div class="table-wrap">
+                <div id="stations-body">
+                    <div class="loading"><i class="fas fa-spinner"></i></div>
+                </div>
+            </div>
+        </div>
 
-<!-- Modal Suggest -->
-<div id="suggestModal" style="display:none;position:fixed;inset:0;z-index:2000;align-items:center;justify-content:center;background:rgba(0,0,0,0.55);padding:20px;">
-    <div style="background:#fff;border-radius:18px;padding:40px 36px;width:100%;max-width:460px;box-shadow:0 24px 64px rgba(0,0,0,0.3);position:relative;">
-        <button onclick="closeSuggestModal()" style="position:absolute;top:16px;right:18px;background:none;border:none;font-size:1.4em;color:#aaa;cursor:pointer;">&#10005;</button>
-        <div style="text-align:center;margin-bottom:24px;">
-            <div style="font-size:2.2em;margin-bottom:8px;">🚇</div>
-            <h3 style="font-size:1.3em;font-weight:700;color:var(--dark-gray);">Suggest a Missing Station</h3>
-            <p style="color:#888;font-size:0.9em;margin-top:6px;">Fill in what you know — we'll take care of the rest!</p>
+        <!-- ══ BLOG ══ -->
+        <div class="panel" id="panel-blog">
+            <div class="section-header">
+                <h2><i class="fas fa-newspaper" style="color:var(--primary);margin-right:8px;"></i> Blog Posts</h2>
+                <button class="btn btn-ghost btn-sm" onclick="loadBlog()"><i class="fas fa-refresh"></i> Refresh</button>
+            </div>
+            <div class="table-wrap">
+                <div id="blog-body">
+                    <div class="loading"><i class="fas fa-spinner"></i></div>
+                </div>
+            </div>
         </div>
-        <div style="margin-bottom:16px;">
-            <label style="display:block;font-size:0.8em;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Country *</label>
-            <input id="sg_country" type="text" placeholder="e.g. Brazil" style="width:100%;padding:11px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:0.97em;font-family:inherit;">
+
+        <!-- ══ COUNTRIES ══ -->
+        <div class="panel" id="panel-countries">
+            <div class="section-header">
+                <h2><i class="fas fa-globe" style="color:var(--primary);margin-right:8px;"></i> Countries</h2>
+                <button class="btn btn-ghost btn-sm" onclick="loadCountries()"><i class="fas fa-refresh"></i> Refresh</button>
+            </div>
+            <div class="table-wrap">
+                <div id="countries-body">
+                    <div class="loading"><i class="fas fa-spinner"></i></div>
+                </div>
+            </div>
         </div>
-        <div style="margin-bottom:16px;">
-            <label style="display:block;font-size:0.8em;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">City *</label>
-            <input id="sg_city" type="text" placeholder="e.g. Sao Paulo" style="width:100%;padding:11px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:0.97em;font-family:inherit;">
+
+        <!-- ══ CITIES ══ -->
+        <div class="panel" id="panel-cities">
+            <div class="section-header">
+                <h2><i class="fas fa-city" style="color:var(--primary);margin-right:8px;"></i> Cities</h2>
+                <button class="btn btn-ghost btn-sm" onclick="loadCities()"><i class="fas fa-refresh"></i> Refresh</button>
+            </div>
+            <div class="table-wrap">
+                <div id="cities-body">
+                    <div class="loading"><i class="fas fa-spinner"></i></div>
+                </div>
+            </div>
         </div>
-        <div style="margin-bottom:16px;">
-            <label style="display:block;font-size:0.8em;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Station / Metro Line Name *</label>
-            <input id="sg_station" type="text" placeholder="e.g. Paulista - Line 2 Green" style="width:100%;padding:11px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:0.97em;font-family:inherit;">
+
+        <!-- ══ LINES ══ -->
+        <div class="panel" id="panel-lines">
+            <div class="section-header">
+                <h2><i class="fas fa-route" style="color:var(--primary);margin-right:8px;"></i> Lines</h2>
+                <button class="btn btn-ghost btn-sm" onclick="loadLines()"><i class="fas fa-refresh"></i> Refresh</button>
+            </div>
+            <div class="table-wrap">
+                <div id="lines-body">
+                    <div class="loading"><i class="fas fa-spinner"></i></div>
+                </div>
+            </div>
         </div>
-        <div style="margin-bottom:24px;">
-            <label style="display:block;font-size:0.8em;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Extra info <span style="font-weight:400;text-transform:none;">(optional)</span></label>
-            <textarea id="sg_notes" placeholder="Address, coordinates, links..." rows="3" style="width:100%;padding:11px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:0.97em;font-family:inherit;resize:vertical;"></textarea>
-        </div>
-        <div id="sg_msg" style="display:none;border-radius:8px;padding:10px 14px;font-size:0.9em;margin-bottom:16px;text-align:center;"></div>
-        <button onclick="submitSuggestion()" id="sg_btn" style="width:100%;padding:13px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-size:1em;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
-            <i class="fas fa-paper-plane"></i> Send Suggestion
-        </button>
-    </div>
-</div>
+
+    </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- Toast -->
+<div id="toast"><i class="fas fa-check-circle"></i> <span id="toast-msg"></span></div>
 
 <script>
-function openSuggestModal() {
-    document.getElementById('suggestModal').style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-}
-function closeSuggestModal() {
-    document.getElementById('suggestModal').style.display = 'none';
-    document.body.style.overflow = '';
-    ['sg_country','sg_city','sg_station','sg_notes'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('sg_msg').style.display = 'none';
-    const btn = document.getElementById('sg_btn');
-    btn.disabled = false;
-    btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Suggestion';
-}
-document.getElementById('suggestModal').addEventListener('click', function(e){ if(e.target===this) closeSuggestModal(); });
-async function submitSuggestion() {
-    const country = document.getElementById('sg_country').value.trim();
-    const city    = document.getElementById('sg_city').value.trim();
-    const station = document.getElementById('sg_station').value.trim();
-    const notes   = document.getElementById('sg_notes').value.trim();
-    const msg     = document.getElementById('sg_msg');
-    const btn     = document.getElementById('sg_btn');
-    msg.style.display = 'none';
-    if (!country || !city || !station) {
-        msg.textContent = 'Please fill in Country, City and Station name.';
-        msg.style.cssText = 'display:block;background:#fdecea;color:#c62828;border:1px solid #f5c6cb;border-radius:8px;padding:10px 14px;font-size:0.9em;margin-bottom:16px;text-align:center;';
-        return;
-    }
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-    try {
-        const res  = await fetch('/api/suggestions', {
-            method: 'POST', headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({country, city, station_name: station, notes})
-        });
-        const data = await res.json();
-        if (data.ok) {
-            msg.textContent = 'Thank you! We received your suggestion and will review it soon.';
-            msg.style.cssText = 'display:block;background:#e8f5e9;color:#2e7d32;border:1px solid #c8e6c9;border-radius:8px;padding:10px 14px;font-size:0.9em;margin-bottom:16px;text-align:center;';
-            btn.innerHTML = '<i class="fas fa-check"></i> Sent!';
-        } else { throw new Error(data.error || 'Error'); }
-    } catch(e) {
-        msg.textContent = 'Something went wrong. Please try again.';
-        msg.style.cssText = 'display:block;background:#fdecea;color:#c62828;border:1px solid #f5c6cb;border-radius:8px;padding:10px 14px;font-size:0.9em;margin-bottom:16px;text-align:center;';
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Suggestion';
-    }
-}
-</script>
+// ── State ───────────────────────────────────────────
+let currentPanel = 'dashboard';
+let currentSuggestionsStatus = 'pending';
+let suggestionsData = {};
 
-<!-- ── Footer ── -->
-<footer>
-    <div class="container">
-        <div class="footer-grid">
-            <div>
-                <h4>nearestmetro.com</h4>
-                <p style="font-size:0.9em;color:#aaa;line-height:1.6;">The global metro station finder. Find any subway station, anywhere in the world.</p>
-            </div>
-            <div>
-                <h4>Explore</h4>
-                <ul>
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/blog">Blog</a></li>
-                    <li><a href="/sitemap.xml">Sitemap</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 nearestmetro.com — All rights reserved.</p>
-        </div>
-    </div>
-</footer>
+// ── Navigation ───────────────────────────────────────
+function showPanel(name) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('panel-' + name).classList.add('active');
 
-<!-- ── Google Translate ── -->
-<div id="google_translate_element"></div>
-<script>
-function googleTranslateElementInit() {
-    new google.translate.TranslateElement({
-        pageLanguage: 'en',
-        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-    }, 'google_translate_element');
-}
-</script>
-<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
-<script>
-// ── Mobile menu ──
-function toggleMenu() {
-    const nav = document.getElementById('mobileNav');
-    nav.classList.toggle('active');
-}
-
-// ── Country flag emoji from ISO code ──
-function countryFlag(code) {
-    if (!code) return '🌐';
-    return code.toUpperCase().replace(/./g, c =>
-        String.fromCodePoint(0x1F1E6 - 65 + c.charCodeAt(0))
-    );
-}
-
-// ── Format distance ──
-function formatDistance(meters) {
-    if (!meters && meters !== 0) return '';
-    if (meters < 1000) return Math.round(meters) + ' m';
-    return (meters / 1000).toFixed(1) + ' km';
-}
-
-// ── Find nearest by geolocation ──
-async function findNearest() {
-    const btn = document.getElementById('geoBtn');
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Locating…';
-    btn.disabled = true;
-
-    if (!navigator.geolocation) {
-        alert('Geolocation is not supported by your browser.');
-        btn.innerHTML = '<i class="fas fa-location-arrow"></i> Use My Location';
-        btn.disabled = false;
-        return;
-    }
-
-    navigator.geolocation.getCurrentPosition(async (pos) => {
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        try {
-            const res  = await fetch(`/api/stations/nearest?lat=${lat}&lng=${lng}&limit=5`);
-            const data = await res.json();
-            if (!data.length) {
-                alert('No stations found near your location.');
-            } else {
-                renderNearest(data);
-            }
-        } catch(e) {
-            alert('Error fetching stations. Please try again.');
+    // activate correct sidebar item
+    document.querySelectorAll('.nav-item').forEach(btn => {
+        if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes("'" + name + "'")) {
+            btn.classList.add('active');
         }
-        btn.innerHTML = '<i class="fas fa-location-arrow"></i> Use My Location';
-        btn.disabled = false;
-    }, () => {
-        alert('Unable to get your location. Please allow location access.');
-        btn.innerHTML = '<i class="fas fa-location-arrow"></i> Use My Location';
-        btn.disabled = false;
     });
+
+    const titles = {
+        dashboard: 'Dashboard',
+        suggestions: 'Station Suggestions',
+        comments: 'Comments',
+        stations: 'Stations',
+        blog: 'Blog Posts',
+        countries: 'Countries',
+        cities: 'Cities',
+        lines: 'Lines'
+    };
+    document.getElementById('topbar-title').textContent = titles[name] || name;
+    currentPanel = name;
+
+    // lazy-load each panel
+    if (name === 'dashboard') loadStats();
+    if (name === 'suggestions') loadSuggestions(currentSuggestionsStatus);
+    if (name === 'comments') loadComments();
+    if (name === 'stations') loadStations();
+    if (name === 'blog') loadBlog();
+    if (name === 'countries') loadCountries();
+    if (name === 'cities') loadCities();
+    if (name === 'lines') loadLines();
 }
 
-function renderNearest(stations) {
-    const box  = document.getElementById('nearest-results');
-    const list = document.getElementById('nearest-list');
-    list.innerHTML = stations.map(s => `
-        <a class="nearest-card" href="/stations/${s.slug}">
-            <div class="line-dot" style="background:${s.line_color || '#1a73e8'}"></div>
-            <div class="info">
-                <strong>${s.name}</strong>
-                <small>${s.line_name || 'Metro'} · ${s.city_name || ''}, ${s.country_name || ''}</small>
+// ── Toast ────────────────────────────────────────────
+function toast(msg, type = 'success') {
+    const el = document.getElementById('toast');
+    const msgEl = document.getElementById('toast-msg');
+    el.className = 'show ' + type;
+    msgEl.textContent = msg;
+    el.querySelector('i').className = type === 'success' ? 'fas fa-check-circle' : 'fas fa-triangle-exclamation';
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// ── Format date ───────────────────────────────────────
+function fmtDate(str) {
+    if (!str) return '—';
+    const d = new Date(str);
+    return d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }) +
+           ' ' + d.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+}
+
+// ── API helper ────────────────────────────────────────
+async function api(url, method = 'GET', body = null) {
+    const opts = { method, headers: { 'Content-Type': 'application/json' } };
+    if (body) opts.body = JSON.stringify(body);
+    const res = await fetch(url, opts);
+    return res.json();
+}
+
+// ── DASHBOARD ─────────────────────────────────────────
+async function loadStats() {
+    try {
+        const data = await api('/api/admin/stats');
+        const grid = document.getElementById('statsGrid');
+        const items = [
+            { label: 'Stations',           value: data.stations,         icon: 'fa-subway',      color: '#1a73e8' },
+            { label: 'Countries',          value: data.countries,        icon: 'fa-globe',       color: '#0d47a1' },
+            { label: 'Cities',             value: data.cities,           icon: 'fa-city',        color: '#6200ea' },
+            { label: 'Lines',              value: data.lines,            icon: 'fa-route',       color: '#00796b' },
+            { label: 'Blog Posts',         value: data.posts,            icon: 'fa-newspaper',   color: '#558b2f' },
+            { label: 'Pending Comments',   value: data.pending_comments, icon: 'fa-comments',    color: data.pending_comments > 0 ? '#e65100' : '#888' },
+            { label: 'Suggestions',        value: data.suggestions ?? '—', icon: 'fa-lightbulb', color: '#f57f17' },
+        ];
+        grid.innerHTML = items.map(i => `
+            <div class="stat-card">
+                <div class="icon" style="color:${i.color}"><i class="fas ${i.icon}"></i></div>
+                <div class="value">${i.value}</div>
+                <div class="label">${i.label}</div>
             </div>
-            <span class="distance">${formatDistance(s.distance_m)}</span>
-        </a>
-    `).join('');
-    box.style.display = 'block';
-    box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
+        `).join('');
 
-// ── Load countries into filter dropdown ──
-async function loadCountries() {
-    try {
-        const res  = await fetch('/api/countries');
-        const data = await res.json();
-        const sel  = document.getElementById('countryFilter');
-        data.forEach(c => {
-            const opt = document.createElement('option');
-            opt.value = c.slug;
-            opt.textContent = `${countryFlag(c.code)} ${c.name}`;
-            sel.appendChild(opt);
-        });
-        renderCountryCards(data);
-    } catch(e) { console.error(e); }
-}
-
-async function loadCities() {
-    const country = document.getElementById('countryFilter').value;
-    const cityEl  = document.getElementById('cityFilter');
-    cityEl.innerHTML = '<option value="">— Select city —</option>';
-    cityEl.disabled  = true;
-    if (!country) return;
-    try {
-        const res  = await fetch(`/api/cities?country=${country}`);
-        const data = await res.json();
-        data.forEach(c => {
-            const opt = document.createElement('option');
-            opt.value = c.slug;
-            opt.textContent = c.name;
-            cityEl.appendChild(opt);
-        });
-        cityEl.disabled = false;
-    } catch(e) { console.error(e); }
-}
-
-function goToCity() {
-    const country = document.getElementById('countryFilter').value;
-    const city    = document.getElementById('cityFilter').value;
-    if (!country) { alert('Please select a country.'); return; }
-    if (city) {
-        window.location.href = `/country/${country}/${city}`;
-    } else {
-        window.location.href = `/country/${country}`;
+        // update badges
+        if (data.pending_comments > 0) {
+            const b = document.getElementById('comments-badge');
+            b.textContent = data.pending_comments;
+            b.style.display = 'inline-block';
+        }
+    } catch(e) {
+        console.error(e);
     }
 }
 
-function renderCountryCards(countries) {
-    const grid = document.getElementById('countriesGrid');
-    if (!countries.length) {
-        grid.innerHTML = '<p style="text-align:center;color:#999;grid-column:1/-1;">No countries added yet.</p>';
-        return;
-    }
-    grid.innerHTML = countries.map(c => `
-        <a class="country-card" href="/country/${c.slug}">
-            <div class="country-flag">${countryFlag(c.code)}</div>
-            <h3>${c.name}</h3>
-        </a>
-    `).join('');
-}
+// ── SUGGESTIONS ───────────────────────────────────────
+async function loadSuggestions(status) {
+    currentSuggestionsStatus = status;
 
-// ── Load featured stations ──
-async function loadFeatured() {
+    // update tab UI
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + status).classList.add('active');
+
+    const wrap = document.getElementById('suggestions-body');
+    wrap.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i></div>';
+
     try {
-        const res  = await fetch('/api/stations?limit=6');
-        const data = await res.json();
-        const grid = document.getElementById('featuredGrid');
-        if (!data.length) {
-            grid.innerHTML = '<p style="text-align:center;color:#999;grid-column:1/-1;">No stations added yet.</p>';
+        const rows = await api('/api/admin/suggestions?status=' + status);
+        suggestionsData[status] = rows;
+
+        // update counts
+        document.getElementById('count-' + status).textContent = '(' + rows.length + ')';
+
+        // also load counts for other tabs if not loaded
+        ['pending','done','rejected'].forEach(async s => {
+            if (!suggestionsData[s]) {
+                const r = await api('/api/admin/suggestions?status=' + s);
+                suggestionsData[s] = r;
+                document.getElementById('count-' + s).textContent = '(' + r.length + ')';
+                if (s === 'pending' && r.length > 0) {
+                    const b = document.getElementById('suggestions-badge');
+                    b.textContent = r.length;
+                    b.style.display = 'inline-block';
+                }
+            }
+        });
+
+        if (rows.length === 0) {
+            wrap.innerHTML = `<div class="empty-state"><i class="fas fa-inbox"></i><p>No ${status} suggestions</p></div>`;
             return;
         }
-        grid.innerHTML = data.filter(s => s.featured || true).slice(0, 6).map(s => `
-            <a class="station-card" href="/stations/${s.slug}">
-                <div class="station-card-img">
-                    ${s.photo_url ? `<img src="${s.photo_url}" alt="${s.name}" loading="lazy">` : '<i class="fas fa-subway"></i>'}
-                </div>
-                <div class="station-card-body">
-                    ${s.line_name ? `<span class="line-badge" style="background:${s.line_color||'#1a73e8'}">${s.line_name}</span>` : ''}
-                    <h3>${s.name}</h3>
-                    <p class="location"><i class="fas fa-map-marker-alt" style="color:#aaa;margin-right:4px;"></i>${s.city_name || ''}${s.country_name ? ', ' + s.country_name : ''}</p>
-                </div>
-            </a>
-        `).join('');
-    } catch(e) { console.error(e); }
+
+        wrap.innerHTML = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Station</th>
+                        <th>City</th>
+                        <th>Country</th>
+                        <th>Notes</th>
+                        <th>Submitted</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${rows.map(r => `
+                        <tr id="sg-row-${r.id}">
+                            <td style="color:#bbb;font-size:12px;">${r.id}</td>
+                            <td><strong class="suggestion-location">${esc(r.station_name)}</strong></td>
+                            <td>${esc(r.city)}</td>
+                            <td>${esc(r.country)}</td>
+                            <td><span class="suggestion-notes" title="${esc(r.notes || '')}">${r.notes ? esc(r.notes) : '<span style="color:#ddd">—</span>'}</span></td>
+                            <td><span class="suggestion-meta">${fmtDate(r.created_at)}</span></td>
+                            <td>
+                                <div class="btn-group">
+                                    ${status === 'pending' ? `
+                                        <button class="btn btn-success btn-sm" onclick="updateSuggestion(${r.id},'done')">
+                                            <i class="fas fa-check"></i> Done
+                                        </button>
+                                        <button class="btn btn-warning btn-sm" onclick="updateSuggestion(${r.id},'rejected')">
+                                            <i class="fas fa-ban"></i> Reject
+                                        </button>
+                                    ` : `
+                                        <button class="btn btn-ghost btn-sm" onclick="updateSuggestion(${r.id},'pending')">
+                                            <i class="fas fa-arrow-rotate-left"></i> Reopen
+                                        </button>
+                                    `}
+                                    <button class="btn btn-danger btn-sm" onclick="deleteSuggestion(${r.id})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    } catch(e) {
+        wrap.innerHTML = '<div class="empty-state"><i class="fas fa-triangle-exclamation"></i><p>Failed to load suggestions</p></div>';
+    }
 }
 
-loadCountries();
-loadFeatured();
+async function updateSuggestion(id, status) {
+    try {
+        const data = await api(`/api/admin/suggestions/${id}`, 'PUT', { status });
+        if (data.ok) {
+            toast(status === 'done' ? 'Marked as done!' : status === 'rejected' ? 'Rejected.' : 'Reopened.');
+            suggestionsData = {}; // clear cache
+            loadSuggestions(currentSuggestionsStatus);
+        }
+    } catch(e) { toast('Error updating', 'error'); }
+}
+
+async function deleteSuggestion(id) {
+    if (!confirm('Delete this suggestion permanently?')) return;
+    try {
+        const data = await api(`/api/admin/suggestions/${id}`, 'DELETE');
+        if (data.ok) {
+            toast('Deleted.');
+            suggestionsData = {};
+            loadSuggestions(currentSuggestionsStatus);
+        }
+    } catch(e) { toast('Error deleting', 'error'); }
+}
+
+// ── COMMENTS ─────────────────────────────────────────
+async function loadComments() {
+    const wrap = document.getElementById('comments-body');
+    wrap.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i></div>';
+    try {
+        const rows = await api('/api/admin/comments');
+        if (!rows.length) {
+            wrap.innerHTML = '<div class="empty-state"><i class="fas fa-comments"></i><p>No comments yet</p></div>';
+            return;
+        }
+        wrap.innerHTML = `
+            <table>
+                <thead><tr>
+                    <th>Author</th><th>Comment</th><th>Station</th><th>Date</th><th>Status</th><th>Actions</th>
+                </tr></thead>
+                <tbody>
+                ${rows.map(r => `
+                    <tr id="cm-row-${r.id}">
+                        <td><strong>${esc(r.name)}</strong>${r.email ? `<br><small style="color:#aaa">${esc(r.email)}</small>` : ''}</td>
+                        <td><span class="comment-text" title="${esc(r.text)}">${esc(r.text)}</span></td>
+                        <td>${r.station_name ? esc(r.station_name) : '<span style="color:#ddd">—</span>'}</td>
+                        <td><span class="suggestion-meta">${fmtDate(r.created_at)}</span></td>
+                        <td>${r.approved
+                            ? '<span class="badge badge-approved"><i class="fas fa-check"></i> Approved</span>'
+                            : '<span class="badge badge-waiting"><i class="fas fa-clock"></i> Pending</span>'
+                        }</td>
+                        <td>
+                            <div class="btn-group">
+                                ${!r.approved ? `<button class="btn btn-success btn-sm" onclick="approveComment(${r.id})"><i class="fas fa-check"></i> Approve</button>` : ''}
+                                <button class="btn btn-danger btn-sm" onclick="deleteComment(${r.id})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('')}
+                </tbody>
+            </table>
+        `;
+    } catch(e) {
+        wrap.innerHTML = '<div class="empty-state"><i class="fas fa-triangle-exclamation"></i><p>Failed to load comments</p></div>';
+    }
+}
+
+async function approveComment(id) {
+    const data = await api(`/api/admin/comments/${id}/approve`, 'POST');
+    if (data.ok) { toast('Comment approved!'); loadComments(); }
+}
+async function deleteComment(id) {
+    if (!confirm('Delete this comment?')) return;
+    const data = await api(`/api/admin/comments/${id}`, 'DELETE');
+    if (data.ok) { toast('Comment deleted.'); loadComments(); }
+}
+
+// ── STATIONS ─────────────────────────────────────────
+async function loadStations() {
+    const wrap = document.getElementById('stations-body');
+    wrap.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i></div>';
+    try {
+        const rows = await api('/api/admin/stations');
+        if (!rows.length) { wrap.innerHTML = '<div class="empty-state"><i class="fas fa-subway"></i><p>No stations</p></div>'; return; }
+        wrap.innerHTML = `
+            <table>
+                <thead><tr><th>Name</th><th>Line</th><th>City</th><th>Country</th><th>Status</th></tr></thead>
+                <tbody>
+                ${rows.map(r => `
+                    <tr>
+                        <td><strong>${esc(r.name)}</strong></td>
+                        <td>${r.line_name ? esc(r.line_name) : '<span style="color:#ddd">—</span>'}</td>
+                        <td>${r.city_name ? esc(r.city_name) : '<span style="color:#ddd">—</span>'}</td>
+                        <td>${r.country_name ? esc(r.country_name) : '<span style="color:#ddd">—</span>'}</td>
+                        <td>${r.active
+                            ? '<span class="badge badge-approved"><i class="fas fa-circle" style="font-size:8px"></i> Active</span>'
+                            : '<span class="badge badge-rejected"><i class="fas fa-circle" style="font-size:8px"></i> Inactive</span>'
+                        }</td>
+                    </tr>
+                `).join('')}
+                </tbody>
+            </table>
+        `;
+    } catch(e) {
+        wrap.innerHTML = '<div class="empty-state"><i class="fas fa-triangle-exclamation"></i><p>Failed to load</p></div>';
+    }
+}
+
+// ── BLOG ─────────────────────────────────────────────
+async function loadBlog() {
+    const wrap = document.getElementById('blog-body');
+    wrap.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i></div>';
+    try {
+        const rows = await api('/api/admin/blog');
+        if (!rows.length) { wrap.innerHTML = '<div class="empty-state"><i class="fas fa-newspaper"></i><p>No posts</p></div>'; return; }
+        wrap.innerHTML = `
+            <table>
+                <thead><tr><th>Title</th><th>Author</th><th>Date</th><th>Status</th></tr></thead>
+                <tbody>
+                ${rows.map(r => `
+                    <tr>
+                        <td><strong>${esc(r.title)}</strong>${r.subtitle ? `<br><small style="color:#aaa">${esc(r.subtitle)}</small>` : ''}</td>
+                        <td>${r.author ? esc(r.author) : '<span style="color:#ddd">—</span>'}</td>
+                        <td><span class="suggestion-meta">${fmtDate(r.created_at)}</span></td>
+                        <td>${r.active
+                            ? '<span class="badge badge-approved"><i class="fas fa-circle" style="font-size:8px"></i> Published</span>'
+                            : '<span class="badge badge-rejected"><i class="fas fa-circle" style="font-size:8px"></i> Draft</span>'
+                        }</td>
+                    </tr>
+                `).join('')}
+                </tbody>
+            </table>
+        `;
+    } catch(e) {
+        wrap.innerHTML = '<div class="empty-state"><i class="fas fa-triangle-exclamation"></i><p>Failed to load</p></div>';
+    }
+}
+
+// ── COUNTRIES ────────────────────────────────────────
+async function loadCountries() {
+    const wrap = document.getElementById('countries-body');
+    wrap.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i></div>';
+    try {
+        const rows = await api('/api/admin/countries');
+        if (!rows.length) { wrap.innerHTML = '<div class="empty-state"><i class="fas fa-globe"></i><p>No countries</p></div>'; return; }
+        wrap.innerHTML = `
+            <table>
+                <thead><tr><th>Name</th><th>Code</th><th>Slug</th><th>Status</th></tr></thead>
+                <tbody>
+                ${rows.map(r => `
+                    <tr>
+                        <td><strong>${esc(r.name)}</strong></td>
+                        <td><code style="background:#f0f0f0;padding:2px 6px;border-radius:4px;font-size:12px;">${esc(r.code || '—')}</code></td>
+                        <td style="color:#aaa;font-size:13px;">${esc(r.slug || '—')}</td>
+                        <td>${r.active
+                            ? '<span class="badge badge-approved"><i class="fas fa-circle" style="font-size:8px"></i> Active</span>'
+                            : '<span class="badge badge-rejected"><i class="fas fa-circle" style="font-size:8px"></i> Inactive</span>'
+                        }</td>
+                    </tr>
+                `).join('')}
+                </tbody>
+            </table>
+        `;
+    } catch(e) {
+        wrap.innerHTML = '<div class="empty-state"><i class="fas fa-triangle-exclamation"></i><p>Failed to load</p></div>';
+    }
+}
+
+// ── CITIES ───────────────────────────────────────────
+async function loadCities() {
+    const wrap = document.getElementById('cities-body');
+    wrap.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i></div>';
+    try {
+        const rows = await api('/api/admin/cities');
+        if (!rows.length) { wrap.innerHTML = '<div class="empty-state"><i class="fas fa-city"></i><p>No cities</p></div>'; return; }
+        wrap.innerHTML = `
+            <table>
+                <thead><tr><th>Name</th><th>Country</th><th>Slug</th><th>Status</th></tr></thead>
+                <tbody>
+                ${rows.map(r => `
+                    <tr>
+                        <td><strong>${esc(r.name)}</strong></td>
+                        <td>${r.country_name ? esc(r.country_name) : '<span style="color:#ddd">—</span>'}</td>
+                        <td style="color:#aaa;font-size:13px;">${esc(r.slug || '—')}</td>
+                        <td>${r.active
+                            ? '<span class="badge badge-approved"><i class="fas fa-circle" style="font-size:8px"></i> Active</span>'
+                            : '<span class="badge badge-rejected"><i class="fas fa-circle" style="font-size:8px"></i> Inactive</span>'
+                        }</td>
+                    </tr>
+                `).join('')}
+                </tbody>
+            </table>
+        `;
+    } catch(e) {
+        wrap.innerHTML = '<div class="empty-state"><i class="fas fa-triangle-exclamation"></i><p>Failed to load</p></div>';
+    }
+}
+
+// ── LINES ────────────────────────────────────────────
+async function loadLines() {
+    const wrap = document.getElementById('lines-body');
+    wrap.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i></div>';
+    try {
+        const rows = await api('/api/admin/lines');
+        if (!rows.length) { wrap.innerHTML = '<div class="empty-state"><i class="fas fa-route"></i><p>No lines</p></div>'; return; }
+        wrap.innerHTML = `
+            <table>
+                <thead><tr><th>Name</th><th>City</th><th>Color</th><th>Status</th></tr></thead>
+                <tbody>
+                ${rows.map(r => `
+                    <tr>
+                        <td><strong>${esc(r.name)}</strong></td>
+                        <td>${r.city_name ? esc(r.city_name) : '<span style="color:#ddd">—</span>'}</td>
+                        <td>${r.color
+                            ? `<span style="display:inline-flex;align-items:center;gap:6px;">
+                                <span style="width:16px;height:16px;border-radius:50%;background:${esc(r.color)};display:inline-block;"></span>
+                                <code style="font-size:12px;color:#666;">${esc(r.color)}</code>
+                               </span>`
+                            : '<span style="color:#ddd">—</span>'
+                        }</td>
+                        <td>${r.active
+                            ? '<span class="badge badge-approved"><i class="fas fa-circle" style="font-size:8px"></i> Active</span>'
+                            : '<span class="badge badge-rejected"><i class="fas fa-circle" style="font-size:8px"></i> Inactive</span>'
+                        }</td>
+                    </tr>
+                `).join('')}
+                </tbody>
+            </table>
+        `;
+    } catch(e) {
+        wrap.innerHTML = '<div class="empty-state"><i class="fas fa-triangle-exclamation"></i><p>Failed to load</p></div>';
+    }
+}
+
+// ── Escape HTML ───────────────────────────────────────
+function esc(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Init ─────────────────────────────────────────────
+(async function init() {
+    // try to get username from session (via stats endpoint)
+    try {
+        const stats = await api('/api/admin/stats');
+        // update pending badges from stats
+        if (stats.pending_comments > 0) {
+            const b = document.getElementById('comments-badge');
+            b.textContent = stats.pending_comments;
+            b.style.display = 'inline-block';
+        }
+        loadStats();
+    } catch(e) {}
+
+    // load suggestions count for sidebar badge
+    try {
+        const pending = await api('/api/admin/suggestions?status=pending');
+        if (pending.length > 0) {
+            const b = document.getElementById('suggestions-badge');
+            b.textContent = pending.length;
+            b.style.display = 'inline-block';
+            suggestionsData['pending'] = pending;
+        }
+    } catch(e) {}
+})();
 </script>
 </body>
 </html>
