@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login — nearestmetro.com</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --dark: #0d47a1;
+            --light: #e3f2fd;
+            --light-gray: #f8f9fa;
+            --medium-gray: #e0e0e0;
+            --dark-gray: #343a40;
+            --text-color: #495057;
+            --white: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 60%, #42a5f5 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-card {
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            padding: 48px 40px 40px;
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .logo-text {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-text .nearest { color: var(--dark); }
+        .logo-text .metro   { color: var(--primary); }
+        .logo-text .dot-com { color: #90a4ae; font-weight: 400; font-size: 22px; }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-color);
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 36px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-wrap i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 14px 12px 40px;
+            border: 1.5px solid var(--medium-gray);
+            border-radius: 8px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 15px;
+            color: var(--dark-gray);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background: var(--light-gray);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26,115,232,0.12);
+            background: var(--white);
+        }
+
+        .btn-signin {
+            width: 100%;
+            padding: 13px;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-signin:hover  { background: var(--dark); }
+        .btn-signin:active { transform: scale(0.99); }
+        .btn-signin:disabled { opacity: 0.7; cursor: not-allowed; }
+
+        .error-msg {
+            display: none;
+            background: #fdecea;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            color: #c62828;
+            font-size: 13px;
+            padding: 10px 14px;
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .error-msg.visible { display: block; }
+
+        .footer {
+            margin-top: 24px;
+            text-align: center;
+            color: rgba(255,255,255,0.55);
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <div class="logo">
+            <span class="logo-text">
+                <span class="nearest">nearest</span><span class="metro">metro</span><span class="dot-com">.com</span>
+            </span>
+        </div>
+        <p class="subtitle">Admin Panel</p>
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            <div class="input-wrap">
+                <i class="fa fa-envelope"></i>
+                <input type="email" id="email" placeholder="admin@nearestmetro.com" autocomplete="email" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-wrap">
+                <i class="fa fa-lock"></i>
+                <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required>
+            </div>
+        </div>
+
+        <button class="btn-signin" id="signInBtn" onclick="doLogin()">
+            <i class="fa fa-right-to-bracket"></i> Sign In
+        </button>
+
+        <div class="error-msg" id="errorMsg"></div>
+    </div>
+
+    <p class="footer">nearestmetro.com &copy; 2025</p>
+
+    <script>
+        // Allow Enter key to submit
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Enter') doLogin();
+        });
+
+        async function doLogin() {
+            const email    = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const btn      = document.getElementById('signInBtn');
+            const errEl    = document.getElementById('errorMsg');
+
+            errEl.classList.remove('visible');
+
+            if (!email || !password) {
+                showError('Please enter your email and password.');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Signing in…';
+
+            try {
+                const res  = await fetch('/admin/login', {
+                    method:  'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body:    JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+
+                if (data.ok) {
+                    btn.innerHTML = '<i class="fa fa-check"></i> Success!';
+                    window.location.href = '/admin';
+                } else {
+                    showError(data.error || 'Invalid email or password.');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa fa-right-to-bracket"></i> Sign In';
+                }
+            } catch (err) {
+                showError('Connection error. Please try again.');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa fa-right-to-bracket"></i> Sign In';
+            }
+        }
+
+        function showError(msg) {
+            const errEl = document.getElementById('errorMsg');
+            errEl.textContent = msg;
+            errEl.classList.add('visible');
+        }
+    </script>
+</body>
+</html>
