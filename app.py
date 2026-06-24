@@ -160,8 +160,8 @@ def blog_post(slug):
 def api_stations():
     conn = None
     try:
-        lat         = request.args.get('lat', type=float)
-        lng         = request.args.get('lng', type=float)
+        lat          = request.args.get('lat', type=float)
+        lng          = request.args.get('lng', type=float)
         country_slug = request.args.get('country')
         city_slug    = request.args.get('city')
         line_slug    = request.args.get('line')
@@ -473,8 +473,8 @@ def api_blog():
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
     if request.method == 'POST':
-        data  = request.get_json()
-        email = data.get('email', '').strip()
+        data     = request.get_json()
+        email    = data.get('email', '').strip()
         password = data.get('password', '')
         conn = None
         try:
@@ -504,6 +504,45 @@ def admin_logout():
 @login_required
 def admin_index():
     return render_template('admin/index.html', name=session.get('admin_name'))
+
+
+# ════════════════════════════════════════════════════════════
+#  API ADMIN — STATS (dashboard)
+# ════════════════════════════════════════════════════════════
+
+@app.route('/api/admin/stats')
+@login_required
+def api_admin_stats():
+    conn = None
+    try:
+        conn = get_db_connection()
+        cur  = conn.cursor()
+        cur.execute("SELECT COUNT(*) FROM stations")
+        stations = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM countries")
+        countries = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM cities")
+        cities = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM lines")
+        lines = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM comments WHERE approved = FALSE")
+        pending_comments = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM posts")
+        posts = cur.fetchone()[0]
+        cur.close()
+        return jsonify({
+            'stations':         stations,
+            'countries':        countries,
+            'cities':           cities,
+            'lines':            lines,
+            'pending_comments': pending_comments,
+            'posts':            posts
+        })
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+    finally:
+        if conn: conn.close()
 
 
 # ════════════════════════════════════════════════════════════
