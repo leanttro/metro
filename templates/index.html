@@ -171,20 +171,92 @@
         .btn-filter { padding: 14px 28px; background: var(--primary); color: var(--white); border: none; border-radius: 10px; font-size: 1em; font-weight: 600; cursor: pointer; transition: background 0.2s; }
         .btn-filter:hover { background: var(--dark); }
 
-        /* ── Countries Grid ── */
+        /* ── Countries Carousel ── */
         .section { padding: 60px 0; }
-        .countries-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+        
+        /* ── Alphabetic Filter ── */
+        .alphabet-filter {
+            display: flex; justify-content: center; flex-wrap: wrap;
+            gap: 8px; margin-bottom: 32px;
+        }
+        .alpha-btn {
+            padding: 8px 14px; border: 2px solid var(--medium-gray);
+            border-radius: 20px; background: var(--white);
+            color: var(--text-color); font-weight: 500;
+            cursor: pointer; transition: all 0.2s;
+            font-size: 0.85em;
+        }
+        .alpha-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .alpha-btn.active { background: var(--primary); color: var(--white); border-color: var(--primary); }
+        
+        /* ── Carousel Wrapper ── */
+        .carousel-wrapper {
+            display: flex; align-items: center; gap: 16px;
+            position: relative; margin-bottom: 24px;
+        }
+        
+        .carousel-container {
+            flex: 1; overflow: hidden; border-radius: 12px;
+        }
+        
+        .countries-carousel {
+            display: flex; gap: 16px;
+            scroll-behavior: smooth;
+            overflow-x: auto; padding-bottom: 8px;
+        }
+        .countries-carousel::-webkit-scrollbar {
+            height: 4px;
+        }
+        .countries-carousel::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+            border-radius: 2px;
+        }
+        .countries-carousel::-webkit-scrollbar-thumb {
+            background: var(--medium-gray);
+            border-radius: 2px;
+        }
+        .countries-carousel::-webkit-scrollbar-thumb:hover {
+            background: #999;
+        }
+        
         .country-card {
             background: var(--white); border-radius: 14px; padding: 28px 20px;
             text-align: center; text-decoration: none; color: var(--dark-gray);
             box-shadow: 0 4px 12px var(--shadow-light);
             transition: transform 0.3s, box-shadow 0.3s;
             display: flex; flex-direction: column; align-items: center; gap: 12px;
+            min-width: 180px; flex-shrink: 0;
         }
         .country-card:hover { transform: translateY(-6px); box-shadow: 0 8px 24px var(--shadow-medium); }
         .country-flag { font-size: 3em; }
         .country-card h3 { font-size: 1.1em; font-weight: 600; }
         .country-card small { color: #888; font-size: 0.85em; }
+        
+        /* ── Carousel Navigation ── */
+        .carousel-nav {
+            background: var(--primary); color: var(--white);
+            border: none; border-radius: 50%;
+            width: 44px; height: 44px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; flex-shrink: 0;
+            transition: all 0.2s;
+            font-size: 1em;
+        }
+        .carousel-nav:hover { background: var(--dark); transform: scale(1.08); }
+        .carousel-nav:active { transform: scale(0.95); }
+        
+        /* ── Carousel Indicators ── */
+        .carousel-indicators {
+            display: flex; justify-content: center;
+            gap: 8px;
+        }
+        .indicator {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--medium-gray); cursor: pointer;
+            transition: all 0.2s;
+        }
+        .indicator.active { background: var(--primary); width: 24px; border-radius: 4px; }
+        .indicator:hover { background: #999; }
 
         /* ── Featured Stations ── */
         .stations-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
@@ -298,6 +370,20 @@
         @media (max-width: 768px) {
             .hero-section h1 { font-size: 1.9em; }
             .filter-grid { grid-template-columns: 1fr; }
+            
+            /* Carousel mobile ── */
+            .carousel-wrapper { gap: 12px; }
+            .carousel-nav {
+                width: 40px; height: 40px;
+                font-size: 0.9em;
+            }
+            .country-card {
+                min-width: 160px; padding: 20px 16px;
+            }
+            .country-flag { font-size: 2.5em; }
+            .country-card h3 { font-size: 1em; }
+            .alphabet-filter { gap: 6px; margin-bottom: 24px; }
+            .alpha-btn { padding: 6px 11px; font-size: 0.78em; }
             body > header nav.desktop-nav { display: none; }
             .hamburger-menu { display: block; }
         }
@@ -371,17 +457,39 @@
     </div>
 </section>
 
-<!-- ── Countries Grid ── -->
-<section class="section">
+<!-- ── Countries Carousel with Alphabetic Filter ── -->
+<section class="section" id="countriesSection">
     <div class="container">
         <h2 class="section-title">Metro Systems Worldwide</h2>
         <p class="section-subtitle">Click a country to explore its metro stations</p>
-        <div class="countries-grid" id="countriesGrid">
-            <div style="text-align:center;color:#999;grid-column:1/-1;padding:40px;">
-                <i class="fas fa-globe fa-2x" style="margin-bottom:12px;display:block;color:#ddd;"></i>
-                Loading countries…
-            </div>
+        
+        <!-- ── Alphabetic Filter Buttons ── -->
+        <div class="alphabet-filter" id="alphabetFilter">
+            <button class="alpha-btn active" data-letter="all">All</button>
         </div>
+        
+        <!-- ── Carousel Container ── -->
+        <div class="carousel-wrapper">
+            <button class="carousel-nav carousel-prev" id="carouselPrev" aria-label="Previous">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            
+            <div class="carousel-container" id="carouselContainer">
+                <div class="countries-carousel" id="countriesGrid">
+                    <div style="text-align:center;color:#999;padding:40px;">
+                        <i class="fas fa-globe fa-2x" style="margin-bottom:12px;display:block;color:#ddd;"></i>
+                        Loading countries…
+                    </div>
+                </div>
+            </div>
+            
+            <button class="carousel-nav carousel-next" id="carouselNext" aria-label="Next">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+        
+        <!-- ── Carousel Indicators ── -->
+        <div class="carousel-indicators" id="carouselIndicators"></div>
     </div>
 </section>
 
@@ -755,18 +863,126 @@ function goToCity() {
     }
 }
 
+// ── Global countries list for filtering ──
+let allCountries = [];
+
 function renderCountryCards(countries) {
+    allCountries = countries;
     const grid = document.getElementById('countriesGrid');
     if (!countries.length) {
-        grid.innerHTML = '<p style="text-align:center;color:#999;grid-column:1/-1;">No countries added yet.</p>';
+        grid.innerHTML = '<p style="text-align:center;color:#999;padding:40px;">No countries added yet.</p>';
         return;
     }
     grid.innerHTML = countries.map(c => `
-        <a class="country-card" href="/country/${c.slug}">
+        <a class="country-card" href="/country/${c.slug}" data-country="${c.name.toUpperCase()}">
             <div class="country-flag">${countryFlag(c.code)}</div>
             <h3>${c.name}</h3>
         </a>
     `).join('');
+    initCarousel(countries);
+    initAlphabeticFilter(countries);
+}
+
+// ── Initialize Carousel ──
+function initCarousel(countries) {
+    const carousel = document.getElementById('countriesGrid');
+    const prevBtn  = document.getElementById('carouselPrev');
+    const nextBtn  = document.getElementById('carouselNext');
+    const indicators = document.getElementById('carouselIndicators');
+    
+    // Calcular número de cards visíveis
+    const container = document.getElementById('carouselContainer');
+    const cardWidth = 196; // 180px + 16px gap
+    const containerWidth = container.offsetWidth;
+    const visibleCards = Math.max(1, Math.floor(containerWidth / cardWidth));
+    const totalCards = countries.length;
+    const totalPages = Math.ceil(totalCards / visibleCards);
+    
+    let currentPage = 0;
+    
+    // Criar indicadores
+    indicators.innerHTML = Array(totalPages).fill(0)
+        .map((_, i) => `<div class="indicator ${i === 0 ? 'active' : ''}" data-page="${i}"></div>`)
+        .join('');
+    
+    const updateCarousel = () => {
+        const scrollAmount = currentPage * cardWidth * visibleCards;
+        carousel.scrollLeft = scrollAmount;
+        document.querySelectorAll('.indicator').forEach((ind, i) => {
+            ind.classList.toggle('active', i === currentPage);
+        });
+    };
+    
+    const scroll = (direction) => {
+        if (direction === 'prev') {
+            currentPage = Math.max(0, currentPage - 1);
+        } else {
+            currentPage = Math.min(totalPages - 1, currentPage + 1);
+        }
+        updateCarousel();
+    };
+    
+    prevBtn.addEventListener('click', () => scroll('prev'));
+    nextBtn.addEventListener('click', () => scroll('next'));
+    
+    document.querySelectorAll('.indicator').forEach(ind => {
+        ind.addEventListener('click', () => {
+            currentPage = parseInt(ind.dataset.page);
+            updateCarousel();
+        });
+    });
+    
+    // Atualizar ao redimensionar
+    window.addEventListener('resize', () => {
+        updateCarousel();
+    });
+}
+
+// ── Initialize Alphabetic Filter ──
+function initAlphabeticFilter(countries) {
+    const filterContainer = document.getElementById('alphabetFilter');
+    
+    // Gerar letras únicas
+    const letters = new Set();
+    countries.forEach(c => {
+        const firstLetter = c.name.charAt(0).toUpperCase();
+        letters.add(firstLetter);
+    });
+    
+    const sortedLetters = Array.from(letters).sort();
+    
+    // Criar botões de filtro
+    filterContainer.innerHTML = '<button class="alpha-btn active" data-letter="all">All</button>' +
+        sortedLetters.map(letter => 
+            `<button class="alpha-btn" data-letter="${letter}">${letter}</button>`
+        ).join('');
+    
+    // Event listeners
+    document.querySelectorAll('.alpha-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Atualizar botão ativo
+            document.querySelectorAll('.alpha-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // Filtrar cards
+            const letter = btn.dataset.letter;
+            const cards = document.querySelectorAll('.country-card');
+            let visibleCount = 0;
+            
+            cards.forEach(card => {
+                const cardLetter = card.dataset.country.charAt(0);
+                if (letter === 'all' || cardLetter === letter) {
+                    card.style.display = 'flex';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            // Resetar posição do carrossel
+            document.getElementById('countriesGrid').scrollLeft = 0;
+        });
+    });
 }
 
 loadCountries();
