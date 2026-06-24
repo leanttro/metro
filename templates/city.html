@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {% if city %}
+    <title>Metro Stations in {{ city.name }}, {{ country.name }} | nearestmetro.com</title>
+    <meta name="description" content="Browse all metro stations in {{ city.name }}, {{ country.name }}. Filter by line and find stations near you.">
+    <link rel="canonical" href="https://www.nearestmetro.com/country/{{ country.slug }}/{{ city.slug }}">
+    {% else %}
+    <title>Metro Stations in {{ country.name }} | nearestmetro.com</title>
+    <meta name="description" content="Browse all cities and metro stations in {{ country.name }}.">
+    <link rel="canonical" href="https://www.nearestmetro.com/country/{{ country.slug }}">
+    {% endif %}
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root { --primary:#1a73e8; --dark:#0d47a1; --light:#e3f2fd; --light-gray:#f8f9fa; --medium-gray:#e0e0e0; --dark-gray:#343a40; --text-color:#495057; --white:#ffffff; --shadow-light:rgba(0,0,0,0.08); --shadow-medium:rgba(0,0,0,0.15); }
+        * { box-sizing:border-box; margin:0; padding:0; }
+        body { font-family:'Roboto',sans-serif; background:var(--light-gray); color:var(--text-color); line-height:1.6; }
+        .container { max-width:1200px; margin:0 auto; padding:0 20px; }
+
+        header { background:linear-gradient(135deg,var(--primary),var(--dark)); padding:16px 20px; display:flex; align-items:center; justify-content:space-between; }
+        .logo a { text-decoration:none; color:#fff; font-size:1.4em; font-weight:700; }
+        .logo a span { opacity:.7; }
+        header nav a { color:rgba(255,255,255,0.85); text-decoration:none; margin-left:24px; font-weight:500; }
+
+        .breadcrumb { background:var(--white); border-bottom:1px solid var(--medium-gray); padding:12px 0; }
+        .breadcrumb ol { list-style:none; display:flex; flex-wrap:wrap; gap:6px; align-items:center; font-size:0.9em; }
+        .breadcrumb ol li a { color:var(--primary); text-decoration:none; }
+        .breadcrumb ol li::after { content:' / '; color:#aaa; margin-left:6px; }
+        .breadcrumb ol li:last-child::after { content:''; }
+
+        .page-hero { background:linear-gradient(135deg,var(--primary),var(--dark)); color:#fff; padding:48px 0; text-align:center; }
+        .page-hero h1 { font-size:2.2em; font-weight:700; margin-bottom:8px; }
+        .page-hero p { opacity:.85; font-size:1.05em; }
+
+        .filters-bar { background:var(--white); padding:20px 0; border-bottom:1px solid var(--medium-gray); }
+        .filters-bar .inner { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+        .filter-select { padding:10px 16px; border:2px solid var(--medium-gray); border-radius:8px; font-size:0.95em; background:var(--white); color:var(--dark-gray); cursor:pointer; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23666' d='M6 8L0 0h12z'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; padding-right:32px; }
+        .filter-select:focus { outline:none; border-color:var(--primary); }
+        .search-input { padding:10px 16px; border:2px solid var(--medium-gray); border-radius:8px; font-size:0.95em; min-width:240px; }
+        .search-input:focus { outline:none; border-color:var(--primary); }
+
+        .content { padding:32px 0 60px; }
+        .stations-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:20px; }
+        .station-card { background:var(--white); border-radius:12px; overflow:hidden; box-shadow:0 2px 8px var(--shadow-light); text-decoration:none; color:inherit; transition:transform 0.3s,box-shadow 0.3s; display:flex; flex-direction:column; }
+        .station-card:hover { transform:translateY(-5px); box-shadow:0 8px 24px var(--shadow-medium); }
+        .station-card-img { width:100%; height:160px; object-fit:cover; background:var(--light); display:flex; align-items:center; justify-content:center; font-size:3em; color:var(--primary); }
+        .station-card-img img { width:100%; height:100%; object-fit:cover; }
+        .station-card-body { padding:18px; flex:1; }
+        .line-badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:0.78em; font-weight:600; color:#fff; margin-bottom:8px; }
+        .station-card-body h3 { font-size:1.05em; font-weight:600; margin-bottom:6px; color:var(--dark-gray); }
+        .station-card-body .address { color:#888; font-size:0.88em; display:flex; align-items:center; gap:5px; }
+
+        .cities-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:20px; }
+        .city-card { background:var(--white); border-radius:12px; padding:28px 20px; text-align:center; text-decoration:none; color:var(--dark-gray); box-shadow:0 2px 8px var(--shadow-light); transition:transform 0.3s,box-shadow 0.3s; }
+        .city-card:hover { transform:translateY(-5px); box-shadow:0 8px 24px var(--shadow-medium); }
+        .city-card i { font-size:2.5em; color:var(--primary); margin-bottom:14px; }
+        .city-card h3 { font-size:1.1em; font-weight:600; }
+
+        .no-results { text-align:center; padding:60px 20px; color:#aaa; }
+        .no-results i { font-size:3em; display:block; margin-bottom:16px; color:#ddd; }
+
+        footer { background:#2d3748; color:#aaa; text-align:center; padding:24px; font-size:0.9em; }
+        footer a { color:#90caf9; text-decoration:none; }
+        #google_translate_element { position:fixed; bottom:16px; right:16px; z-index:999; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo"><a href="/">nearest<span>metro</span>.com</a></div>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/blog">Blog</a>
+    </nav>
+</header>
+
+<div class="breadcrumb">
+    <div class="container">
+        <ol>
+            <li><a href="/">Home</a></li>
+            <li><a href="/country/{{ country.slug }}">{{ country.name }}</a></li>
+            {% if city %}<li>{{ city.name }}</li>{% endif %}
+        </ol>
+    </div>
+</div>
+
+<div class="page-hero">
+    <div class="container">
+        {% if city %}
+        <h1><i class="fas fa-subway"></i> Metro Stations in {{ city.name }}</h1>
+        <p>{{ country.name }} — browse all stations or filter by line</p>
+        {% else %}
+        <h1><i class="fas fa-globe"></i> Metro Systems in {{ country.name }}</h1>
+        <p>Select a city to browse its metro stations</p>
+        {% endif %}
+    </div>
+</div>
+
+{% if city %}
+<!-- Filter bar -->
+<div class="filters-bar">
+    <div class="container">
+        <div class="inner">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search station name…" oninput="filterStations()">
+            <select class="filter-select" id="lineFilter" onchange="filterStations()">
+                <option value="">All lines</option>
+                {% for line in lines %}
+                <option value="{{ line.slug }}" data-color="{{ line.color }}">{{ line.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="content">
+    <div class="container">
+        <div class="stations-grid" id="stationsGrid">
+            <div class="no-results"><i class="fas fa-spinner fa-spin"></i> Loading stations…</div>
+        </div>
+    </div>
+</div>
+
+<script>
+let allStations = [];
+
+async function loadStations() {
+    try {
+        const res  = await fetch('/api/stations?city={{ city.slug }}&country={{ country.slug }}');
+        allStations = await res.json();
+        renderStations(allStations);
+    } catch(e) {
+        document.getElementById('stationsGrid').innerHTML = '<div class="no-results"><i class="fas fa-exclamation-circle"></i><p>Error loading stations.</p></div>';
+    }
+}
+
+function filterStations() {
+    const q    = document.getElementById('searchInput').value.toLowerCase();
+    const line = document.getElementById('lineFilter').value;
+    const filtered = allStations.filter(s => {
+        const matchQ = !q || s.name.toLowerCase().includes(q) || (s.address||'').toLowerCase().includes(q);
+        const matchL = !line || s.line_slug === line || s.line_id === line;
+        return matchQ && matchL;
+    });
+    renderStations(filtered);
+}
+
+function renderStations(stations) {
+    const grid = document.getElementById('stationsGrid');
+    if (!stations.length) {
+        grid.innerHTML = '<div class="no-results" style="grid-column:1/-1"><i class="fas fa-subway"></i><p>No stations found.</p></div>';
+        return;
+    }
+    grid.innerHTML = stations.map(s => `
+        <a class="station-card" href="/stations/${s.slug}">
+            <div class="station-card-img">
+                ${s.photo_url ? `<img src="${s.photo_url}" alt="${s.name}" loading="lazy">` : '<i class="fas fa-subway"></i>'}
+            </div>
+            <div class="station-card-body">
+                ${s.line_name ? `<span class="line-badge" style="background:${s.line_color||'#1a73e8'}">${s.line_name}</span>` : ''}
+                <h3>${s.name}</h3>
+                ${s.address ? `<p class="address"><i class="fas fa-map-marker-alt"></i>${s.address}</p>` : ''}
+            </div>
+        </a>
+    `).join('');
+}
+
+loadStations();
+</script>
+
+{% else %}
+<!-- Country view — show cities -->
+<div class="content">
+    <div class="container">
+        <h2 style="font-size:1.4em;font-weight:600;margin-bottom:24px;color:var(--dark-gray);">Cities in {{ country.name }}</h2>
+        {% if cities %}
+        <div class="cities-grid">
+            {% for c in cities %}
+            <a class="city-card" href="/country/{{ country.slug }}/{{ c.slug }}">
+                <i class="fas fa-city"></i>
+                <h3>{{ c.name }}</h3>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-results"><i class="fas fa-city"></i><p>No cities found for {{ country.name }} yet.</p></div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+<footer>
+    <p><a href="/">nearestmetro.com</a> — Find metro stations worldwide</p>
+</footer>
+
+<div id="google_translate_element"></div>
+<script>
+function googleTranslateElementInit() {
+    new google.translate.TranslateElement({ pageLanguage:'en', layout:google.translate.TranslateElement.InlineLayout.SIMPLE }, 'google_translate_element');
+}
+</script>
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
+</html>

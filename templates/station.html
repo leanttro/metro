@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ station.name }} Metro Station — {{ station.city_name }}, {{ station.country_name }} | nearestmetro.com</title>
+    <meta name="description" content="Find {{ station.name }} metro station in {{ station.city_name }}. Get directions, nearby places, line info, and real-time visitor reviews.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.nearestmetro.com/stations/{{ station.slug }}">
+
+    <meta property="og:type"        content="place">
+    <meta property="og:title"       content="{{ station.name }} Metro Station — {{ station.city_name }}">
+    <meta property="og:description" content="Find {{ station.name }} metro station in {{ station.city_name }}, {{ station.country_name }}. Get directions and station details.">
+    {% if station.photo_url %}<meta property="og:image" content="{{ station.photo_url }}">{% endif %}
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Place",
+      "name": "{{ station.name }} Metro Station",
+      "description": "{{ station.description or ('Metro station on ' + (station.line_name or 'metro line')) }}",
+      "url": "https://www.nearestmetro.com/stations/{{ station.slug }}",
+      {% if station.photo_url %}"image": "{{ station.photo_url }}",{% endif %}
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "{{ station.address or '' }}",
+        "addressLocality": "{{ station.city_name or '' }}",
+        "addressCountry": "{{ station.country_code or '' }}"
+      }{% if station.lat and station.lng %},
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": {{ station.lat }},
+        "longitude": {{ station.lng }}
+      }{% endif %}
+    }
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary:#1a73e8; --dark:#0d47a1; --light:#e3f2fd;
+            --light-gray:#f8f9fa; --medium-gray:#e0e0e0; --dark-gray:#343a40;
+            --text-color:#495057; --white:#ffffff;
+            --shadow-light:rgba(0,0,0,0.08); --shadow-medium:rgba(0,0,0,0.15);
+            --line-color: {{ station.line_color or '#1a73e8' }};
+        }
+        * { box-sizing:border-box; margin:0; padding:0; }
+        body { font-family:'Roboto',sans-serif; background:var(--light-gray); color:var(--text-color); line-height:1.6; }
+        .container { max-width:1100px; margin:0 auto; padding:0 20px; }
+
+        header {
+            background: linear-gradient(135deg, var(--line-color), color-mix(in srgb, var(--line-color) 70%, black));
+            padding:16px 20px; display:flex; align-items:center; justify-content:space-between;
+        }
+        .logo a { text-decoration:none; color:#fff; font-size:1.4em; font-weight:700; }
+        .logo a span { opacity:.7; }
+        header nav a { color:rgba(255,255,255,0.85); text-decoration:none; margin-left:24px; font-weight:500; }
+        header nav a:hover { color:#fff; }
+
+        /* Breadcrumb */
+        .breadcrumb { background:var(--white); border-bottom:1px solid var(--medium-gray); padding:12px 0; }
+        .breadcrumb ol { list-style:none; display:flex; flex-wrap:wrap; gap:6px; align-items:center; font-size:0.9em; }
+        .breadcrumb ol li a { color:var(--primary); text-decoration:none; }
+        .breadcrumb ol li::after { content:' / '; color:#aaa; margin-left:6px; }
+        .breadcrumb ol li:last-child::after { content:''; }
+        .breadcrumb ol li:last-child { color:var(--text-color); }
+
+        /* Hero card */
+        .station-hero {
+            background:var(--white); margin-bottom:24px;
+            box-shadow:0 2px 8px var(--shadow-light);
+        }
+        .station-hero-img { width:100%; height:320px; object-fit:cover; display:flex; align-items:center; justify-content:center; background:var(--light); font-size:5em; color:var(--line-color); }
+        .station-hero-img img { width:100%; height:100%; object-fit:cover; }
+        .station-hero-body { padding:28px 32px; }
+        .line-badge { display:inline-flex; align-items:center; gap:6px; padding:5px 14px; border-radius:20px; font-size:0.85em; font-weight:600; color:#fff; background:var(--line-color); margin-bottom:12px; }
+        .station-hero-body h1 { font-size:2.2em; font-weight:700; color:var(--dark-gray); margin-bottom:8px; line-height:1.2; }
+        .station-meta { display:flex; flex-wrap:wrap; gap:18px; color:#666; font-size:0.95em; margin-top:12px; }
+        .station-meta span { display:flex; align-items:center; gap:6px; }
+        .station-meta i { color:var(--line-color); }
+
+        /* Actions */
+        .action-btns { display:flex; gap:12px; flex-wrap:wrap; margin-top:20px; }
+        .btn { display:inline-flex; align-items:center; gap:8px; padding:11px 22px; border-radius:8px; font-size:0.95em; font-weight:600; cursor:pointer; text-decoration:none; border:none; transition:all 0.2s; }
+        .btn-primary { background:var(--primary); color:#fff; }
+        .btn-primary:hover { background:var(--dark); }
+        .btn-outline { background:transparent; color:var(--primary); border:2px solid var(--primary); }
+        .btn-outline:hover { background:var(--light); }
+
+        /* Content grid */
+        .content-grid { display:grid; grid-template-columns:1fr 340px; gap:24px; padding:24px 0 48px; }
+        @media(max-width:860px) { .content-grid { grid-template-columns:1fr; } }
+
+        .card { background:var(--white); border-radius:12px; padding:24px; box-shadow:0 2px 8px var(--shadow-light); margin-bottom:20px; }
+        .card h2 { font-size:1.2em; font-weight:700; color:var(--dark-gray); margin-bottom:16px; padding-bottom:10px; border-bottom:2px solid var(--medium-gray); }
+
+        /* Rating */
+        .stars { display:flex; gap:4px; }
+        .star { font-size:1.8em; cursor:pointer; color:#ddd; transition:color 0.15s; }
+        .star.active, .star:hover { color:#F39C12; }
+        .rating-summary { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+        .rating-avg { font-size:2.5em; font-weight:700; color:var(--dark-gray); }
+        .rating-count { color:#888; font-size:0.9em; }
+
+        /* Comments */
+        .comment-item { border-bottom:1px solid var(--medium-gray); padding:14px 0; }
+        .comment-item:last-child { border-bottom:none; }
+        .comment-author { font-weight:600; color:var(--dark-gray); margin-bottom:4px; }
+        .comment-date { font-size:0.8em; color:#aaa; margin-left:10px; }
+        .comment-text { color:var(--text-color); font-size:0.95em; }
+        .comment-form input, .comment-form textarea {
+            width:100%; padding:10px 14px; border:1px solid var(--medium-gray); border-radius:8px;
+            font-size:0.95em; margin-bottom:12px; font-family:inherit;
+        }
+        .comment-form textarea { min-height:90px; resize:vertical; }
+        .comment-form input:focus, .comment-form textarea:focus { outline:none; border-color:var(--primary); }
+
+        /* Map placeholder */
+        .map-container { border-radius:10px; overflow:hidden; height:250px; background:#e8eaf0; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:0.95em; }
+        #map { width:100%; height:100%; }
+
+        footer { background:#2d3748; color:#aaa; text-align:center; padding:24px; font-size:0.9em; }
+        footer a { color:#90caf9; text-decoration:none; }
+
+        #google_translate_element { position:fixed; bottom:16px; right:16px; z-index:999; }
+
+        @media(max-width:600px) {
+            .station-hero-body { padding:20px; }
+            .station-hero-body h1 { font-size:1.6em; }
+            .station-hero-img { height:220px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo"><a href="/">nearest<span>metro</span>.com</a></div>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/blog">Blog</a>
+    </nav>
+</header>
+
+<!-- Breadcrumb -->
+<div class="breadcrumb">
+    <div class="container">
+        <ol>
+            <li><a href="/">Home</a></li>
+            {% if station.country_slug %}<li><a href="/country/{{ station.country_slug }}">{{ station.country_name }}</a></li>{% endif %}
+            {% if station.city_slug and station.country_slug %}<li><a href="/country/{{ station.country_slug }}/{{ station.city_slug }}">{{ station.city_name }}</a></li>{% endif %}
+            <li>{{ station.name }}</li>
+        </ol>
+    </div>
+</div>
+
+<!-- Hero -->
+<div class="station-hero">
+    <div class="station-hero-img">
+        {% if station.photo_url %}
+            <img src="{{ station.photo_url }}" alt="{{ station.name }} metro station">
+        {% else %}
+            <i class="fas fa-subway"></i>
+        {% endif %}
+    </div>
+    <div class="container">
+        <div class="station-hero-body">
+            {% if station.line_name %}
+            <span class="line-badge">
+                <span style="width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.5);display:inline-block;"></span>
+                {{ station.line_name }}
+            </span>
+            {% endif %}
+            <h1>{{ station.name }}</h1>
+            <div class="station-meta">
+                {% if station.city_name %}<span><i class="fas fa-city"></i> {{ station.city_name }}, {{ station.country_name }}</span>{% endif %}
+                {% if station.address %}<span><i class="fas fa-map-marker-alt"></i> {{ station.address }}</span>{% endif %}
+            </div>
+            <div class="action-btns">
+                {% if station.lat and station.lng %}
+                <a class="btn btn-primary" href="https://www.google.com/maps/dir/?api=1&destination={{ station.lat }},{{ station.lng }}" target="_blank" rel="noopener">
+                    <i class="fas fa-directions"></i> Get Directions
+                </a>
+                {% endif %}
+                <a class="btn btn-outline" href="/country/{{ station.country_slug }}/{{ station.city_slug }}">
+                    <i class="fas fa-list"></i> All Stations in {{ station.city_name }}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Content -->
+<div class="container">
+    <div class="content-grid">
+
+        <!-- Left column -->
+        <div>
+            {% if station.description %}
+            <div class="card">
+                <h2><i class="fas fa-info-circle" style="color:var(--primary);margin-right:8px;"></i>About This Station</h2>
+                <p>{{ station.description }}</p>
+            </div>
+            {% endif %}
+
+            <!-- Rating -->
+            <div class="card">
+                <h2><i class="fas fa-star" style="color:#F39C12;margin-right:8px;"></i>Rate This Station</h2>
+                <div class="rating-summary">
+                    <div class="rating-avg" id="ratingAvg">—</div>
+                    <div>
+                        <div class="stars" id="displayStars">
+                            <i class="fas fa-star" style="color:#ddd;"></i>
+                            <i class="fas fa-star" style="color:#ddd;"></i>
+                            <i class="fas fa-star" style="color:#ddd;"></i>
+                            <i class="fas fa-star" style="color:#ddd;"></i>
+                            <i class="fas fa-star" style="color:#ddd;"></i>
+                        </div>
+                        <div class="rating-count" id="ratingCount">Loading…</div>
+                    </div>
+                </div>
+                <p style="margin-bottom:12px;font-size:0.9em;color:#666;">Leave your rating:</p>
+                <div class="stars" id="rateStars">
+                    <i class="fas fa-star star" onclick="submitRating(1)" onmouseover="hoverStars(1)" onmouseleave="resetHover()"></i>
+                    <i class="fas fa-star star" onclick="submitRating(2)" onmouseover="hoverStars(2)" onmouseleave="resetHover()"></i>
+                    <i class="fas fa-star star" onclick="submitRating(3)" onmouseover="hoverStars(3)" onmouseleave="resetHover()"></i>
+                    <i class="fas fa-star star" onclick="submitRating(4)" onmouseover="hoverStars(4)" onmouseleave="resetHover()"></i>
+                    <i class="fas fa-star star" onclick="submitRating(5)" onmouseover="hoverStars(5)" onmouseleave="resetHover()"></i>
+                </div>
+                <div id="ratingMsg" style="margin-top:10px;font-size:0.9em;color:#4CAF50;display:none;"></div>
+            </div>
+
+            <!-- Comments -->
+            <div class="card">
+                <h2><i class="fas fa-comments" style="color:var(--primary);margin-right:8px;"></i>Comments</h2>
+                <div id="commentsList"><p style="color:#999;">Loading comments…</p></div>
+                <hr style="margin:20px 0;border:none;border-top:1px solid var(--medium-gray);">
+                <h3 style="font-size:1em;font-weight:600;margin-bottom:14px;">Leave a Comment</h3>
+                <div class="comment-form">
+                    <input type="text" id="cName" placeholder="Your name *">
+                    <input type="email" id="cEmail" placeholder="Your email (optional)">
+                    <textarea id="cText" placeholder="Your comment *"></textarea>
+                    <button class="btn btn-primary" onclick="submitComment()">
+                        <i class="fas fa-paper-plane"></i> Submit Comment
+                    </button>
+                    <div id="commentMsg" style="margin-top:10px;font-size:0.9em;display:none;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right sidebar -->
+        <div>
+            {% if station.lat and station.lng %}
+            <div class="card">
+                <h2><i class="fas fa-map" style="color:var(--primary);margin-right:8px;"></i>Map</h2>
+                <div class="map-container">
+                    <iframe
+                        id="map"
+                        src="https://maps.google.com/maps?q={{ station.lat }},{{ station.lng }}&z=16&output=embed"
+                        style="border:0;"
+                        allowfullscreen loading="lazy">
+                    </iframe>
+                </div>
+                <div style="margin-top:12px;text-align:center;">
+                    <a class="btn btn-outline" href="https://www.google.com/maps?q={{ station.lat }},{{ station.lng }}" target="_blank" rel="noopener" style="width:100%;justify-content:center;">
+                        <i class="fas fa-external-link-alt"></i> Open in Google Maps
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="card">
+                <h2><i class="fas fa-subway" style="color:var(--primary);margin-right:8px;"></i>Station Info</h2>
+                <table style="width:100%;font-size:0.92em;">
+                    <tr><td style="padding:6px 0;color:#888;width:110px;">Line</td><td><strong>{{ station.line_name or '—' }}</strong></td></tr>
+                    <tr><td style="padding:6px 0;color:#888;">City</td><td>{{ station.city_name or '—' }}</td></tr>
+                    <tr><td style="padding:6px 0;color:#888;">Country</td><td>{{ station.country_name or '—' }}</td></tr>
+                    {% if station.address %}<tr><td style="padding:6px 0;color:#888;">Address</td><td>{{ station.address }}</td></tr>{% endif %}
+                    {% if station.lat %}<tr><td style="padding:6px 0;color:#888;">Coords</td><td style="font-size:0.85em;">{{ station.lat }}, {{ station.lng }}</td></tr>{% endif %}
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<footer>
+    <p><a href="/">nearestmetro.com</a> — Find metro stations worldwide</p>
+</footer>
+
+<div id="google_translate_element"></div>
+<script>
+function googleTranslateElementInit() {
+    new google.translate.TranslateElement({ pageLanguage:'en', layout:google.translate.TranslateElement.InlineLayout.SIMPLE }, 'google_translate_element');
+}
+</script>
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<script>
+const STATION_ID = {{ station.id }};
+
+// ── Rating ──
+async function loadRating() {
+    try {
+        const res  = await fetch(`/api/stations/${STATION_ID}/rating`);
+        const data = await res.json();
+        document.getElementById('ratingAvg').textContent = data.average ? data.average.toFixed(1) : '—';
+        document.getElementById('ratingCount').textContent = `${data.total} rating${data.total !== 1 ? 's' : ''}`;
+        const stars = document.querySelectorAll('#displayStars i');
+        stars.forEach((s, i) => s.style.color = i < Math.round(data.average) ? '#F39C12' : '#ddd');
+    } catch(e) {}
+}
+
+function hoverStars(n) {
+    document.querySelectorAll('#rateStars .star').forEach((s, i) => s.classList.toggle('active', i < n));
+}
+function resetHover() {
+    document.querySelectorAll('#rateStars .star').forEach(s => s.classList.remove('active'));
+}
+async function submitRating(n) {
+    try {
+        await fetch(`/api/stations/${STATION_ID}/rate`, {
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({rating:n})
+        });
+        const msg = document.getElementById('ratingMsg');
+        msg.textContent = 'Thanks for your rating!'; msg.style.display = 'block';
+        loadRating();
+    } catch(e) {}
+}
+
+// ── Comments ──
+async function loadComments() {
+    try {
+        const res  = await fetch(`/api/stations/${STATION_ID}/comments`);
+        const data = await res.json();
+        const box  = document.getElementById('commentsList');
+        if (!data.length) { box.innerHTML = '<p style="color:#999;font-size:0.9em;">No comments yet. Be the first!</p>'; return; }
+        box.innerHTML = data.map(c => `
+            <div class="comment-item">
+                <div class="comment-author">${c.name}<span class="comment-date">${c.created_at || ''}</span></div>
+                <div class="comment-text">${c.text}</div>
+            </div>
+        `).join('');
+    } catch(e) {}
+}
+
+async function submitComment() {
+    const name  = document.getElementById('cName').value.trim();
+    const email = document.getElementById('cEmail').value.trim();
+    const text  = document.getElementById('cText').value.trim();
+    const msg   = document.getElementById('commentMsg');
+    if (!name || !text) { msg.textContent='Name and comment are required.'; msg.style.color='#e53935'; msg.style.display='block'; return; }
+    try {
+        const res  = await fetch(`/api/stations/${STATION_ID}/comments`, {
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({name, email, text})
+        });
+        const data = await res.json();
+        msg.textContent  = data.msg || 'Comment submitted!';
+        msg.style.color  = '#4CAF50'; msg.style.display = 'block';
+        document.getElementById('cName').value = '';
+        document.getElementById('cEmail').value = '';
+        document.getElementById('cText').value = '';
+    } catch(e) {
+        msg.textContent = 'Error submitting comment.'; msg.style.color='#e53935'; msg.style.display='block';
+    }
+}
+
+loadRating();
+loadComments();
+</script>
+</body>
+</html>

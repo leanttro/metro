@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>nearestmetro.com — Find the Nearest Metro Station Worldwide</title>
+    <meta name="description" content="Find the nearest metro station to your location worldwide. Search by country, city, or metro line. Free, fast, and always up to date.">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#1a73e8">
+    <link rel="canonical" href="https://www.nearestmetro.com/">
+
+    <meta property="og:type"        content="website">
+    <meta property="og:site_name"   content="nearestmetro.com">
+    <meta property="og:url"         content="https://www.nearestmetro.com/">
+    <meta property="og:title"       content="nearestmetro.com — Find the Nearest Metro Station">
+    <meta property="og:description" content="Find the nearest metro station to your location worldwide. Search by country, city, or metro line.">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "url": "https://www.nearestmetro.com/",
+      "name": "nearestmetro.com",
+      "description": "Global metro station finder",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://www.nearestmetro.com/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary:       #1a73e8;
+            --dark:          #0d47a1;
+            --light:         #e3f2fd;
+            --light-gray:    #f8f9fa;
+            --medium-gray:   #e0e0e0;
+            --dark-gray:     #343a40;
+            --text-color:    #495057;
+            --white:         #ffffff;
+            --shadow-light:  rgba(0,0,0,0.08);
+            --shadow-medium: rgba(0,0,0,0.15);
+            --gold:          #F39C12;
+            --metro-red:     #e53935;
+            --metro-blue:    #1e88e5;
+            --metro-green:   #43a047;
+            --metro-yellow:  #f9a825;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Roboto', sans-serif; background-color: var(--light-gray); color: var(--text-color); line-height: 1.6; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        /* ── Header ── */
+        body > header {
+            background: linear-gradient(135deg, var(--primary), var(--dark));
+            padding: 16px 20px;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            gap: 12px; position: relative;
+        }
+        .logo a { text-decoration: none; color: var(--white); font-size: 1.6em; font-weight: 700; letter-spacing: -0.5px; }
+        .logo a span { color: #90caf9; }
+        body > header nav.desktop-nav ul { list-style: none; display: flex; gap: 35px; }
+        body > header nav.desktop-nav ul li a {
+            text-decoration: none; color: var(--white); font-weight: 500;
+            transition: color 0.3s; padding-bottom: 4px;
+            border-bottom: 2px solid transparent;
+        }
+        body > header nav.desktop-nav ul li a:hover { border-color: var(--white); }
+        .hamburger-menu { display: none; font-size: 1.8em; color: var(--white); cursor: pointer; padding: 10px 20px; z-index: 1001; position: absolute; right: 0; top: 50%; transform: translateY(-50%); }
+        .mobile-nav-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.92); z-index: 1000;
+            justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s;
+        }
+        .mobile-nav-overlay.active { display: flex; opacity: 1; }
+        .mobile-nav-overlay nav ul { list-style: none; flex-direction: column; text-align: center; padding: 0; }
+        .mobile-nav-overlay nav ul li { margin: 20px 0; }
+        .mobile-nav-overlay nav ul li a { color: var(--white); font-size: 1.8em; font-weight: 700; text-decoration: none; }
+
+        /* ── Hero ── */
+        .hero-section {
+            color: var(--white); text-align: center;
+            min-height: 520px; display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(rgba(13,71,161,0.85), rgba(13,71,161,0.75)),
+                        url('https://images.unsplash.com/photo-1555992457-b8fefdd09069?w=1400') center/cover no-repeat;
+            position: relative;
+        }
+        .hero-content { max-width: 700px; padding: 60px 20px; }
+        .hero-section h1 { font-size: 2.8em; font-weight: 700; text-shadow: 2px 2px 6px rgba(0,0,0,0.4); margin-bottom: 16px; line-height: 1.25; }
+        .hero-section p  { font-size: 1.25em; margin-bottom: 36px; opacity: 0.92; }
+
+        .btn-hero {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: var(--white); color: var(--primary);
+            padding: 15px 32px; border-radius: 50px; font-size: 1.1em; font-weight: 700;
+            text-decoration: none; border: none; cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        }
+        .btn-hero:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+        .btn-hero.secondary { background: transparent; color: var(--white); border: 2px solid var(--white); margin-left: 12px; }
+        .btn-hero.secondary:hover { background: rgba(255,255,255,0.1); }
+
+        /* ── Nearest Result ── */
+        #nearest-results { display: none; margin-top: 32px; background: rgba(255,255,255,0.12); border-radius: 16px; padding: 20px; backdrop-filter: blur(8px); text-align: left; }
+        #nearest-results h3 { color: var(--white); font-size: 1.1em; margin-bottom: 14px; text-align: center; }
+        .nearest-card {
+            background: rgba(255,255,255,0.95); border-radius: 10px; padding: 14px 18px;
+            margin-bottom: 10px; display: flex; align-items: center; gap: 14px;
+            text-decoration: none; color: var(--dark-gray);
+            transition: transform 0.2s; cursor: pointer;
+        }
+        .nearest-card:hover { transform: translateX(4px); }
+        .nearest-card:last-child { margin-bottom: 0; }
+        .nearest-card .line-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+        .nearest-card .info { flex: 1; }
+        .nearest-card .info strong { display: block; font-weight: 600; color: var(--dark-gray); }
+        .nearest-card .info small { color: #666; font-size: 0.85em; }
+        .nearest-card .distance { font-weight: 700; color: var(--primary); font-size: 0.95em; white-space: nowrap; }
+
+        /* ── Filters ── */
+        .filters-section { padding: 50px 0; background: var(--white); }
+        .section-title { text-align: center; font-size: 2em; font-weight: 700; color: var(--dark-gray); margin-bottom: 10px; }
+        .section-subtitle { text-align: center; color: #6c757d; margin-bottom: 40px; font-size: 1.05em; }
+        .filter-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 800px; margin: 0 auto; }
+        .filter-select {
+            padding: 14px 18px; border: 2px solid var(--medium-gray); border-radius: 10px;
+            font-size: 1em; background: var(--white); color: var(--dark-gray);
+            cursor: pointer; transition: border-color 0.2s; width: 100%; appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23666' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 14px center;
+        }
+        .filter-select:focus { outline: none; border-color: var(--primary); }
+        .btn-filter { padding: 14px 28px; background: var(--primary); color: var(--white); border: none; border-radius: 10px; font-size: 1em; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+        .btn-filter:hover { background: var(--dark); }
+
+        /* ── Countries Grid ── */
+        .section { padding: 60px 0; }
+        .countries-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+        .country-card {
+            background: var(--white); border-radius: 14px; padding: 28px 20px;
+            text-align: center; text-decoration: none; color: var(--dark-gray);
+            box-shadow: 0 4px 12px var(--shadow-light);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex; flex-direction: column; align-items: center; gap: 12px;
+        }
+        .country-card:hover { transform: translateY(-6px); box-shadow: 0 8px 24px var(--shadow-medium); }
+        .country-flag { font-size: 3em; }
+        .country-card h3 { font-size: 1.1em; font-weight: 600; }
+        .country-card small { color: #888; font-size: 0.85em; }
+
+        /* ── Featured Stations ── */
+        .stations-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+        .station-card {
+            background: var(--white); border-radius: 14px; overflow: hidden;
+            box-shadow: 0 4px 12px var(--shadow-light);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none; color: inherit;
+        }
+        .station-card:hover { transform: translateY(-6px); box-shadow: 0 8px 24px var(--shadow-medium); }
+        .station-card-img { width: 100%; height: 170px; object-fit: cover; background: var(--light); display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 3em; }
+        .station-card-img img { width: 100%; height: 100%; object-fit: cover; }
+        .station-card-body { padding: 18px; }
+        .station-card-body h3 { font-size: 1.1em; font-weight: 600; margin-bottom: 6px; }
+        .station-card-body .line-badge {
+            display: inline-block; padding: 3px 10px; border-radius: 20px;
+            font-size: 0.8em; font-weight: 600; color: var(--white); margin-bottom: 8px;
+        }
+        .station-card-body .location { color: #777; font-size: 0.9em; }
+
+        /* ── How it works ── */
+        .how-section { background: var(--light); padding: 60px 0; }
+        .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 30px; }
+        .step-card { text-align: center; }
+        .step-icon { width: 72px; height: 72px; border-radius: 50%; background: var(--primary); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 18px; }
+        .step-icon i { color: var(--white); font-size: 1.8em; }
+        .step-card h3 { font-size: 1.1em; font-weight: 600; margin-bottom: 8px; }
+        .step-card p { color: #666; font-size: 0.95em; }
+
+        /* ── Footer ── */
+        footer { background: var(--dark-gray); color: #ccc; padding: 40px 0 20px; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; margin-bottom: 30px; }
+        footer h4 { color: var(--white); font-size: 1em; margin-bottom: 14px; font-weight: 600; }
+        footer ul { list-style: none; }
+        footer ul li { margin-bottom: 8px; }
+        footer ul li a { color: #aaa; text-decoration: none; font-size: 0.9em; transition: color 0.2s; }
+        footer ul li a:hover { color: var(--white); }
+        .footer-bottom { border-top: 1px solid #555; padding-top: 20px; text-align: center; font-size: 0.85em; color: #888; }
+
+        /* ── Translate widget ── */
+        #google_translate_element { position: fixed; bottom: 16px; right: 16px; z-index: 999; }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .hero-section h1 { font-size: 1.9em; }
+            .filter-grid { grid-template-columns: 1fr; }
+            body > header nav.desktop-nav { display: none; }
+            .hamburger-menu { display: block; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<header>
+    <div class="logo"><a href="/">nearest<span>metro</span>.com</a></div>
+    <nav class="desktop-nav">
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/blog">Blog</a></li>
+        </ul>
+    </nav>
+    <span class="hamburger-menu" onclick="toggleMenu()"><i class="fas fa-bars"></i></span>
+</header>
+
+<div class="mobile-nav-overlay" id="mobileNav">
+    <span style="position:absolute;top:20px;right:25px;color:#fff;font-size:2em;cursor:pointer;" onclick="toggleMenu()"><i class="fas fa-times"></i></span>
+    <nav><ul>
+        <li><a href="/" onclick="toggleMenu()">Home</a></li>
+        <li><a href="/blog" onclick="toggleMenu()">Blog</a></li>
+    </ul></nav>
+</div>
+
+<!-- ── Hero ── -->
+<section class="hero-section">
+    <div class="hero-content">
+        <h1>Find the Nearest Metro Station</h1>
+        <p>Instant metro finder for cities worldwide. Use your location or search by country and city.</p>
+        <button class="btn-hero" id="geoBtn" onclick="findNearest()">
+            <i class="fas fa-location-arrow"></i> Use My Location
+        </button>
+        <a href="#browse" class="btn-hero secondary">
+            <i class="fas fa-search"></i> Browse by City
+        </a>
+
+        <div id="nearest-results">
+            <h3><i class="fas fa-subway"></i> Nearest Stations</h3>
+            <div id="nearest-list"></div>
+        </div>
+    </div>
+</section>
+
+<!-- ── Browse Filter ── -->
+<section class="filters-section" id="browse">
+    <div class="container">
+        <h2 class="section-title">Browse by Location</h2>
+        <p class="section-subtitle">Select a country and city to see all metro stations</p>
+        <div class="filter-grid">
+            <select class="filter-select" id="countryFilter" onchange="loadCities()">
+                <option value="">— Select country —</option>
+            </select>
+            <select class="filter-select" id="cityFilter" disabled>
+                <option value="">— Select city —</option>
+            </select>
+            <button class="btn-filter" onclick="goToCity()"><i class="fas fa-search"></i> Browse Stations</button>
+        </div>
+    </div>
+</section>
+
+<!-- ── Countries Grid ── -->
+<section class="section">
+    <div class="container">
+        <h2 class="section-title">Metro Systems Worldwide</h2>
+        <p class="section-subtitle">Click a country to explore its metro stations</p>
+        <div class="countries-grid" id="countriesGrid">
+            <div style="text-align:center;color:#999;grid-column:1/-1;padding:40px;">
+                <i class="fas fa-globe fa-2x" style="margin-bottom:12px;display:block;color:#ddd;"></i>
+                Loading countries…
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── Featured Stations ── -->
+<section class="section" style="background:var(--white); padding-top:0;">
+    <div class="container" style="padding-top:60px;">
+        <h2 class="section-title">Featured Stations</h2>
+        <p class="section-subtitle">Iconic metro stations from around the world</p>
+        <div class="stations-grid" id="featuredGrid">
+            <div style="text-align:center;color:#999;grid-column:1/-1;padding:40px;">
+                <i class="fas fa-subway fa-2x" style="margin-bottom:12px;display:block;color:#ddd;"></i>
+                Loading stations…
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── How it works ── -->
+<section class="how-section">
+    <div class="container">
+        <h2 class="section-title">How It Works</h2>
+        <p class="section-subtitle">Three simple steps to find any metro station</p>
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-icon"><i class="fas fa-location-arrow"></i></div>
+                <h3>Share Location</h3>
+                <p>Tap "Use My Location" to instantly find metro stations near you using GPS.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-icon"><i class="fas fa-subway"></i></div>
+                <h3>See Nearest Stations</h3>
+                <p>We calculate distance using the Haversine formula and sort by proximity.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-icon"><i class="fas fa-map-marker-alt"></i></div>
+                <h3>Get Directions</h3>
+                <p>View station details, line info, address, and open in Google Maps.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── Footer ── -->
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div>
+                <h4>nearestmetro.com</h4>
+                <p style="font-size:0.9em;color:#aaa;line-height:1.6;">The global metro station finder. Find any subway station, anywhere in the world.</p>
+            </div>
+            <div>
+                <h4>Explore</h4>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/blog">Blog</a></li>
+                    <li><a href="/sitemap.xml">Sitemap</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 nearestmetro.com — All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<!-- ── Google Translate ── -->
+<div id="google_translate_element"></div>
+<script>
+function googleTranslateElementInit() {
+    new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+    }, 'google_translate_element');
+}
+</script>
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<script>
+// ── Mobile menu ──
+function toggleMenu() {
+    const nav = document.getElementById('mobileNav');
+    nav.classList.toggle('active');
+}
+
+// ── Country flag emoji from ISO code ──
+function countryFlag(code) {
+    if (!code) return '🌐';
+    return code.toUpperCase().replace(/./g, c =>
+        String.fromCodePoint(0x1F1E6 - 65 + c.charCodeAt(0))
+    );
+}
+
+// ── Format distance ──
+function formatDistance(meters) {
+    if (!meters && meters !== 0) return '';
+    if (meters < 1000) return Math.round(meters) + ' m';
+    return (meters / 1000).toFixed(1) + ' km';
+}
+
+// ── Find nearest by geolocation ──
+async function findNearest() {
+    const btn = document.getElementById('geoBtn');
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Locating…';
+    btn.disabled = true;
+
+    if (!navigator.geolocation) {
+        alert('Geolocation is not supported by your browser.');
+        btn.innerHTML = '<i class="fas fa-location-arrow"></i> Use My Location';
+        btn.disabled = false;
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        try {
+            const res  = await fetch(`/api/stations/nearest?lat=${lat}&lng=${lng}&limit=5`);
+            const data = await res.json();
+            if (!data.length) {
+                alert('No stations found near your location.');
+            } else {
+                renderNearest(data);
+            }
+        } catch(e) {
+            alert('Error fetching stations. Please try again.');
+        }
+        btn.innerHTML = '<i class="fas fa-location-arrow"></i> Use My Location';
+        btn.disabled = false;
+    }, () => {
+        alert('Unable to get your location. Please allow location access.');
+        btn.innerHTML = '<i class="fas fa-location-arrow"></i> Use My Location';
+        btn.disabled = false;
+    });
+}
+
+function renderNearest(stations) {
+    const box  = document.getElementById('nearest-results');
+    const list = document.getElementById('nearest-list');
+    list.innerHTML = stations.map(s => `
+        <a class="nearest-card" href="/stations/${s.slug}">
+            <div class="line-dot" style="background:${s.line_color || '#1a73e8'}"></div>
+            <div class="info">
+                <strong>${s.name}</strong>
+                <small>${s.line_name || 'Metro'} · ${s.city_name || ''}, ${s.country_name || ''}</small>
+            </div>
+            <span class="distance">${formatDistance(s.distance_m)}</span>
+        </a>
+    `).join('');
+    box.style.display = 'block';
+    box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ── Load countries into filter dropdown ──
+async function loadCountries() {
+    try {
+        const res  = await fetch('/api/countries');
+        const data = await res.json();
+        const sel  = document.getElementById('countryFilter');
+        data.forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = c.slug;
+            opt.textContent = `${countryFlag(c.code)} ${c.name}`;
+            sel.appendChild(opt);
+        });
+        renderCountryCards(data);
+    } catch(e) { console.error(e); }
+}
+
+async function loadCities() {
+    const country = document.getElementById('countryFilter').value;
+    const cityEl  = document.getElementById('cityFilter');
+    cityEl.innerHTML = '<option value="">— Select city —</option>';
+    cityEl.disabled  = true;
+    if (!country) return;
+    try {
+        const res  = await fetch(`/api/cities?country=${country}`);
+        const data = await res.json();
+        data.forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = c.slug;
+            opt.textContent = c.name;
+            cityEl.appendChild(opt);
+        });
+        cityEl.disabled = false;
+    } catch(e) { console.error(e); }
+}
+
+function goToCity() {
+    const country = document.getElementById('countryFilter').value;
+    const city    = document.getElementById('cityFilter').value;
+    if (!country) { alert('Please select a country.'); return; }
+    if (city) {
+        window.location.href = `/country/${country}/${city}`;
+    } else {
+        window.location.href = `/country/${country}`;
+    }
+}
+
+function renderCountryCards(countries) {
+    const grid = document.getElementById('countriesGrid');
+    if (!countries.length) {
+        grid.innerHTML = '<p style="text-align:center;color:#999;grid-column:1/-1;">No countries added yet.</p>';
+        return;
+    }
+    grid.innerHTML = countries.map(c => `
+        <a class="country-card" href="/country/${c.slug}">
+            <div class="country-flag">${countryFlag(c.code)}</div>
+            <h3>${c.name}</h3>
+        </a>
+    `).join('');
+}
+
+// ── Load featured stations ──
+async function loadFeatured() {
+    try {
+        const res  = await fetch('/api/stations?limit=6');
+        const data = await res.json();
+        const grid = document.getElementById('featuredGrid');
+        if (!data.length) {
+            grid.innerHTML = '<p style="text-align:center;color:#999;grid-column:1/-1;">No stations added yet.</p>';
+            return;
+        }
+        grid.innerHTML = data.filter(s => s.featured || true).slice(0, 6).map(s => `
+            <a class="station-card" href="/stations/${s.slug}">
+                <div class="station-card-img">
+                    ${s.photo_url ? `<img src="${s.photo_url}" alt="${s.name}" loading="lazy">` : '<i class="fas fa-subway"></i>'}
+                </div>
+                <div class="station-card-body">
+                    ${s.line_name ? `<span class="line-badge" style="background:${s.line_color||'#1a73e8'}">${s.line_name}</span>` : ''}
+                    <h3>${s.name}</h3>
+                    <p class="location"><i class="fas fa-map-marker-alt" style="color:#aaa;margin-right:4px;"></i>${s.city_name || ''}${s.country_name ? ', ' + s.country_name : ''}</p>
+                </div>
+            </a>
+        `).join('');
+    } catch(e) { console.error(e); }
+}
+
+loadCountries();
+loadFeatured();
+</script>
+</body>
+</html>
