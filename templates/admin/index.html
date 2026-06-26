@@ -386,6 +386,80 @@
             color: #555;
         }
 
+        /* ── Edit Modal ───────────────────────────── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal {
+            background: var(--white);
+            border-radius: 14px;
+            padding: 28px;
+            width: 480px;
+            max-width: 95vw;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+        }
+        .modal h3 {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--dark-gray);
+            margin-bottom: 20px;
+        }
+        .modal-field {
+            margin-bottom: 14px;
+        }
+        .modal-field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        .modal-field input, .modal-field select {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1.5px solid var(--medium-gray);
+            border-radius: 7px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 14px;
+            color: var(--dark-gray);
+            outline: none;
+            transition: border-color 0.15s;
+        }
+        .modal-field input:focus, .modal-field select:focus {
+            border-color: var(--primary);
+        }
+        .modal-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            margin-top: 22px;
+        }
+
+        /* ── Checkbox col ─────────────────────────── */
+        .row-check { width: 36px; text-align: center; }
+        .row-check input[type=checkbox] { width: 15px; height: 15px; cursor: pointer; accent-color: var(--primary); }
+        .bulk-bar {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            background: #e8f0fe;
+            border-bottom: 1px solid #c5d8fd;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        .bulk-bar.visible { display: flex; }
+
         /* ── Responsive ───────────────────────────── */
         @media (max-width: 768px) {
             .sidebar { width: 60px; }
@@ -522,7 +596,10 @@
         <div class="panel" id="panel-stations">
             <div class="section-header">
                 <h2><i class="fas fa-subway" style="color:var(--primary);margin-right:8px;"></i> Stations</h2>
-                <button class="btn btn-ghost btn-sm" onclick="loadStations()"><i class="fas fa-refresh"></i> Refresh</button>
+                <div class="btn-group">
+                    <button class="btn btn-danger btn-sm" id="stations-bulk-delete" style="display:none" onclick="bulkDelete('stations')"><i class="fas fa-trash"></i> Delete Selected</button>
+                    <button class="btn btn-ghost btn-sm" onclick="loadStations()"><i class="fas fa-refresh"></i> Refresh</button>
+                </div>
             </div>
             <div class="table-wrap">
                 <div id="stations-body">
@@ -535,7 +612,10 @@
         <div class="panel" id="panel-blog">
             <div class="section-header">
                 <h2><i class="fas fa-newspaper" style="color:var(--primary);margin-right:8px;"></i> Blog Posts</h2>
-                <button class="btn btn-ghost btn-sm" onclick="loadBlog()"><i class="fas fa-refresh"></i> Refresh</button>
+                <div class="btn-group">
+                    <button class="btn btn-danger btn-sm" id="blog-bulk-delete" style="display:none" onclick="bulkDelete('blog')"><i class="fas fa-trash"></i> Delete Selected</button>
+                    <button class="btn btn-ghost btn-sm" onclick="loadBlog()"><i class="fas fa-refresh"></i> Refresh</button>
+                </div>
             </div>
             <div class="table-wrap">
                 <div id="blog-body">
@@ -548,7 +628,10 @@
         <div class="panel" id="panel-countries">
             <div class="section-header">
                 <h2><i class="fas fa-globe" style="color:var(--primary);margin-right:8px;"></i> Countries</h2>
-                <button class="btn btn-ghost btn-sm" onclick="loadCountries()"><i class="fas fa-refresh"></i> Refresh</button>
+                <div class="btn-group">
+                    <button class="btn btn-danger btn-sm" id="countries-bulk-delete" style="display:none" onclick="bulkDelete('countries')"><i class="fas fa-trash"></i> Delete Selected</button>
+                    <button class="btn btn-ghost btn-sm" onclick="loadCountries()"><i class="fas fa-refresh"></i> Refresh</button>
+                </div>
             </div>
             <div class="table-wrap">
                 <div id="countries-body">
@@ -561,7 +644,10 @@
         <div class="panel" id="panel-cities">
             <div class="section-header">
                 <h2><i class="fas fa-city" style="color:var(--primary);margin-right:8px;"></i> Cities</h2>
-                <button class="btn btn-ghost btn-sm" onclick="loadCities()"><i class="fas fa-refresh"></i> Refresh</button>
+                <div class="btn-group">
+                    <button class="btn btn-danger btn-sm" id="cities-bulk-delete" style="display:none" onclick="bulkDelete('cities')"><i class="fas fa-trash"></i> Delete Selected</button>
+                    <button class="btn btn-ghost btn-sm" onclick="loadCities()"><i class="fas fa-refresh"></i> Refresh</button>
+                </div>
             </div>
             <div class="table-wrap">
                 <div id="cities-body">
@@ -574,7 +660,10 @@
         <div class="panel" id="panel-lines">
             <div class="section-header">
                 <h2><i class="fas fa-route" style="color:var(--primary);margin-right:8px;"></i> Lines</h2>
-                <button class="btn btn-ghost btn-sm" onclick="loadLines()"><i class="fas fa-refresh"></i> Refresh</button>
+                <div class="btn-group">
+                    <button class="btn btn-danger btn-sm" id="lines-bulk-delete" style="display:none" onclick="bulkDelete('lines')"><i class="fas fa-trash"></i> Delete Selected</button>
+                    <button class="btn btn-ghost btn-sm" onclick="loadLines()"><i class="fas fa-refresh"></i> Refresh</button>
+                </div>
             </div>
             <div class="table-wrap">
                 <div id="lines-body">
@@ -588,6 +677,18 @@
 
 <!-- Toast -->
 <div id="toast"><i class="fas fa-check-circle"></i> <span id="toast-msg"></span></div>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="editModal">
+    <div class="modal">
+        <h3 id="editModalTitle">Edit</h3>
+        <div id="editModalFields"></div>
+        <div class="modal-actions">
+            <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+            <button class="btn btn-primary" onclick="saveModal()"><i class="fas fa-save"></i> Save</button>
+        </div>
+    </div>
+</div>
 
 <script>
 // ── State ───────────────────────────────────────────
@@ -864,10 +965,14 @@ async function loadStations() {
         if (!rows.length) { wrap.innerHTML = '<div class="empty-state"><i class="fas fa-subway"></i><p>No stations</p></div>'; return; }
         wrap.innerHTML = `
             <table>
-                <thead><tr><th>Name</th><th>Line</th><th>City</th><th>Country</th><th>Status</th></tr></thead>
+                <thead><tr>
+                    <th class="row-check"><input type="checkbox" id="chk-stations-all" onchange="toggleAllChecks('stations',this.checked)"></th>
+                    <th>Name</th><th>Line</th><th>City</th><th>Country</th><th>Status</th><th>Actions</th>
+                </tr></thead>
                 <tbody>
                 ${rows.map(r => `
-                    <tr>
+                    <tr id="st-row-${r.id}">
+                        <td class="row-check"><input type="checkbox" class="chk-stations" value="${r.id}" onchange="updateBulkBar('stations')"></td>
                         <td><strong>${esc(r.name)}</strong></td>
                         <td>${r.line_name ? esc(r.line_name) : '<span style="color:#ddd">—</span>'}</td>
                         <td>${r.city_name ? esc(r.city_name) : '<span style="color:#ddd">—</span>'}</td>
@@ -876,6 +981,12 @@ async function loadStations() {
                             ? '<span class="badge badge-approved"><i class="fas fa-circle" style="font-size:8px"></i> Active</span>'
                             : '<span class="badge badge-rejected"><i class="fas fa-circle" style="font-size:8px"></i> Inactive</span>'
                         }</td>
+                        <td>
+                            <div class="btn-group">
+                                <button class="btn btn-ghost btn-sm" onclick='openEdit("stations",${JSON.stringify(r)})'><i class="fas fa-pen"></i></button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteOne('stations',${r.id})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
                     </tr>
                 `).join('')}
                 </tbody>
@@ -895,10 +1006,14 @@ async function loadBlog() {
         if (!rows.length) { wrap.innerHTML = '<div class="empty-state"><i class="fas fa-newspaper"></i><p>No posts</p></div>'; return; }
         wrap.innerHTML = `
             <table>
-                <thead><tr><th>Title</th><th>Author</th><th>Date</th><th>Status</th></tr></thead>
+                <thead><tr>
+                    <th class="row-check"><input type="checkbox" id="chk-blog-all" onchange="toggleAllChecks('blog',this.checked)"></th>
+                    <th>Title</th><th>Author</th><th>Date</th><th>Status</th><th>Actions</th>
+                </tr></thead>
                 <tbody>
                 ${rows.map(r => `
-                    <tr>
+                    <tr id="bl-row-${r.id}">
+                        <td class="row-check"><input type="checkbox" class="chk-blog" value="${r.id}" onchange="updateBulkBar('blog')"></td>
                         <td><strong>${esc(r.title)}</strong>${r.subtitle ? `<br><small style="color:#aaa">${esc(r.subtitle)}</small>` : ''}</td>
                         <td>${r.author ? esc(r.author) : '<span style="color:#ddd">—</span>'}</td>
                         <td><span class="suggestion-meta">${fmtDate(r.created_at)}</span></td>
@@ -906,6 +1021,12 @@ async function loadBlog() {
                             ? '<span class="badge badge-approved"><i class="fas fa-circle" style="font-size:8px"></i> Published</span>'
                             : '<span class="badge badge-rejected"><i class="fas fa-circle" style="font-size:8px"></i> Draft</span>'
                         }</td>
+                        <td>
+                            <div class="btn-group">
+                                <button class="btn btn-ghost btn-sm" onclick='openEdit("blog",${JSON.stringify(r)})'><i class="fas fa-pen"></i></button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteOne('blog',${r.id})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
                     </tr>
                 `).join('')}
                 </tbody>
@@ -925,10 +1046,14 @@ async function loadCountries() {
         if (!rows.length) { wrap.innerHTML = '<div class="empty-state"><i class="fas fa-globe"></i><p>No countries</p></div>'; return; }
         wrap.innerHTML = `
             <table>
-                <thead><tr><th>Name</th><th>Code</th><th>Slug</th><th>Status</th></tr></thead>
+                <thead><tr>
+                    <th class="row-check"><input type="checkbox" id="chk-countries-all" onchange="toggleAllChecks('countries',this.checked)"></th>
+                    <th>Name</th><th>Code</th><th>Slug</th><th>Status</th><th>Actions</th>
+                </tr></thead>
                 <tbody>
                 ${rows.map(r => `
-                    <tr>
+                    <tr id="co-row-${r.id}">
+                        <td class="row-check"><input type="checkbox" class="chk-countries" value="${r.id}" onchange="updateBulkBar('countries')"></td>
                         <td><strong>${esc(r.name)}</strong></td>
                         <td><code style="background:#f0f0f0;padding:2px 6px;border-radius:4px;font-size:12px;">${esc(r.code || '—')}</code></td>
                         <td style="color:#aaa;font-size:13px;">${esc(r.slug || '—')}</td>
@@ -936,6 +1061,12 @@ async function loadCountries() {
                             ? '<span class="badge badge-approved"><i class="fas fa-circle" style="font-size:8px"></i> Active</span>'
                             : '<span class="badge badge-rejected"><i class="fas fa-circle" style="font-size:8px"></i> Inactive</span>'
                         }</td>
+                        <td>
+                            <div class="btn-group">
+                                <button class="btn btn-ghost btn-sm" onclick='openEdit("countries",${JSON.stringify(r)})'><i class="fas fa-pen"></i></button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteOne('countries',${r.id})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
                     </tr>
                 `).join('')}
                 </tbody>
@@ -955,10 +1086,14 @@ async function loadCities() {
         if (!rows.length) { wrap.innerHTML = '<div class="empty-state"><i class="fas fa-city"></i><p>No cities</p></div>'; return; }
         wrap.innerHTML = `
             <table>
-                <thead><tr><th>Name</th><th>Country</th><th>Slug</th><th>Status</th></tr></thead>
+                <thead><tr>
+                    <th class="row-check"><input type="checkbox" id="chk-cities-all" onchange="toggleAllChecks('cities',this.checked)"></th>
+                    <th>Name</th><th>Country</th><th>Slug</th><th>Status</th><th>Actions</th>
+                </tr></thead>
                 <tbody>
                 ${rows.map(r => `
-                    <tr>
+                    <tr id="ci-row-${r.id}">
+                        <td class="row-check"><input type="checkbox" class="chk-cities" value="${r.id}" onchange="updateBulkBar('cities')"></td>
                         <td><strong>${esc(r.name)}</strong></td>
                         <td>${r.country_name ? esc(r.country_name) : '<span style="color:#ddd">—</span>'}</td>
                         <td style="color:#aaa;font-size:13px;">${esc(r.slug || '—')}</td>
@@ -966,6 +1101,12 @@ async function loadCities() {
                             ? '<span class="badge badge-approved"><i class="fas fa-circle" style="font-size:8px"></i> Active</span>'
                             : '<span class="badge badge-rejected"><i class="fas fa-circle" style="font-size:8px"></i> Inactive</span>'
                         }</td>
+                        <td>
+                            <div class="btn-group">
+                                <button class="btn btn-ghost btn-sm" onclick='openEdit("cities",${JSON.stringify(r)})'><i class="fas fa-pen"></i></button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteOne('cities',${r.id})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
                     </tr>
                 `).join('')}
                 </tbody>
@@ -985,10 +1126,14 @@ async function loadLines() {
         if (!rows.length) { wrap.innerHTML = '<div class="empty-state"><i class="fas fa-route"></i><p>No lines</p></div>'; return; }
         wrap.innerHTML = `
             <table>
-                <thead><tr><th>Name</th><th>City</th><th>Color</th><th>Status</th></tr></thead>
+                <thead><tr>
+                    <th class="row-check"><input type="checkbox" id="chk-lines-all" onchange="toggleAllChecks('lines',this.checked)"></th>
+                    <th>Name</th><th>City</th><th>Color</th><th>Status</th><th>Actions</th>
+                </tr></thead>
                 <tbody>
                 ${rows.map(r => `
-                    <tr>
+                    <tr id="li-row-${r.id}">
+                        <td class="row-check"><input type="checkbox" class="chk-lines" value="${r.id}" onchange="updateBulkBar('lines')"></td>
                         <td><strong>${esc(r.name)}</strong></td>
                         <td>${r.city_name ? esc(r.city_name) : '<span style="color:#ddd">—</span>'}</td>
                         <td>${r.color
@@ -1002,6 +1147,12 @@ async function loadLines() {
                             ? '<span class="badge badge-approved"><i class="fas fa-circle" style="font-size:8px"></i> Active</span>'
                             : '<span class="badge badge-rejected"><i class="fas fa-circle" style="font-size:8px"></i> Inactive</span>'
                         }</td>
+                        <td>
+                            <div class="btn-group">
+                                <button class="btn btn-ghost btn-sm" onclick='openEdit("lines",${JSON.stringify(r)})'><i class="fas fa-pen"></i></button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteOne('lines',${r.id})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
                     </tr>
                 `).join('')}
                 </tbody>
@@ -1010,6 +1161,156 @@ async function loadLines() {
     } catch(e) {
         wrap.innerHTML = '<div class="empty-state"><i class="fas fa-triangle-exclamation"></i><p>Failed to load</p></div>';
     }
+}
+
+// ── EDIT / DELETE / BULK ──────────────────────────────
+
+// Fields config per entity
+const editFields = {
+    cities:    [
+        { key: 'name',         label: 'Name',         type: 'text' },
+        { key: 'slug',         label: 'Slug',         type: 'text' },
+        { key: 'country_name', label: 'Country',      type: 'text' },
+        { key: 'active',       label: 'Status',       type: 'select', options: [{v:'1',l:'Active'},{v:'0',l:'Inactive'}] },
+    ],
+    countries: [
+        { key: 'name',  label: 'Name',  type: 'text' },
+        { key: 'code',  label: 'Code',  type: 'text' },
+        { key: 'slug',  label: 'Slug',  type: 'text' },
+        { key: 'active', label: 'Status', type: 'select', options: [{v:'1',l:'Active'},{v:'0',l:'Inactive'}] },
+    ],
+    lines: [
+        { key: 'name',      label: 'Name',  type: 'text' },
+        { key: 'city_name', label: 'City',  type: 'text' },
+        { key: 'color',     label: 'Color (hex)', type: 'text' },
+        { key: 'active', label: 'Status', type: 'select', options: [{v:'1',l:'Active'},{v:'0',l:'Inactive'}] },
+    ],
+    stations: [
+        { key: 'name',         label: 'Name',    type: 'text' },
+        { key: 'line_name',    label: 'Line',    type: 'text' },
+        { key: 'city_name',    label: 'City',    type: 'text' },
+        { key: 'country_name', label: 'Country', type: 'text' },
+        { key: 'active', label: 'Status', type: 'select', options: [{v:'1',l:'Active'},{v:'0',l:'Inactive'}] },
+    ],
+    blog: [
+        { key: 'title',    label: 'Title',    type: 'text' },
+        { key: 'subtitle', label: 'Subtitle', type: 'text' },
+        { key: 'author',   label: 'Author',   type: 'text' },
+        { key: 'active', label: 'Status', type: 'select', options: [{v:'1',l:'Published'},{v:'0',l:'Draft'}] },
+    ],
+};
+
+let _editEntity = null;
+let _editRow    = null;
+
+function openEdit(entity, row) {
+    _editEntity = entity;
+    _editRow    = row;
+    const fields = editFields[entity] || [];
+    document.getElementById('editModalTitle').textContent = 'Edit ' + entity.slice(0,-1).charAt(0).toUpperCase() + entity.slice(1,-1);
+    document.getElementById('editModalFields').innerHTML = fields.map(f => {
+        if (f.type === 'select') {
+            const val = row[f.key] == 1 || row[f.key] === true ? '1' : '0';
+            return `<div class="modal-field">
+                <label>${f.label}</label>
+                <select id="ef-${f.key}">
+                    ${f.options.map(o => `<option value="${o.v}"${val === o.v ? ' selected' : ''}>${o.l}</option>`).join('')}
+                </select>
+            </div>`;
+        }
+        return `<div class="modal-field">
+            <label>${f.label}</label>
+            <input type="text" id="ef-${f.key}" value="${esc(row[f.key] || '')}">
+        </div>`;
+    }).join('');
+    document.getElementById('editModal').classList.add('open');
+}
+
+function closeModal() {
+    document.getElementById('editModal').classList.remove('open');
+    _editEntity = null;
+    _editRow    = null;
+}
+
+async function saveModal() {
+    if (!_editEntity || !_editRow) return;
+    const fields = editFields[_editEntity] || [];
+    const body = { id: _editRow.id };
+    fields.forEach(f => {
+        const el = document.getElementById('ef-' + f.key);
+        if (el) body[f.key] = f.type === 'select' ? (el.value === '1' ? 1 : 0) : el.value;
+    });
+    try {
+        const data = await api(`/api/admin/${_editEntity}/${_editRow.id}`, 'PUT', body);
+        if (data.ok || data.id || data.success) {
+            toast('Saved!');
+            closeModal();
+            // reload the right panel
+            if (_editEntity === 'cities')    loadCities();
+            if (_editEntity === 'countries') loadCountries();
+            if (_editEntity === 'lines')     loadLines();
+            if (_editEntity === 'stations')  loadStations();
+            if (_editEntity === 'blog')      loadBlog();
+        } else {
+            toast(data.error || 'Error saving', 'error');
+        }
+    } catch(e) { toast('Error saving', 'error'); }
+}
+
+// Close modal on overlay click
+document.getElementById('editModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+});
+
+async function deleteOne(entity, id) {
+    if (!confirm('Delete this item permanently?')) return;
+    try {
+        const data = await api(`/api/admin/${entity}/${id}`, 'DELETE');
+        if (data.ok || data.success) {
+            toast('Deleted.');
+            if (entity === 'cities')    loadCities();
+            if (entity === 'countries') loadCountries();
+            if (entity === 'lines')     loadLines();
+            if (entity === 'stations')  loadStations();
+            if (entity === 'blog')      loadBlog();
+        } else {
+            toast(data.error || 'Error deleting', 'error');
+        }
+    } catch(e) { toast('Error deleting', 'error'); }
+}
+
+function toggleAllChecks(entity, checked) {
+    document.querySelectorAll(`.chk-${entity}`).forEach(c => c.checked = checked);
+    updateBulkBar(entity);
+}
+
+function updateBulkBar(entity) {
+    const count = document.querySelectorAll(`.chk-${entity}:checked`).length;
+    const btn = document.getElementById(`${entity}-bulk-delete`);
+    if (btn) btn.style.display = count > 0 ? 'inline-flex' : 'none';
+    // sync select-all checkbox
+    const all = document.querySelectorAll(`.chk-${entity}`).length;
+    const allChk = document.getElementById(`chk-${entity}-all`);
+    if (allChk) allChk.indeterminate = count > 0 && count < all, allChk.checked = count === all && all > 0;
+}
+
+async function bulkDelete(entity) {
+    const ids = [...document.querySelectorAll(`.chk-${entity}:checked`)].map(c => c.value);
+    if (!ids.length) return;
+    if (!confirm(`Delete ${ids.length} item(s) permanently?`)) return;
+    let errors = 0;
+    for (const id of ids) {
+        try {
+            await api(`/api/admin/${entity}/${id}`, 'DELETE');
+        } catch(e) { errors++; }
+    }
+    if (errors) toast(`Done with ${errors} error(s).`, 'error');
+    else toast(`${ids.length} item(s) deleted.`);
+    if (entity === 'cities')    loadCities();
+    if (entity === 'countries') loadCountries();
+    if (entity === 'lines')     loadLines();
+    if (entity === 'stations')  loadStations();
+    if (entity === 'blog')      loadBlog();
 }
 
 // ── Escape HTML ───────────────────────────────────────
